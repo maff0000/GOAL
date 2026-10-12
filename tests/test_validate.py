@@ -14,7 +14,6 @@ files, never in-place mutations of the canonical backlog.
 
 import os
 import pathlib
-import stat
 import subprocess
 import sys
 
@@ -25,7 +24,8 @@ from goal_dcp.model import BacklogLoadError, load_backlog, sort_findings
 from goal_dcp.validate import dependency_cycles, validate
 
 FIXTURES = pathlib.Path(__file__).resolve().parent / "fixtures"
-GOAL_VALIDATE = pathlib.Path(__file__).resolve().parents[1] / "tools" / "goal-validate"
+REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
+GOAL_VALIDATE = REPO_ROOT / "tools" / "goal-validate"
 
 #: Every finding code the validator is required to implement.
 EXPECTED_CODES = frozenset({
@@ -472,9 +472,28 @@ def run_cli(*arguments, cwd=None):
 
 
 def test_cli_is_an_executable_without_a_py_extension():
+    # An extensionless command name is part of the CLI contract.
     assert GOAL_VALIDATE.suffix == ""
-    mode = stat.S_IMODE(GOAL_VALIDATE.stat().st_mode)
-    assert mode == 0o755
+
+    # The executable bit is asserted against the **git index**, not against
+    # ``GOAL_VALIDATE.stat()``. git applies the checking-out process's umask
+    # when it materialises a file, so a committed 100755 lands on disk as 0775
+    # under the common umask 0002 and as 0755 only under umask 0022. Asserting
+    # the on-disk bits therefore tests the umask of whoever ran ``git
+    # checkout`` -- not anything about this repository -- and fails in any
+    # ordinary group-writable checkout, CI included. The committed mode is the
+    # durable fact, so read it from the index. Do not "simplify" this back to
+    # comparing ``stat()`` bits against 0o755.
+    recorded = subprocess.run(
+        ["git", "ls-files", "-s", "--", "tools/goal-validate"],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert recorded.stdout.split()[0] == "100755"
+
+    # ...and that the bit survived into this particular checkout.
     assert os.access(GOAL_VALIDATE, os.X_OK)
     first_line = GOAL_VALIDATE.read_text(encoding="utf-8").splitlines()[0]
     assert first_line == "#!/usr/bin/env python3"
