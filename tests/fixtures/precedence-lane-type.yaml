@@ -1,0 +1,18 @@
+# Precedence: one defect, one finding.
+# 'lane' is an integer, so it is reported once as INVALID_FIELD_TYPE. The
+# downstream INVALID_LANE check is suppressed — 7 is obviously not in LANES,
+# but saying so twice describes one defect as two.
+items:
+  - id: ALPHA-001
+    title: "Alpha"
+    lane: 7
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

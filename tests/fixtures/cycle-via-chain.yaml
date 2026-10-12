@@ -1,0 +1,64 @@
+# DEPENDENCY_CYCLE: a cycle reachable only through a chain from an acyclic
+# node. ENTRY-001 and CHAIN-001 are in no cycle themselves, so a search that
+# only reported "the node I started from is in a cycle" would miss this.
+#   ENTRY-001 -> CHAIN-001 -> RING-001 -> RING-002 -> RING-001
+items:
+  - id: ENTRY-001
+    title: "Entry"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on:
+      - CHAIN-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+
+  - id: CHAIN-001
+    title: "Chain"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on:
+      - RING-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+
+  - id: RING-001
+    title: "Ring one"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on:
+      - RING-002
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+
+  - id: RING-002
+    title: "Ring two"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on:
+      - RING-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

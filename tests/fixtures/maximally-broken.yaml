@@ -1,0 +1,28 @@
+# validate() must never raise on semantically broken data — it reports.
+#
+# ALPHA (whose id is an integer, so findings are located by source position)
+# gets every one of the 13 fields wrong at once. BETA omits almost every key
+# and puts wrong-typed values inside its lists. Nothing here is structurally
+# unloadable, so load_backlog succeeds and the validator has to describe it.
+items:
+  - id: 17
+    title: []
+    lane: true
+    component: {}
+    target_repository: 3.5
+    priority:
+      - P0
+    risk: null
+    state: 1
+    depends_on: "GOAL-DCP-001"
+    po_gate: 1
+    matt_gate: "no"
+    pid_path: 42
+    architecture_refs: {}
+
+  - id: BETA-001
+    depends_on:
+      - 5
+      - "OPS-SAFE-*"
+    architecture_refs:
+      - 7

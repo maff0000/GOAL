@@ -1,0 +1,37 @@
+# Valid: produces no findings at all. The baseline every other fixture is a
+# single deliberate mutation of.
+#
+# ALPHA-001 is MERGED, which is a state that requires a canonical PID, so it
+# declares one — and that PID agrees with it, so neither MISSING_PID nor
+# BACKLOG_PID_MISMATCH fires. BETA-001 is DELIVERY_READY with no PID, which is
+# correct. Between them they cover the positive side of the PID rules.
+items:
+  - id: ALPHA-001
+    title: "Alpha"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: MERGED
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-fixture.md
+    architecture_refs:
+      - fixtures/pid-fixture.md
+
+  - id: BETA-001
+    title: "Beta"
+    lane: ops
+    component: Estate
+    target_repository: maff0000/GOAL
+    priority: P2
+    risk: capital
+    state: DELIVERY_READY
+    depends_on:
+      - ALPHA-001
+    po_gate: true
+    matt_gate: true
+    pid_path: null
+    architecture_refs: []

@@ -1,0 +1,25 @@
+# No findings: the backlog agrees with every label its PID declares.
+#
+# Proves three things at once:
+#   - a declared, resolvable pid_path satisfies a PID_REQUIRED_STATE, so
+#     MISSING_PID does not fire;
+#   - 'shared' matches the PID's 'Shared' and 'maff0000/GOAL' matches the
+#     PID's backticked value;
+#   - risk is 'capital' while the PID declares no Risk label at all, which is
+#     not a mismatch.
+#
+# pid_path is relative to this fixture's own repo_root, which is tests/.
+items:
+  - id: PIDFIX-001
+    title: "PID agreement fixture"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: capital
+    state: FORGE_AUDIT
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-fixture.md
+    architecture_refs: []

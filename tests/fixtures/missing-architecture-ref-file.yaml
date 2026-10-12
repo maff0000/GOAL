@@ -1,0 +1,19 @@
+# MISSING_ARCHITECTURE_REF_FILE: architecture_refs[1] names nothing.
+# architecture_refs[0] does resolve under this fixture's repo_root (tests/),
+# so exactly one finding is expected: an existing ref must not be reported.
+items:
+  - id: ALPHA-001
+    title: "Alpha"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - fixtures/pid-fixture.md
+      - architecture/NO-SUCH-RECORD.md

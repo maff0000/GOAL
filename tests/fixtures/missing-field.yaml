@@ -1,0 +1,14 @@
+# MISSING_FIELD: the 'risk' key is absent from the item mapping.
+items:
+  - id: ALPHA-001
+    title: "Alpha"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

@@ -1,0 +1,15 @@
+# INVALID_PRIORITY: priorities are P0, P1, P2.
+items:
+  - id: ALPHA-001
+    title: "Alpha"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P3
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

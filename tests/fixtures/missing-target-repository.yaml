@@ -1,0 +1,31 @@
+# MISSING_TARGET_REPOSITORY: the declared target is null or empty.
+#   ALPHA-001  target_repository is null
+#   BETA-001   target_repository is whitespace
+items:
+  - id: ALPHA-001
+    title: "Alpha"
+    lane: shared
+    component: GOAL
+    target_repository: null
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+
+  - id: BETA-001
+    title: "Beta"
+    lane: shared
+    component: GOAL
+    target_repository: "  "
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

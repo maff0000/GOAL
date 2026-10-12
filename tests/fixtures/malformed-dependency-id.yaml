@@ -1,0 +1,19 @@
+# MALFORMED_DEPENDENCY_ID: syntactically unusable dependency entries.
+#   'tron-t1'          lowercase
+#   'TRON-T2,T3,T4'    a comma list, not one id
+items:
+  - id: ALPHA-001
+    title: "Alpha"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on:
+      - tron-t1
+      - "TRON-T2,T3,T4"
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

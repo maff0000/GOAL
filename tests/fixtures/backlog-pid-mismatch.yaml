@@ -1,0 +1,19 @@
+# BACKLOG_PID_MISMATCH: one finding per disagreeing label.
+#   lane       backlog 'ops'  vs PID 'Shared'
+#   matt_gate  backlog true   vs PID 'No'
+# Every other compared label agrees, and the PID declares no Risk label, so
+# exactly two findings are expected.
+items:
+  - id: PIDFIX-001
+    title: "PID disagreement fixture"
+    lane: ops
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: capital
+    state: FORGE_AUDIT
+    depends_on: []
+    po_gate: true
+    matt_gate: true
+    pid_path: fixtures/pid-fixture.md
+    architecture_refs: []

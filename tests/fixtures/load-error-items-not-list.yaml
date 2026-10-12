@@ -1,0 +1,5 @@
+# Structurally unloadable: 'items' is not a list, so load_backlog raises
+# BacklogLoadError and there is nothing to validate. The CLI reports this as
+# exit 2, never exit 1: "the backlog is invalid" would be a false claim about
+# a document that never loaded.
+items: 3

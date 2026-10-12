@@ -1,0 +1,18 @@
+# SELF_DEPENDENCY: an item depends on its own id. dependency_cycles() reports
+# this as a one-element cycle; validate() reports SELF_DEPENDENCY rather than
+# DEPENDENCY_CYCLE, which is defined for cycles of length >= 2.
+items:
+  - id: ALPHA-001
+    title: "Alpha"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on:
+      - ALPHA-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

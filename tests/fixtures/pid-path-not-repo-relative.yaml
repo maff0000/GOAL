@@ -1,0 +1,38 @@
+# PID_FILE_NOT_FOUND: pid_path must be a repo-relative POSIX path resolved
+# against the backlog's own repo_root. Neither of these is.
+#
+#   ABS-001     an absolute path. pathlib discards the root entirely when
+#               joined with one, so without a guard this would read a file
+#               outside the backlog's repository.
+#   ESCAPE-001  a path that climbs out with '..'. This fixture's repo_root is
+#               tests/, so without a guard this would resolve to the real
+#               pids/GOAL-DCP-001.md and silently pass — a fixture's findings
+#               would then depend on the repository around it.
+items:
+  - id: ABS-001
+    title: "Absolute"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: PID_DRAFT
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: /pids/GOAL-DCP-001.md
+    architecture_refs: []
+
+  - id: ESCAPE-001
+    title: "Escaping"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: PID_DRAFT
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: ../pids/GOAL-DCP-001.md
+    architecture_refs: []

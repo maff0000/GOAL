@@ -1,0 +1,32 @@
+# UNKNOWN_DEPENDENCY: 'DCP-001' is shorthand for GOAL-DCP-001 and is rejected
+# by the membership layer. It is syntactically well-formed, so no regex can
+# catch it: only the fact that no item declares that id can.
+items:
+  - id: GOAL-DCP-001
+    title: "Alpha"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+
+  - id: BETA-001
+    title: "Beta"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on:
+      - DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

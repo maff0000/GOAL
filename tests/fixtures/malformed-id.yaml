@@ -1,0 +1,15 @@
+# MALFORMED_ID: lowercase is not a canonical complete id.
+items:
+  - id: tron-t1
+    title: "Alpha"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
