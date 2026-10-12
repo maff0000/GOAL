@@ -75,6 +75,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `tests/fixtures_readiness/one_met_one_unmet.yaml`
 - `tests/fixtures_readiness/state_not_delivery_ready.yaml`
 - `tests/fixtures_readiness/unresolvable_dependency.yaml`
+- `tests/test_cli.py`
 - `tests/test_docsync.py`
 - `tests/test_first_wave.py`
 - `tests/test_model.py`
