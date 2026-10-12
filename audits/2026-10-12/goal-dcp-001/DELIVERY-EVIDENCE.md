@@ -295,12 +295,35 @@ These are recorded explicitly rather than presented as established truth.
 
 ### Known residue, deliberately not rewritten
 
-The internal host identifier removed above **remains in the root commit**
-`acc3f48`. Rewriting the root commit was explicitly out of scope for this
-increment, and `maff0000/GOAL#1` already cites `acc3f48` by SHA — rewriting
-it would break that citation. It is a low-sensitivity internal hostname
-already public since the bootstrap push. Recorded here for the PO to decide
-on, rather than silently rewritten or silently ignored.
+Stated precisely, because an earlier revision of this section framed the
+residue as bounded to history when it is not — the Auditor caught that, and
+this is the corrected account:
+
+1. **The internal host identifier remains in the root commit `acc3f48`.**
+   Rewriting the root commit was explicitly out of scope, and
+   `maff0000/GOAL#1` already cites `acc3f48` by SHA — rewriting it would
+   break that citation. It is a low-sensitivity internal hostname, public
+   since the bootstrap push. It is absent from `HEAD`.
+2. **Generic local filesystem paths remain in `HEAD`**, at
+   `operations/HELM-BOOTSTRAP-INSTRUCTIONS.md` lines 29 and 31 and
+   `operations/HELM-NEXT-ACTIONS.md` line 39, in two files this increment
+   edited. These are deliberately **not** scrubbed: a path like `/srv/GOAL`
+   is not a hostname, credential, address or topology detail, it discloses
+   nothing actionable, and it is part of the historical record of what HELM
+   was actually instructed to do. Removing it would degrade that record for
+   no security benefit. The host identifier — the part with disclosure value
+   — was removed.
+
+Both are recorded for the PO to decide on, rather than silently rewritten or
+silently ignored.
+
+### Pre-existing, outside this increment
+
+`decisions/ADR-MT5-002-LEGACY-LIVE-FLAGGED-EXECUTOR.md` line 6 publishes a
+bind address and `TRADING_ENABLED=true`. Confirmed present in the base commit
+`acc3f48`, so it predates this increment. `0.0.0.0` is a bind-all placeholder
+rather than a routable internal address, and the surrounding text is the
+substance of an accepted ADR. Raised for the PO; not changed here.
 
 ## 9. Non-goals honoured
 
@@ -361,9 +384,24 @@ dispatch, including that the shared project working tree stayed clean.
 
 ## 11. Independent audit
 
-A fresh-context FORGE Auditor was dispatched against the delivered head
-with no inherited Engineer context. Its structured verdict block is recorded
-alongside this file in `AUDIT-VERDICT.md`.
+A fresh-context FORGE Auditor was dispatched against the delivered head with
+no inherited Engineer context. Its structured verdict block, the checks it
+ran, and the PL's adjudication of its findings are in `AUDIT-VERDICT.md`
+alongside this file.
+
+Verdict: **GREEN** at `16e28909c43e8ea07ba27544f66fd830bec794f3`, with three
+non-RED findings, all three confirmed accurate by direct PL spot-check. Two
+of them were defects in **this** evidence file rather than in the delivered
+implementation, and are corrected below and in `AUDIT-VERDICT.md`.
+
+> **Correction, appended rather than rewritten.** An earlier revision of this
+> section asserted in the past tense that the audit had completed and that
+> `AUDIT-VERDICT.md` was recorded alongside this file — at a commit where no
+> such file existed. The Auditor caught it. That is the overclaim pattern
+> Forge's durable-truth doctrine exists to prevent, so it is corrected in a
+> later commit rather than by amending the published one: rewriting a pushed
+> commit to hide an overclaim is precisely what that doctrine forbids. See
+> `AUDIT-VERDICT.md` for the full adjudication.
 
 Presentation target: this increment has **no user-facing browser surface**.
 It delivers repository data, command-line tools, tests and documentation, so
