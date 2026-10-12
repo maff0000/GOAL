@@ -1,0 +1,144 @@
+# Backlog Schema
+
+Field reference for `backlog/backlog.yaml`.
+
+## Authority
+
+`backlog/backlog.yaml` is the **machine-readable authority** for delivery
+automation. Validation, readiness and dispatch all read it and nothing else.
+
+`backlog/MASTER-BACKLOG.md` is the **human view generated from it**. The two
+are not independent truths: the markdown's generated regions are rendered
+from the YAML, and drift between them is a defect that `./tools/goal-docs`
+detects and repairs. Never hand-edit a generated region, and never treat the
+markdown as the source when the two disagree.
+
+The vocabularies below come from `governance/DELIVERY-STATE-MACHINE.md`.
+`tools/goal_dcp/model.py` holds the single machine copy of them.
+
+## Document shape
+
+The top level is a mapping with exactly one key, `items`, whose value is a
+list of item mappings. Every item carries **all 13 keys explicitly**, in the
+order listed below. A key is never omitted; absence of a value is expressed
+as `null` (currently only for `pid_path`), not by dropping the key.
+
+## Fields
+
+| field | type | required | allowed values | meaning |
+|---|---|---|---|---|
+| `id` | string | yes | matches `^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$`, unique across items | Canonical complete work-item identifier. |
+| `title` | string | yes | non-empty | Human-readable delivery outcome. |
+| `lane` | string | yes | `shared`, `research`, `trading`, `ops` | Delivery lane; lowercase to match the `lane:*` label vocabulary. |
+| `component` | string | yes | non-empty | System or estate area the work belongs to. |
+| `target_repository` | string | yes | matches `^[A-Za-z0-9][A-Za-z0-9._-]*/[A-Za-z0-9][A-Za-z0-9._-]*$` | `owner/name` of the repository the work lands in. |
+| `priority` | string | yes | `P0`, `P1`, `P2` | Programme priority. |
+| `risk` | string | yes | `low`, `medium`, `high`, `capital` | Risk class; `capital` means real money is exposed. |
+| `state` | string | yes | one of the 19 canonical states below | Current delivery state. |
+| `depends_on` | list of strings | yes (may be empty) | each entry a canonical complete `id` declared by another item | Work that must reach an accepted terminal state first. |
+| `po_gate` | boolean | yes | `true`, `false` | Whether PO acceptance is required. |
+| `matt_gate` | boolean | yes | `true`, `false` | Whether a declared owner/capital decision is required. |
+| `pid_path` | string or null | yes (value may be `null`) | repo-relative POSIX path to an existing file, or `null` | The item's canonical PID, when one exists. |
+| `architecture_refs` | list of strings | yes (may be empty) | repo-relative POSIX paths to existing files | Architecture and decision records governing the item. |
+
+`pid_path` and `architecture_refs` entries are repo-relative POSIX paths,
+resolved against the repository root. They are never absolute.
+
+### Canonical states
+
+In state-machine order:
+
+```text
+DISCOVERED, ARCHITECTURE_REQUIRED, PID_DRAFT, PO_REVIEW, BLOCKED,
+DELIVERY_READY, ROGUE_DISPATCHED, FORGE_BUILD, FORGE_AUDIT, REPAIR,
+PO_ACCEPTANCE, MATT_DECISION, CANDIDATE, MERGED, DEPLOYMENT_READY,
+PAPER, LIVE, CLOSED, CANCELLED
+```
+
+## `ACCEPTED_TERMINAL_STATES`
+
+```text
+MERGED, DEPLOYMENT_READY, PAPER, LIVE, CLOSED
+```
+
+A dependency counts as satisfied **only** in one of these states. This set is
+what readiness computes against: an item is dispatchable when its own state is
+`DELIVERY_READY` and every dependency resolves to a declared item in an
+accepted terminal state.
+
+Reasoning for the exclusions:
+
+- `CANCELLED` is **terminal but not accepted**. Work can stop permanently
+  without its outcome ever being delivered, so a cancelled dependency must not
+  unblock the work that needed it.
+- `BLOCKED` is not terminal at all — it is a live state awaiting resolution.
+- `PO_ACCEPTANCE`, `MATT_DECISION` and `CANDIDATE` are **in-flight gates, not
+  acceptance**. Work sitting in a gate has not yet been accepted, and treating
+  a pending gate as satisfied would let dependent work start on an outcome
+  that may still be rejected.
+
+## `PID_REQUIRED_STATES`
+
+```text
+ROGUE_DISPATCHED, FORGE_BUILD, FORGE_AUDIT, REPAIR, PO_ACCEPTANCE,
+MATT_DECISION, CANDIDATE, MERGED, DEPLOYMENT_READY, PAPER, LIVE, CLOSED
+```
+
+These are the states that mean FORGE is already engaged. Once work has been
+dispatched, built, audited, accepted or merged, a canonical PID must exist —
+otherwise there is no authoritative statement of what was built or what
+acceptance meant. An item in one of these states with `pid_path: null` is a
+`MISSING_PID` finding.
+
+The requirement is deliberately **state-conditional**:
+
+- Most backlog items have no PID yet. Requiring one unconditionally would
+  make the canonical data permanently invalid, which is a defect rather than a
+  check.
+- `DELIVERY_READY` does **not** require a PID. `DELIVERY_READY` means
+  dependency-satisfied and mechanically dispatchable; authoring the canonical
+  PID is part of the dispatch that follows, not a precondition for being
+  listed as available work. Demanding a PID here would make readiness
+  unusable for exactly the items it exists to surface.
+- The rule is exercised by canonical data today via `GOAL-DCP-001`, which is
+  in `FORGE_AUDIT` and declares `pids/GOAL-DCP-001.md`.
+
+## Identifier rules
+
+Canonical ids are **complete**. Valid: `GOAL-DCP-001`, `GOAL-CONTRACT-001`,
+`OPS-SAFE-001`, `DARWIN-R1`, `MT5-GW-001`, `PAPER-E2E-001`. Not valid:
+`DCP-001`, `CONTRACT-001`, `CORE-001`, `OPS-SAFE-*`, `GOAL-*`, `tron-t1`,
+`TRON-T2,T3,T4`.
+
+Rejection of shorthand is **two-layered**, because no regular expression can
+tell `DCP-001` (shorthand, invalid) from `DARWIN-R1` (canonical, valid):
+
+1. **Syntax** — the `id` pattern rejects wildcards, lowercase, commas,
+   whitespace and empty strings.
+2. **Membership** — a dependency must resolve to an `id` some item declares.
+   This is the layer that rejects shorthand, aliases and unknown ids:
+   `DCP-001` fails because no item declares it.
+
+Both layers are required; neither alone is sufficient.
+
+## `target_repository` is a declared target
+
+`target_repository` records where work is *intended* to land. It is never
+checked against GitHub: validation is offline and deterministic. Several
+declared targets do not exist yet, which is correct and expected for work that
+has not started. Repository name casing is significant and recorded as the
+remote actually spells it.
+
+## Loading behaviour
+
+`tools/goal_dcp/model.py` provides a **structural** loader, not a validator.
+It fails only when the document cannot be read as a structure — the YAML does
+not parse, the top level is not a mapping, `items` is missing, `items` is not
+a list, or an `items` entry is not a mapping.
+
+Everything else is handed through intact so the validator can report it: a
+missing field becomes `None`, a wrong-typed field is carried through
+unconverted, and the original mapping is always retained so "absent" can be
+told apart from "present but null". Semantically broken data therefore loads
+successfully and then produces findings, which is what makes the validator
+able to describe the problem instead of merely refusing to start.
