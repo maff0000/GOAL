@@ -2,9 +2,9 @@
 """Print the deterministic readiness answer ROGUE dispatches from.
 
 Readiness is the list of items whose own state is ``DELIVERY_READY`` and whose
-every dependency has reached an accepted terminal state. Output is
-``json.dumps(..., sort_keys=True)`` on one line, so it is diffable and
-machine-consumable without a parser of its own.
+every dependency has reached an accepted terminal state. Output is one line of
+compact, key-sorted JSON, so it is diffable and machine-consumable without a
+parser of its own.
 
 This command **validates the backlog first and refuses to answer from invalid
 data**. A readiness answer computed from a malformed backlog is worse than no
@@ -93,7 +93,13 @@ def main(argv=None):
         print(f"{PROGRAM}: {exc}", file=sys.stderr)
         return 2
 
-    sys.stdout.write(json.dumps(payload, sort_keys=True) + "\n")
+    # Compact separators, not json.dumps' spaced defaults: this is a consumed
+    # machine contract, and ``pids/GOAL-DCP-001.md`` publishes its example as
+    # {"ready":[{"id":"...","target_repository":"..."}]} with no space after
+    # any ',' or ':'. Emitting those exact bytes keeps the command and the
+    # published contract byte-for-byte identical rather than merely equivalent
+    # after parsing.
+    sys.stdout.write(json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n")
     return 0
 
 
