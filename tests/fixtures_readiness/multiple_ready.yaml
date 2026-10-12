@@ -1,0 +1,44 @@
+# Isolates: output ordering and payload shape. Three dependency-free
+# DELIVERY_READY items declared out of alphabetical order; readiness
+# must return them sorted by id. ALPHA-001 declares a pid_path and the
+# others do not, so --with-pid has both cases to render.
+items:
+  - id: ZULU-001
+    title: "Zulu item"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/zulu
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+  - id: ALPHA-001
+    title: "Alpha item"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/alpha
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: pids/ALPHA-001.md
+    architecture_refs: []
+  - id: MIKE-001
+    title: "Mike item"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/mike
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

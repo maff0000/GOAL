@@ -1,0 +1,30 @@
+# Isolates: the state half of the rule. Every dependency is satisfied,
+# but TARGET-001 is ARCHITECTURE_REQUIRED, so it is never ready.
+items:
+  - id: TARGET-001
+    title: "Target item under test"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - DEP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+  - id: DEP-001
+    title: "Dependency under test"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: CLOSED
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

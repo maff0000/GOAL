@@ -1,58 +1,89 @@
 # THE GOAL — Initial Master Backlog
 
-| ID | Lane | Component | Outcome | Depends on | Priority | Matt gate |
-|---|---|---|---|---|---|---|
-| GOAL-DCP-001 | Shared | GOAL | GitHub delivery-control foundation | — | P0 | No |
-| GOAL-DCP-002 | Shared | GOAL/ROGUE | Machine-readable backlog + dependency/readiness validator | DCP-001 | P0 | No |
-| GOAL-DCP-003 | Shared | ROGUE/FORGE | Multi-project dispatch proof | DCP-002 | P0 | No |
-| GOAL-DCP-004 | Shared | GOAL | Automated PO/Rogue status and stale/blocked brief | DCP-002 | P1 | No |
-| OPS-SAFE-001 | Ops | Estate | Backup/off-host/restore programme | DCP-001 | P0 | No |
-| OPS-SAFE-002 | Ops | Estate | Network/data-store containment | DCP-001 | P0 | No |
-| OPS-SAFE-003 | Ops | Estate | Secrets/runtime identity hygiene | DCP-001 | P0 | No |
-| OPS-LEGACY-001 | Ops | Legacy MT5 | Prove/quarantine `agent-smith-original` and dell `MT5_Vantage` safely | DCP-001 | P0 | No |
-| OPS-CRED-001 | Ops | Estate | Remove plaintext broker/DB credentials and rotate where appropriate | DCP-001 | P0 | No |
-| HERMES-CUR-001 | Shared | HERMES | Authoritative PROD/current-state reconciliation | DCP-001 | P0 | No |
-| HERMES-FACT-001 | Shared | HERMES | `goal.market-fact/v1` | HERMES-CUR-001 | P0 | No |
-| HERMES-GR-001 | Research | HERMES | Golden replay proof | HERMES-FACT-001 | P0 | No |
-| ARES-CUR-001 | Shared | ARES | Canonical generation + legacy reconciliation | DCP-001 | P0 | No |
-| ARES-RISK-001 | Shared | ARES | `goal.risk-event/v1` | ARES-CUR-001 | P0 | No |
-| ARES-PIT-001 | Research | ARES | Trading Economics PIT prototype | ARES-RISK-001 | P1 | No |
-| GOAL-CONTRACT-001 | Shared | GOAL | `goal.strategy/v1` | DCP-001 | P0 | No |
-| GOAL-CORE-001 | Shared | GOAL | `goal-strategy-core` | CONTRACT-001 | P0 | No |
-| GOAL-REF-001 | Shared | GOAL | independent semantic reference | CORE-001 | P0 | No |
-| DARWIN-R1 | Research | DARWIN | Source/runtime reconciliation | DCP-001 | P0 | No |
-| DARWIN-R2 | Research | DARWIN | ResearchEngineAdapter | CONTRACT-001, DARWIN-R1 | P0 | No |
-| DARWIN-R3 | Research | DARWIN | APOLLO narrowed causal proof | CORE-001, DARWIN-R1 | P1 | No |
-| LEAN-P1 | Research | DARWIN | LEAN bounded prototype | DARWIN-R2, CORE-001 | P1 | No |
-| CER-R1 | Research | CER | Research evidence + EdgeProfileVersion | DARWIN-R2 | P1 | No |
-| NEO-R1 | Research | NEO | Read-only evidence/MCP architecture | CER-R1 | P1 | No |
-| HELIOS-T1 | Trading | HELIOS | Refactor to GOAL strategy contract/core | CORE-001 | P0 | No |
-| HELIOS-T2 | Trading | HELIOS | Live HERMES/ARES adapters | HELIOS-T1, HERMES-FACT-001, ARES-RISK-001 | P0 | No |
-| HELIOS-T3 | Trading | HELIOS | Signed durable StrategyTrigger | HELIOS-T2 | P0 | No |
-| FALCON-T1 | Trading | FALCON | Reconcile event registry | HELIOS-T3 | P1 | No |
-| MT5-GW-001 | Trading | mt5-gateway | Reconcile eight stacked WO branches into canonical Git history | DCP-001 | P0 | No |
-| MT5-GW-002 | Trading | mt5-gateway | Reproducible image/build provenance, version pinning, environment guard, health and CI | MT5-GW-001 | P0 | No |
-| MT5-GW-003 | Trading | mt5-gateway | Replace raw SlaveService with typed in-container allow-list service; UDS preferred | MT5-GW-001, MT5-GW-002 | P0 | No |
-| MT5-GW-004 | Trading | mt5-gateway | Vantage DEMO execution/reconciliation capability proof | MT5-GW-003 | P0 | No |
-| TRON-T1 | Trading | TRON | Core ledger/reconciliation + Trading Postgres | DCP-001 | P0 | No |
-| TRON-T2 | Trading | TRON | Vantage DEMO broker-neutral adapter | TRON-T1, MT5-GW-003, MT5-GW-004 | P0 | No |
-| TRON-T3 | Trading | TRON | DIKE/hard risk/kill | TRON-T1 | P0 | No |
-| TRON-T4 | Trading | TRON | TriggerInbox intake/idempotency | TRON-T1, HELIOS-T3 | P0 | No |
-| TRON-T5 | Trading | TRON | SizingPolicy + frozen EdgeProfile binding | TRON-T3, CER-R1 | P1 | No |
-| SKEPTIC-T1 | Trading | TRON | asynchronous SHADOW reviewer | TRON-T1 | P2 | No |
-| PAPER-E2E-001 | Trading | GOAL | Full paper lane end-to-end proof | HELIOS-T3, TRON-T2,T3,T4 | P0 | **Yes** |
-| LIVE-GATE-001 | Ops | GOAL | Capital readiness + LIVE decision | PAPER-E2E-001, OPS-SAFE-* | P0 | **Yes** |
+This document is the **human view** of the programme backlog.
+`backlog/backlog.yaml` is the machine authority, and the two are not
+independent truths: everything between the generated-region markers below is
+rendered from the YAML by `./tools/goal-docs`. Never hand-edit a generated
+region — change `backlog/backlog.yaml` and run `./tools/goal-docs --write`.
+`./tools/goal-docs --check` fails when the two disagree. See
+`backlog/SCHEMA.md` for the field reference.
 
-## First wave after DCP-001
+<!-- BEGIN GENERATED: backlog-table -->
 
-These can proceed independently after the control plane is GREEN:
+| ID | Lane | Component | Outcome | Target repository | Depends on | Priority | Risk | State | PO gate | Matt gate |
+|---|---|---|---|---|---|---|---|---|---|---|
+| GOAL-DCP-001 | shared | GOAL | GitHub delivery-control foundation | maff0000/GOAL | — | P0 | medium | FORGE_AUDIT | Yes | No |
+| GOAL-DCP-002 | shared | GOAL/ROGUE | Machine-readable backlog + dependency/readiness validator | maff0000/GOAL | GOAL-DCP-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
+| GOAL-DCP-003 | shared | ROGUE/FORGE | Multi-project dispatch proof | maff0000/GOAL | GOAL-DCP-002 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
+| GOAL-DCP-004 | shared | GOAL | Automated PO/Rogue status and stale/blocked brief | maff0000/GOAL | GOAL-DCP-002 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| OPS-SAFE-001 | ops | Estate | Backup/off-host/restore programme | maff0000/GOAL | GOAL-DCP-001 | P0 | high | DELIVERY_READY | Yes | No |
+| OPS-SAFE-002 | ops | Estate | Network/data-store containment | maff0000/GOAL | GOAL-DCP-001 | P0 | high | DELIVERY_READY | Yes | No |
+| OPS-SAFE-003 | ops | Estate | Secrets/runtime identity hygiene | maff0000/GOAL | GOAL-DCP-001 | P0 | high | DELIVERY_READY | Yes | No |
+| OPS-LEGACY-001 | ops | Legacy MT5 | Prove/quarantine `agent-smith-original` and dell `MT5_Vantage` safely | maff0000/GOAL | GOAL-DCP-001 | P0 | high | DELIVERY_READY | Yes | No |
+| OPS-CRED-001 | ops | Estate | Remove plaintext broker/DB credentials and rotate where appropriate | maff0000/GOAL | GOAL-DCP-001 | P0 | high | DELIVERY_READY | Yes | No |
+| HERMES-CUR-001 | shared | HERMES | Authoritative PROD/current-state reconciliation | maff0000/hermes | GOAL-DCP-001 | P0 | medium | DELIVERY_READY | Yes | No |
+| HERMES-FACT-001 | shared | HERMES | `goal.market-fact/v1` | maff0000/hermes | HERMES-CUR-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
+| HERMES-GR-001 | research | HERMES | Golden replay proof | maff0000/hermes | HERMES-FACT-001 | P0 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| ARES-CUR-001 | shared | ARES | Canonical generation + legacy reconciliation | maff0000/ARES | GOAL-DCP-001 | P0 | medium | DELIVERY_READY | Yes | No |
+| ARES-RISK-001 | shared | ARES | `goal.risk-event/v1` | maff0000/ARES | ARES-CUR-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
+| ARES-PIT-001 | research | ARES | Trading Economics PIT prototype | maff0000/ARES | ARES-RISK-001 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| GOAL-CONTRACT-001 | shared | GOAL | `goal.strategy/v1` | maff0000/GOAL | GOAL-DCP-001 | P0 | medium | DELIVERY_READY | Yes | No |
+| GOAL-CORE-001 | shared | GOAL | `goal-strategy-core` | maff0000/GOAL | GOAL-CONTRACT-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
+| GOAL-REF-001 | shared | GOAL | independent semantic reference | maff0000/GOAL | GOAL-CORE-001 | P0 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| DARWIN-R1 | research | DARWIN | Source/runtime reconciliation | maff0000/DARWIN | GOAL-DCP-001 | P0 | medium | DELIVERY_READY | Yes | No |
+| DARWIN-R2 | research | DARWIN | ResearchEngineAdapter | maff0000/DARWIN | GOAL-CONTRACT-001, DARWIN-R1 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
+| DARWIN-R3 | research | DARWIN | APOLLO narrowed causal proof | maff0000/DARWIN | GOAL-CORE-001, DARWIN-R1 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| LEAN-P1 | research | DARWIN | LEAN bounded prototype | maff0000/DARWIN | DARWIN-R2, GOAL-CORE-001 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| CER-R1 | research | CER | Research evidence + EdgeProfileVersion | maff0000/CER | DARWIN-R2 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| NEO-R1 | research | NEO | Read-only evidence/MCP architecture | maff0000/NEO | CER-R1 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| HELIOS-T1 | trading | HELIOS | Refactor to GOAL strategy contract/core | maff0000/HELIOS | GOAL-CORE-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
+| HELIOS-T2 | trading | HELIOS | Live HERMES/ARES adapters | maff0000/HELIOS | HELIOS-T1, HERMES-FACT-001, ARES-RISK-001 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| HELIOS-T3 | trading | HELIOS | Signed durable StrategyTrigger | maff0000/HELIOS | HELIOS-T2 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| FALCON-T1 | trading | FALCON | Reconcile event registry | maff0000/falcon | HELIOS-T3 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| MT5-GW-001 | trading | mt5-gateway | Reconcile eight stacked WO branches into canonical Git history | maff0000/mt5-gateway | GOAL-DCP-001 | P0 | medium | DELIVERY_READY | Yes | No |
+| MT5-GW-002 | trading | mt5-gateway | Reproducible image/build provenance, version pinning, environment guard, health and CI | maff0000/mt5-gateway | MT5-GW-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
+| MT5-GW-003 | trading | mt5-gateway | Replace raw SlaveService with typed in-container allow-list service; UDS preferred | maff0000/mt5-gateway | MT5-GW-001, MT5-GW-002 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| MT5-GW-004 | trading | mt5-gateway | Vantage DEMO execution/reconciliation capability proof | maff0000/mt5-gateway | MT5-GW-003 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| TRON-T1 | trading | TRON | Core ledger/reconciliation + Trading Postgres | maff0000/tron | GOAL-DCP-001 | P0 | high | DELIVERY_READY | Yes | No |
+| TRON-T2 | trading | TRON | Vantage DEMO broker-neutral adapter | maff0000/tron | TRON-T1, MT5-GW-003, MT5-GW-004 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| TRON-T3 | trading | TRON | DIKE/hard risk/kill | maff0000/tron | TRON-T1 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| TRON-T4 | trading | TRON | TriggerInbox intake/idempotency | maff0000/tron | TRON-T1, HELIOS-T3 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| TRON-T5 | trading | TRON | SizingPolicy + frozen EdgeProfile binding | maff0000/tron | TRON-T3, CER-R1 | P1 | medium | ARCHITECTURE_REQUIRED | Yes | No |
+| SKEPTIC-T1 | trading | TRON | asynchronous SHADOW reviewer | maff0000/tron | TRON-T1 | P2 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| PAPER-E2E-001 | trading | GOAL | Full paper lane end-to-end proof | maff0000/GOAL | HELIOS-T3, TRON-T2, TRON-T3, TRON-T4 | P0 | capital | ARCHITECTURE_REQUIRED | Yes | **Yes** |
+| LIVE-GATE-001 | ops | GOAL | Capital readiness + LIVE decision | maff0000/GOAL | PAPER-E2E-001, OPS-SAFE-001, OPS-SAFE-002, OPS-SAFE-003, OPS-LEGACY-001, OPS-CRED-001 | P0 | capital | ARCHITECTURE_REQUIRED | Yes | **Yes** |
 
-- OPS-SAFE-001..003
-- OPS-LEGACY-001
-- OPS-CRED-001
-- HERMES-CUR-001
-- ARES-CUR-001
-- GOAL-CONTRACT-001
-- DARWIN-R1
-- MT5-GW-001
-- TRON-T1
+<!-- END GENERATED: backlog-table -->
+
+## First wave after GOAL-DCP-001
+
+These can proceed independently once the control plane is GREEN.
+
+The list is **computed, not maintained by hand**: it is the readiness answer
+for the projection "`GOAL-DCP-001` has reached an accepted terminal state" —
+every item whose own state is `DELIVERY_READY` and whose every dependency is
+then satisfied. Ids are canonical and complete, which is what makes the list
+mechanically checkable; range notation such as `OPS-SAFE-001..003` is not a
+canonical id and cannot be verified against the backlog.
+
+Reproduce it with:
+
+```bash
+./tools/goal-ready --assume-closed GOAL-DCP-001
+```
+
+<!-- BEGIN GENERATED: first-wave -->
+
+- `ARES-CUR-001` — Canonical generation + legacy reconciliation (`maff0000/ARES`)
+- `DARWIN-R1` — Source/runtime reconciliation (`maff0000/DARWIN`)
+- `GOAL-CONTRACT-001` — `goal.strategy/v1` (`maff0000/GOAL`)
+- `HERMES-CUR-001` — Authoritative PROD/current-state reconciliation (`maff0000/hermes`)
+- `MT5-GW-001` — Reconcile eight stacked WO branches into canonical Git history (`maff0000/mt5-gateway`)
+- `OPS-CRED-001` — Remove plaintext broker/DB credentials and rotate where appropriate (`maff0000/GOAL`)
+- `OPS-LEGACY-001` — Prove/quarantine `agent-smith-original` and dell `MT5_Vantage` safely (`maff0000/GOAL`)
+- `OPS-SAFE-001` — Backup/off-host/restore programme (`maff0000/GOAL`)
+- `OPS-SAFE-002` — Network/data-store containment (`maff0000/GOAL`)
+- `OPS-SAFE-003` — Secrets/runtime identity hygiene (`maff0000/GOAL`)
+- `TRON-T1` — Core ledger/reconciliation + Trading Postgres (`maff0000/tron`)
+
+<!-- END GENERATED: first-wave -->

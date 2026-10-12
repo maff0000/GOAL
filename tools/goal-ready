@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+"""Print the deterministic readiness answer ROGUE dispatches from.
+
+Readiness is the list of items whose own state is ``DELIVERY_READY`` and whose
+every dependency has reached an accepted terminal state. Output is
+``json.dumps(..., sort_keys=True)`` on one line, so it is diffable and
+machine-consumable without a parser of its own.
+
+This command **validates the backlog first and refuses to answer from invalid
+data**. A readiness answer computed from a malformed backlog is worse than no
+answer at all: ROGUE would dispatch real work on it, and the failure would
+surface as mysterious misordered delivery rather than as the data defect it is.
+Exit 1 with findings on stderr is the correct response; a best-effort answer is
+not.
+
+``--assume-closed`` is a what-if projection for planning, not a state change.
+It answers "if these items were accepted, what would become dispatchable?" and
+writes nothing.
+"""
+
+import argparse
+import json
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from goal_dcp.model import BacklogLoadError, load_backlog, sort_findings  # noqa: E402
+from goal_dcp.readiness import UnknownAssumedId, readiness_payload  # noqa: E402
+from goal_dcp.validate import validate  # noqa: E402
+
+PROGRAM = "goal-ready"
+
+
+def parse_args(argv):
+    parser = argparse.ArgumentParser(
+        prog=PROGRAM,
+        description=(
+            "List backlog items that are mechanically dispatchable: state "
+            "DELIVERY_READY with every dependency in an accepted terminal "
+            "state. Refuses to answer from an invalid backlog."
+        ),
+    )
+    parser.add_argument(
+        "--assume-closed",
+        default="",
+        metavar="ID[,ID...]",
+        help=(
+            "what-if projection: treat these canonical complete ids as CLOSED "
+            "when computing readiness. Changes nothing on disk. An id no "
+            "backlog item declares is a usage error, not a silent no-op."
+        ),
+    )
+    parser.add_argument(
+        "--with-pid",
+        action="store_true",
+        help="include each item's pid_path (null when it has no PID yet)",
+    )
+    return parser.parse_args(argv)
+
+
+def parse_assume_closed(raw):
+    """Split a comma-separated id list, ignoring surrounding whitespace."""
+    return frozenset(part.strip() for part in raw.split(",") if part.strip())
+
+
+def main(argv=None):
+    args = parse_args(argv)
+    assume_closed = parse_assume_closed(args.assume_closed)
+
+    try:
+        backlog = load_backlog()
+    except (BacklogLoadError, OSError) as exc:
+        print(f"{PROGRAM}: {exc}", file=sys.stderr)
+        return 2
+
+    findings = validate(backlog)
+    if findings:
+        print(
+            f"{PROGRAM}: refusing to answer from an invalid backlog "
+            f"({len(findings)} finding(s)); fix these first:",
+            file=sys.stderr,
+        )
+        for finding in sort_findings(findings):
+            print(finding.as_line(), file=sys.stderr)
+        return 1
+
+    try:
+        payload = readiness_payload(
+            backlog, assume_closed=assume_closed, with_pid=args.with_pid
+        )
+    except UnknownAssumedId as exc:
+        print(f"{PROGRAM}: {exc}", file=sys.stderr)
+        return 2
+
+    sys.stdout.write(json.dumps(payload, sort_keys=True) + "\n")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
