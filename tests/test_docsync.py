@@ -153,7 +153,7 @@ def test_drift_is_detected_when_the_machine_backlog_changes(temp_repo):
     path = temp_repo / "backlog" / "backlog.yaml"
     text = path.read_text(encoding="utf-8")
     path.write_text(
-        text.replace("state: FORGE_AUDIT", "state: CLOSED", 1), encoding="utf-8"
+        text.replace("state: CLOSED", "state: FORGE_AUDIT", 1), encoding="utf-8"
     )
 
     findings = docsync.check(temp_repo)

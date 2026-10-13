@@ -12,7 +12,7 @@ region — change `backlog/backlog.yaml` and run `./tools/goal-docs --write`.
 
 | ID | Lane | Component | Outcome | Target repository | Depends on | Priority | Risk | State | PO gate | Matt gate |
 |---|---|---|---|---|---|---|---|---|---|---|
-| GOAL-DCP-001 | shared | GOAL | GitHub control-plane authority: machine backlog, validation, dependency graph, strict delivery readiness, generated views, CI enforcement | maff0000/GOAL | — | P0 | medium | FORGE_AUDIT | Yes | No |
+| GOAL-DCP-001 | shared | GOAL | GitHub control-plane authority: machine backlog, validation, dependency graph, strict delivery readiness, generated views, CI enforcement | maff0000/GOAL | — | P0 | medium | CLOSED | Yes | No |
 | GOAL-DCP-002 | shared | GOAL/ROGUE | ROGUE dispatcher — deterministic consumption and multi-project dispatch control | maff0000/GOAL | GOAL-DCP-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
 | GOAL-DCP-003 | shared | ROGUE/FORGE | Automated GitHub-triggered sandboxed delivery launch | maff0000/GOAL | GOAL-DCP-002 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
 | GOAL-DCP-004 | shared | GOAL | Automated PO/ROGUE status and stale/blocked brief | maff0000/GOAL | GOAL-DCP-002 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
