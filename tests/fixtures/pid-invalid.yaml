@@ -1,0 +1,148 @@
+# PID_INVALID: a declared PID file that exists and is readable but is not a
+# PID. One item per way of failing, and PID_INVALID is the only code this
+# document yields — every item is otherwise sound, and none of the declared
+# PID files carries a bold metadata label, so BACKLOG_PID_MISMATCH cannot fire
+# alongside and confuse the assertion.
+#
+# This is the gap the rule closes. Before it, a single `touch` of the
+# pointed-to file passed the gate: a zero-byte PID satisfies
+# PID_FILE_NOT_FOUND (the file exists) and satisfies BACKLOG_PID_MISMATCH (it
+# declares no labels, and a label the PID omits is not a mismatch). An empty
+# PID therefore established delivery readiness while carrying none of the
+# authority a PID exists to carry.
+#
+# Every item is in a PID-required state, so the rule applies to all of them:
+#
+#   EMPTY-001       a zero-byte PID file. It has no header comment because it
+#                   has no bytes -- that is the case. Nothing but this comment
+#                   and tests/fixtures/README.md can say what it proves.
+#   BLANK-001       a whitespace-only PID file, for the same reason: spaces, a
+#                   tab and newlines, and nothing else. Also uncommentable.
+#   HOLLOW-001      all four required headings present, every body empty.
+#   IDENTITY-001    a complete, substantive PID headed IDENTITY-0011 -- a
+#                   different id, and a deliberate near-miss: IDENTITY-001 is
+#                   a substring of it but not a whole token, so only identity
+#                   is unmet.
+#   NOAPPROVAL-001  four of the five requirements met; no approval evidence.
+#   NOACCEPT-001    four of the five requirements met; no acceptance criteria.
+#   PROSE-001       boilerplate naming purpose, scope, acceptance criteria and
+#                   approval as running prose, with no ATX heading anywhere, so
+#                   identity fails too.
+#   PADDED-001      all four sections padded with one repeated token, which is
+#                   why the floor counts distinct words rather than characters.
+#
+# The negative controls live in tests/fixtures/pid-valid-minimal.yaml: a
+# genuinely valid minimal PID, and an incomplete draft in a pre-delivery state
+# that must NOT be failed by this rule.
+items:
+  - id: EMPTY-001
+    title: "Zero-byte PID"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-invalid-empty.md
+    architecture_refs: []
+
+  - id: BLANK-001
+    title: "Whitespace-only PID"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-invalid-whitespace.md
+    architecture_refs: []
+
+  - id: HOLLOW-001
+    title: "All headings, no bodies"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: FORGE_AUDIT
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-invalid-empty-sections.md
+    architecture_refs: []
+
+  - id: IDENTITY-001
+    title: "A complete PID for a different id"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-invalid-wrong-identity.md
+    architecture_refs: []
+
+  - id: NOAPPROVAL-001
+    title: "No approval evidence"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-invalid-no-approval.md
+    architecture_refs: []
+
+  - id: NOACCEPT-001
+    title: "No acceptance criteria"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: MERGED
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-invalid-no-acceptance.md
+    architecture_refs: []
+
+  - id: PROSE-001
+    title: "Keywords without sections"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-invalid-prose.md
+    architecture_refs: []
+
+  - id: PADDED-001
+    title: "Padded sections"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-invalid-padded.md
+    architecture_refs: []

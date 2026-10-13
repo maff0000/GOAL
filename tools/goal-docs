@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+"""Check or rewrite the generated regions of the human-readable documents.
+
+``backlog/MASTER-BACKLOG.md`` and ``MANIFEST.md`` restate machine truth that
+lives elsewhere: the backlog table and the PID-authoring wave come from
+``backlog/backlog.yaml``, the manifest comes from ``git ls-files``. Those
+restatements are generated and mechanically compared, so the human documents
+cannot quietly become a second, wrong source of truth.
+
+``--check`` is the default because it is the safe, read-only mode: run it in
+review to prove the documents still agree with the repository. ``--write``
+rewrites only the text between the generated-region markers; human prose
+outside them is never touched.
+"""
+
+import argparse
+import os
+import subprocess
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from goal_dcp.docsync import check, write  # noqa: E402
+from goal_dcp.model import BacklogLoadError  # noqa: E402
+
+PROGRAM = "goal-docs"
+
+
+def parse_args(argv):
+    parser = argparse.ArgumentParser(
+        prog=PROGRAM,
+        description=(
+            "Verify (default) or regenerate the generated regions of "
+            "backlog/MASTER-BACKLOG.md and MANIFEST.md."
+        ),
+    )
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
+        "--check",
+        dest="mode",
+        action="store_const",
+        const="check",
+        help="report drifted or missing generated regions (default)",
+    )
+    mode.add_argument(
+        "--write",
+        dest="mode",
+        action="store_const",
+        const="write",
+        help="rewrite drifted generated regions in place",
+    )
+    parser.set_defaults(mode="check")
+    return parser.parse_args(argv)
+
+
+def run_check():
+    findings = check()
+    if findings:
+        print(
+            f"{PROGRAM}: generated regions are out of sync with repository truth:",
+            file=sys.stderr,
+        )
+        for finding in findings:
+            print(finding.as_line(), file=sys.stderr)
+        return 1
+    print(f"{PROGRAM}: generated regions in sync")
+    return 0
+
+
+def run_write():
+    changed = write()
+    for path in changed:
+        print(f"{PROGRAM}: rewrote {path}")
+    if not changed:
+        print(f"{PROGRAM}: generated regions already in sync")
+
+    # A marker pair that does not exist cannot be written, so report what is
+    # still wrong loudly rather than exiting 0 on a partial job.
+    remaining = check()
+    if remaining:
+        print(
+            f"{PROGRAM}: {len(remaining)} generated region(s) could not be "
+            "brought into sync; add the missing marker pair(s) by hand:",
+            file=sys.stderr,
+        )
+        for finding in remaining:
+            print(finding.as_line(), file=sys.stderr)
+        return 2
+    return 0
+
+
+def main(argv=None):
+    args = parse_args(argv)
+    try:
+        return run_write() if args.mode == "write" else run_check()
+    except (BacklogLoadError, OSError, subprocess.CalledProcessError) as exc:
+        print(f"{PROGRAM}: {exc}", file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,44 @@
+# No findings: the two negative controls for minimum PID validity. Without
+# these, tests/fixtures/pid-invalid.yaml would be satisfied by a rule that
+# simply failed every PID it was shown.
+#
+#   MINIMAL-001  DELIVERY_READY, declaring the smallest PID that passes. Each
+#                of its four required sections carries exactly six distinct
+#                words -- the floor itself -- so this also pins the boundary
+#                rather than clearing it by a comfortable margin.
+#   DRAFT-001    PID_DRAFT, declaring a genuinely incomplete draft: the four
+#                required headings present and every body empty, which is RED
+#                in any PID-required state. PID_DRAFT is not one, so it must
+#                produce nothing at all. This is the state-scoping half of the
+#                rule, and it is the half an over-eager implementation breaks.
+#
+# Neither declared PID carries a bold metadata label, so this document proves
+# PID validity on its own and does not depend on label agreement.
+items:
+  - id: MINIMAL-001
+    title: "Minimal valid PID"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-valid-minimal.md
+    architecture_refs: []
+
+  - id: DRAFT-001
+    title: "Incomplete draft in a pre-delivery state"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: PID_DRAFT
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-invalid-draft.md
+    architecture_refs: []

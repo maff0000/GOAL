@@ -1,0 +1,31 @@
+# EMPTY_FIELD: a required text field present but empty or whitespace-only.
+#   ALPHA-001  title is whitespace
+#   BETA-001   component is the empty string
+items:
+  - id: ALPHA-001
+    title: "   "
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+
+  - id: BETA-001
+    title: "Beta"
+    lane: shared
+    component: ""
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

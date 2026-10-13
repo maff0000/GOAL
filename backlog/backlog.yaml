@@ -1,0 +1,693 @@
+# THE GOAL — canonical machine-readable delivery backlog.
+#
+# This file is the machine-readable authority for delivery automation.
+# backlog/MASTER-BACKLOG.md is the human view generated from it; the two are
+# not independent truths. See backlog/SCHEMA.md for the field reference.
+#
+# Dependencies are canonical complete ids. Shorthand (DCP-001, CONTRACT-001,
+# CORE-001), wildcards (OPS-SAFE-*) and comma lists (TRON-T2,T3,T4) are not
+# valid dependencies and are rejected by tools/goal-validate.
+#
+# target_repository is a *declared* target. Some declared repositories do not
+# exist yet; that is expected and is never checked against GitHub.
+#
+# A canonical PID is required from DELIVERY_READY onward: no PID means not
+# DELIVERY_READY. An item whose PID has not been authored yet belongs in a
+# pre-delivery state, and PID_DRAFT is the state in which the PO authors one.
+# ./tools/goal-ready --pid-wave lists the items waiting on exactly that;
+# ./tools/goal-ready lists only what FORGE could actually be dispatched
+# against.
+items:
+  - id: GOAL-DCP-001
+    title: "GitHub control-plane authority: machine backlog, validation, dependency graph, strict delivery readiness, generated views, CI enforcement"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: medium
+    state: FORGE_AUDIT
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: pids/GOAL-DCP-001.md
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - governance/DELIVERY-STATE-MACHINE.md
+      - decisions/ADR-DELIVERY-001-GITHUB-AND-MEMORY-FABRIC.md
+
+  # ROGUE consumes canonical GOAL state and safely dispatches independent
+  # FORGE PLs without Matt mediating work selection. This is dispatch control,
+  # NOT automated GitHub-triggered execution — that is GOAL-DCP-003.
+  - id: GOAL-DCP-002
+    title: "ROGUE dispatcher — deterministic consumption and multi-project dispatch control"
+    lane: shared
+    component: GOAL/ROGUE
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: medium
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - governance/DELIVERY-STATE-MACHINE.md
+
+  # Only after GOAL-DCP-002's dispatcher behaviour is proven. risk is high
+  # because autonomous launch carries operational/execution-system impact; no
+  # auto-merge is in scope here or anywhere else.
+  - id: GOAL-DCP-003
+    title: "Automated GitHub-triggered sandboxed delivery launch"
+    lane: shared
+    component: ROGUE/FORGE
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: high
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - GOAL-DCP-002
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - governance/DELIVERY-STATE-MACHINE.md
+
+  - id: GOAL-DCP-004
+    title: "Automated PO/ROGUE status and stale/blocked brief"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P1
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - GOAL-DCP-002
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - governance/DELIVERY-STATE-MACHINE.md
+
+  - id: OPS-SAFE-001
+    title: "Backup/off-host/restore programme"
+    lane: ops
+    component: Estate
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: high
+    state: PID_DRAFT
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: OPS-SAFE-002
+    title: "Network/data-store containment"
+    lane: ops
+    component: Estate
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: high
+    state: PID_DRAFT
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: OPS-SAFE-003
+    title: "Secrets/runtime identity hygiene"
+    lane: ops
+    component: Estate
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: high
+    state: PID_DRAFT
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: OPS-LEGACY-001
+    title: "Prove/quarantine `agent-smith-original` and dell `MT5_Vantage` safely"
+    lane: ops
+    component: Legacy MT5
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: high
+    state: PID_DRAFT
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - decisions/ADR-MT5-002-LEGACY-LIVE-FLAGGED-EXECUTOR.md
+
+  - id: OPS-CRED-001
+    title: "Remove plaintext broker/DB credentials and rotate where appropriate"
+    lane: ops
+    component: Estate
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: high
+    state: PID_DRAFT
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: HERMES-CUR-001
+    title: "Authoritative PROD/current-state reconciliation"
+    lane: shared
+    component: HERMES
+    target_repository: maff0000/hermes
+    priority: P0
+    risk: medium
+    state: PID_DRAFT
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: HERMES-FACT-001
+    title: "`goal.market-fact/v1`"
+    lane: shared
+    component: HERMES
+    target_repository: maff0000/hermes
+    priority: P0
+    risk: medium
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - HERMES-CUR-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: HERMES-GR-001
+    title: "Golden replay proof"
+    lane: research
+    component: HERMES
+    target_repository: maff0000/hermes
+    priority: P0
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - HERMES-FACT-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: ARES-CUR-001
+    title: "Canonical generation + legacy reconciliation"
+    lane: shared
+    component: ARES
+    target_repository: maff0000/ARES
+    priority: P0
+    risk: medium
+    state: PID_DRAFT
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: ARES-RISK-001
+    title: "`goal.risk-event/v1`"
+    lane: shared
+    component: ARES
+    target_repository: maff0000/ARES
+    priority: P0
+    risk: medium
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - ARES-CUR-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: ARES-PIT-001
+    title: "Trading Economics PIT prototype"
+    lane: research
+    component: ARES
+    target_repository: maff0000/ARES
+    priority: P1
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - ARES-RISK-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: GOAL-CONTRACT-001
+    title: "`goal.strategy/v1`"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: medium
+    state: PID_DRAFT
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: GOAL-CORE-001
+    title: "`goal-strategy-core`"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: medium
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - GOAL-CONTRACT-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: GOAL-REF-001
+    title: "independent semantic reference"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - GOAL-CORE-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: DARWIN-R1
+    title: "Source/runtime reconciliation"
+    lane: research
+    component: DARWIN
+    target_repository: maff0000/DARWIN
+    priority: P0
+    risk: medium
+    state: PID_DRAFT
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: DARWIN-R2
+    title: "ResearchEngineAdapter"
+    lane: research
+    component: DARWIN
+    target_repository: maff0000/DARWIN
+    priority: P0
+    risk: medium
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - GOAL-CONTRACT-001
+      - DARWIN-R1
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: DARWIN-R3
+    title: "APOLLO narrowed causal proof"
+    lane: research
+    component: DARWIN
+    target_repository: maff0000/DARWIN
+    priority: P1
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - GOAL-CORE-001
+      - DARWIN-R1
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: LEAN-P1
+    title: "LEAN bounded prototype"
+    lane: research
+    component: DARWIN
+    target_repository: maff0000/DARWIN
+    priority: P1
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - DARWIN-R2
+      - GOAL-CORE-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: CER-R1
+    title: "Research evidence + EdgeProfileVersion"
+    lane: research
+    component: CER
+    target_repository: maff0000/CER
+    priority: P1
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - DARWIN-R2
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: NEO-R1
+    title: "Read-only evidence/MCP architecture"
+    lane: research
+    component: NEO
+    target_repository: maff0000/NEO
+    priority: P1
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - CER-R1
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: HELIOS-T1
+    title: "Refactor to GOAL strategy contract/core"
+    lane: trading
+    component: HELIOS
+    target_repository: maff0000/HELIOS
+    priority: P0
+    risk: medium
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - GOAL-CORE-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: HELIOS-T2
+    title: "Live HERMES/ARES adapters"
+    lane: trading
+    component: HELIOS
+    target_repository: maff0000/HELIOS
+    priority: P0
+    risk: high
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - HELIOS-T1
+      - HERMES-FACT-001
+      - ARES-RISK-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: HELIOS-T3
+    title: "Signed durable StrategyTrigger"
+    lane: trading
+    component: HELIOS
+    target_repository: maff0000/HELIOS
+    priority: P0
+    risk: high
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - HELIOS-T2
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: FALCON-T1
+    title: "Reconcile event registry"
+    lane: trading
+    component: FALCON
+    target_repository: maff0000/falcon
+    priority: P1
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - HELIOS-T3
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: MT5-GW-001
+    title: "Reconcile eight stacked WO branches into canonical Git history"
+    lane: trading
+    component: mt5-gateway
+    target_repository: maff0000/mt5-gateway
+    priority: P0
+    risk: medium
+    state: PID_DRAFT
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - decisions/ADR-MT5-001-REUSE-CONTAINER-REPLACE-BRIDGE.md
+
+  - id: MT5-GW-002
+    title: "Reproducible image/build provenance, version pinning, environment guard, health and CI"
+    lane: trading
+    component: mt5-gateway
+    target_repository: maff0000/mt5-gateway
+    priority: P0
+    risk: medium
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - MT5-GW-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - decisions/ADR-MT5-001-REUSE-CONTAINER-REPLACE-BRIDGE.md
+
+  - id: MT5-GW-003
+    title: "Replace raw SlaveService with typed in-container allow-list service; UDS preferred"
+    lane: trading
+    component: mt5-gateway
+    target_repository: maff0000/mt5-gateway
+    priority: P0
+    risk: high
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - MT5-GW-001
+      - MT5-GW-002
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - decisions/ADR-MT5-001-REUSE-CONTAINER-REPLACE-BRIDGE.md
+
+  - id: MT5-GW-004
+    title: "Vantage DEMO execution/reconciliation capability proof"
+    lane: trading
+    component: mt5-gateway
+    target_repository: maff0000/mt5-gateway
+    priority: P0
+    risk: high
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - MT5-GW-003
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - decisions/ADR-MT5-001-REUSE-CONTAINER-REPLACE-BRIDGE.md
+
+  - id: TRON-T1
+    title: "Core ledger/reconciliation + Trading Postgres"
+    lane: trading
+    component: TRON
+    target_repository: maff0000/tron
+    priority: P0
+    risk: high
+    state: PID_DRAFT
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: TRON-T2
+    title: "Vantage DEMO broker-neutral adapter"
+    lane: trading
+    component: TRON
+    target_repository: maff0000/tron
+    priority: P0
+    risk: high
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - TRON-T1
+      - MT5-GW-003
+      - MT5-GW-004
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - decisions/ADR-MT5-001-REUSE-CONTAINER-REPLACE-BRIDGE.md
+
+  - id: TRON-T3
+    title: "DIKE/hard risk/kill"
+    lane: trading
+    component: TRON
+    target_repository: maff0000/tron
+    priority: P0
+    risk: high
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - TRON-T1
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: TRON-T4
+    title: "TriggerInbox intake/idempotency"
+    lane: trading
+    component: TRON
+    target_repository: maff0000/tron
+    priority: P0
+    risk: high
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - TRON-T1
+      - HELIOS-T3
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: TRON-T5
+    title: "SizingPolicy + frozen EdgeProfile binding"
+    lane: trading
+    component: TRON
+    target_repository: maff0000/tron
+    priority: P1
+    risk: medium
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - TRON-T3
+      - CER-R1
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: SKEPTIC-T1
+    title: "asynchronous SHADOW reviewer"
+    lane: trading
+    component: TRON
+    target_repository: maff0000/tron
+    priority: P2
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - TRON-T1
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: PAPER-E2E-001
+    title: "Full paper lane end-to-end proof"
+    lane: trading
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: capital
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - HELIOS-T3
+      - TRON-T2
+      - TRON-T3
+      - TRON-T4
+    po_gate: true
+    matt_gate: true
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+
+  - id: LIVE-GATE-001
+    title: "Capital readiness + LIVE decision"
+    lane: ops
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: capital
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - PAPER-E2E-001
+      - OPS-SAFE-001
+      - OPS-SAFE-002
+      - OPS-SAFE-003
+      - OPS-LEGACY-001
+      - OPS-CRED-001
+    po_gate: true
+    matt_gate: true
+    pid_path: null
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md

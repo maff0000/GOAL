@@ -1,0 +1,31 @@
+# DEPENDENCY_CYCLE: the two-node case. CYCLE-001 -> CYCLE-002 -> CYCLE-001.
+items:
+  - id: CYCLE-001
+    title: "One"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - CYCLE-002
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+
+  - id: CYCLE-002
+    title: "Two"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - CYCLE-001
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

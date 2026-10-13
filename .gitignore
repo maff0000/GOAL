@@ -1,0 +1,6 @@
+# Python bytecode and pytest cache. Running the test suite creates these, and
+# `./tools/secret-scan` scans untracked working-tree files, so leaving them
+# untracked both clutters review and gives the scan irrelevant material.
+__pycache__/
+*.py[cod]
+.pytest_cache/

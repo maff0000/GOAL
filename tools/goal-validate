@@ -1,0 +1,93 @@
+#!/usr/bin/env python3
+"""Validate the machine-readable delivery backlog, deterministically and offline.
+
+Usage:
+
+    ./tools/goal-validate                     # the canonical backlog
+    ./tools/goal-validate path/to/backlog.yaml
+
+Exit codes:
+
+    0   the backlog is valid; 'backlog OK: N items' is printed to stdout
+    1   the backlog loaded but has findings; one finding per line on stderr
+    2   the backlog could not be loaded at all, or the command was misused
+
+Exit 1 and exit 2 are deliberately distinct: exit 1 asserts "the backlog was
+read and here is what is wrong with it", which would be a false claim if the
+document never loaded. A load failure is not a validation result.
+
+Findings go to stderr and the success line to stdout, so this command can be
+used in a pipeline without a failure contaminating captured output. Output
+carries no timestamps, durations, absolute paths, hostnames or usernames, so
+the same backlog always produces the same bytes.
+"""
+
+from __future__ import annotations
+
+import argparse
+import os
+import pathlib
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from goal_dcp import model  # noqa: E402  (import follows the sys.path bootstrap)
+from goal_dcp.validate import validate  # noqa: E402
+
+
+def build_parser() -> argparse.ArgumentParser:
+    """The command-line interface for ``goal-validate``."""
+    parser = argparse.ArgumentParser(
+        prog="goal-validate",
+        description=(
+            "Validate a delivery backlog offline and deterministically. "
+            "Prints 'backlog OK: N items' when valid, otherwise one finding "
+            "per line to stderr."
+        ),
+        epilog="Exit 0 valid, 1 findings, 2 load or usage error.",
+    )
+    parser.add_argument(
+        "backlog",
+        nargs="?",
+        default=None,
+        metavar="BACKLOG",
+        help=(
+            "backlog YAML file to validate; defaults to the repository's "
+            "canonical backlog/backlog.yaml"
+        ),
+    )
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Run the validator and return the process exit code."""
+    args = build_parser().parse_args(argv)
+
+    path = model.BACKLOG_PATH if args.backlog is None else pathlib.Path(args.backlog)
+
+    try:
+        backlog = model.load_backlog(path)
+    except model.BacklogLoadError as exc:
+        print(f"backlog could not be loaded: {exc}", file=sys.stderr)
+        return 2
+    except OSError as exc:
+        # Report strerror rather than the exception's str, which would embed
+        # an absolute path in output that must stay deterministic.
+        print(
+            f"backlog could not be read: {exc.strerror or type(exc).__name__}",
+            file=sys.stderr,
+        )
+        return 2
+
+    findings = validate(backlog)
+    if findings:
+        for finding in findings:
+            print(finding.as_line(), file=sys.stderr)
+        return 1
+
+    print(f"backlog OK: {len(backlog.items)} items")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

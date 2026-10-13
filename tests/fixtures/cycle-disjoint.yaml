@@ -1,0 +1,79 @@
+# DEPENDENCY_CYCLE: two disjoint cycles in one document. Finding the first
+# must not stop the search, so both are reported.
+#   CYCLE-A1 -> CYCLE-A2 -> CYCLE-A1
+#   CYCLE-B1 -> CYCLE-B2 -> CYCLE-B3 -> CYCLE-B1
+items:
+  - id: CYCLE-A1
+    title: "A one"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - CYCLE-A2
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+
+  - id: CYCLE-A2
+    title: "A two"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - CYCLE-A1
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+
+  - id: CYCLE-B1
+    title: "B one"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - CYCLE-B2
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+
+  - id: CYCLE-B2
+    title: "B two"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - CYCLE-B3
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+
+  - id: CYCLE-B3
+    title: "B three"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - CYCLE-B1
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

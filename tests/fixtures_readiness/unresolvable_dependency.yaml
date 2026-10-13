@@ -1,0 +1,18 @@
+# Isolates: a dependency that resolves to no declared item makes the
+# item NOT ready. Readiness fails closed, never ready-by-default, so
+# an unknown, shorthand or typo'd dependency cannot unblock work.
+items:
+  - id: TARGET-001
+    title: "Target item under test"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on:
+      - NOT-DECLARED-001
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures_readiness/pid-target.md
+    architecture_refs: []

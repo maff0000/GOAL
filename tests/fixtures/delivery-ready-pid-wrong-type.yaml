@@ -1,0 +1,22 @@
+# INVALID_FIELD_TYPE, and *only* INVALID_FIELD_TYPE: a DELIVERY_READY item
+# whose 'pid_path' is present but is not a string.
+#
+# DELIVERY_READY requires a canonical PID, so this item is RED — but it is RED
+# once. A wrong-typed value is reported as INVALID_FIELD_TYPE and suppresses
+# the downstream checks for that same field, so neither MISSING_PID nor
+# PID_FILE_NOT_FOUND may also fire: with no usable path there is nothing left
+# to say about it.
+items:
+  - id: ALPHA-001
+    title: "Alpha"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: 42
+    architecture_refs: []

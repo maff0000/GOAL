@@ -1,0 +1,50 @@
+# Valid: produces no findings at all. The baseline every other fixture is a
+# single deliberate mutation of.
+#
+# ALPHA-001 is MERGED and BETA-001 is DELIVERY_READY. Both states require a
+# canonical PID, so both declare one; each declared PID agrees with its item
+# and each is a valid PID in its own right — so none of MISSING_PID,
+# PID_FILE_NOT_FOUND, PID_INVALID or BACKLOG_PID_MISMATCH fires. Between them
+# they cover the positive side of the PID rules at both ends of the
+# PID-required range, against two distinct label sets.
+#
+# Each item declares its *own* PID file, which minimum PID validity requires:
+# a PID must name the item that declares it in its first heading, so the two
+# items cannot share one. ALPHA-001's architecture_refs still names
+# fixtures/pid-fixture.md, because an architecture ref is only required to be
+# a file that exists — it is not an identity claim, and the distinction is
+# worth leaving visible here.
+#
+# BETA-001 is deliberately the harder case: a DELIVERY_READY item that is
+# genuinely delivery-ready. The same item with pid_path: null is the defect,
+# and tests/fixtures/missing-pid.yaml is where that is proven RED.
+items:
+  - id: ALPHA-001
+    title: "Alpha"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: MERGED
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-fixture-alpha.md
+    architecture_refs:
+      - fixtures/pid-fixture.md
+
+  - id: BETA-001
+    title: "Beta"
+    lane: ops
+    component: Estate
+    target_repository: maff0000/GOAL
+    priority: P2
+    risk: capital
+    state: DELIVERY_READY
+    depends_on:
+      - ALPHA-001
+    po_gate: true
+    matt_gate: true
+    pid_path: fixtures/pid-fixture-beta.md
+    architecture_refs: []

@@ -1,0 +1,36 @@
+# Isolates: the state clause of the rule, and nothing else. Every dependency
+# is satisfied AND TARGET-001 declares a canonical PID, so the other two
+# clauses are both met; it is ARCHITECTURE_REQUIRED, so it is never ready.
+#
+# The PID is declared deliberately. With pid_path null, this item would be
+# excluded twice over and the fixture would no longer isolate the state
+# clause. A pre-delivery state may legitimately declare a PID -- what it may
+# not do is be DELIVERY_READY without one.
+items:
+  - id: TARGET-001
+    title: "Target item under test"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - DEP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: fixtures/pid-fixture.md
+    architecture_refs: []
+  - id: DEP-001
+    title: "Dependency under test"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: CLOSED
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []

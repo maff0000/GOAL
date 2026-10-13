@@ -1,0 +1,20 @@
+# MISSING_FIELD, and *only* MISSING_FIELD: a DELIVERY_READY item whose
+# 'pid_path' key is absent altogether.
+#
+# DELIVERY_READY requires a canonical PID, so this item is RED — but it is RED
+# once. Precedence says a structurally absent field is reported as
+# MISSING_FIELD and the downstream semantic check for that same field is
+# suppressed, so MISSING_PID must NOT also fire. One defect, one finding.
+items:
+  - id: ALPHA-001
+    title: "Alpha"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    architecture_refs: []

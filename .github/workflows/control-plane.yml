@@ -1,0 +1,64 @@
+# Makes the delivery control plane self-enforcing on GitHub.
+#
+# This workflow only validates. By the non-goals of pids/GOAL-DCP-001.md it
+# must never merge, deploy, mutate an issue or pull request, run on a schedule,
+# expose a workflow_dispatch that launches FORGE, or consume a secret or token.
+# Read-only permissions are declared explicitly so that stays true by default.
+name: control-plane
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  control-plane:
+    name: Validate delivery control plane
+    runs-on: ubuntu-latest
+    steps:
+      # fetch-depth: 0 is required: ./tools/secret-scan scans the full git
+      # history, and a shallow clone would silently scan almost nothing and
+      # still report clean.
+      - name: Check out repository with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: python3 -m pip install pyyaml pytest
+
+      # Pinned release, downloaded directly from the gitleaks project. An
+      # unpinned scanner is not a deterministic gate, and a marketplace action
+      # would add a third-party dependency to a security check.
+      - name: Install gitleaks
+        env:
+          GITLEAKS_VERSION: 8.30.1
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            --output "${RUNNER_TEMP}/gitleaks.tar.gz"
+          tar -xzf "${RUNNER_TEMP}/gitleaks.tar.gz" -C "${RUNNER_TEMP}" gitleaks
+          sudo install -m 0755 "${RUNNER_TEMP}/gitleaks" /usr/local/bin/gitleaks
+          gitleaks version
+
+      - name: Validate backlog
+        run: ./tools/goal-validate
+
+      - name: Check generated documents for drift
+        run: ./tools/goal-docs --check
+
+      - name: Secret scan
+        run: ./tools/secret-scan
+
+      - name: Run test suite
+        run: python3 -m pytest tests/ -q
