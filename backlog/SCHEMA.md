@@ -38,7 +38,7 @@ as `null` (currently only for `pid_path`), not by dropping the key.
 | `depends_on` | list of strings | yes (may be empty) | each entry a canonical complete `id` declared by another item | Work that must reach an accepted terminal state first. |
 | `po_gate` | boolean | yes | `true`, `false` | Whether PO acceptance is required. |
 | `matt_gate` | boolean | yes | `true`, `false` | Whether a declared owner/capital decision is required. |
-| `pid_path` | string or null | yes (value may be `null`) | repo-relative POSIX path to an existing file, or `null` | The item's canonical PID. Non-`null` and pointing at a readable file from `DELIVERY_READY` onwards; `null` only while the item is in a pre-delivery state. |
+| `pid_path` | string or null | yes (value may be `null`) | repo-relative POSIX path to an existing file, or `null` | The item's canonical PID. Non-`null`, pointing at a readable file, and a valid PID from `DELIVERY_READY` onwards — see **Minimum PID validity**; `null` only while the item is in a pre-delivery state. |
 | `architecture_refs` | list of strings | yes (may be empty) | repo-relative POSIX paths to existing files | Architecture and decision records governing the item. |
 
 `pid_path` and `architecture_refs` entries are repo-relative POSIX paths,
@@ -109,12 +109,15 @@ to be engaged, is engaged, or has finished. From `DELIVERY_READY` onwards a
 canonical PID must exist — otherwise there is no authoritative statement of
 what is to be built, what was built, or what acceptance meant. An item in one
 of these states with `pid_path: null` is a `MISSING_PID` finding; a declared
-PID that does not exist or cannot be read is `PID_FILE_NOT_FOUND`; and PID
-metadata that disagrees with the backlog is `BACKLOG_PID_MISMATCH`.
+PID that does not exist or cannot be read is `PID_FILE_NOT_FOUND`; a declared
+PID that exists but is not a PID is `PID_INVALID` (see **Minimum PID validity**
+below); and PID metadata that disagrees with the backlog is
+`BACKLOG_PID_MISMATCH`.
 
 `DELIVERY_READY` is included, and that inclusion is the substance of the rule:
-**no PID = not `DELIVERY_READY`.** What permits the transition into
-`DELIVERY_READY` is an approved canonical PID — one that exists, agrees with
+**no PID = not `DELIVERY_READY`** — and neither is an existing-but-content-free
+PID. What permits the transition into `DELIVERY_READY` is an approved canonical
+PID — one that exists, is a valid PID, agrees with
 this backlog, and has passed the item's declared PO gate. FORGE delivers
 against a PID, so an item without one has nothing for a PL to build to;
 calling it "ready" would promise a dispatch that cannot happen.
@@ -142,8 +145,101 @@ The requirement is nonetheless deliberately **state-conditional**:
   for the sequence and the sets.
 - The rule is exercised by canonical data today via `GOAL-DCP-001`, which
   declares `pids/GOAL-DCP-001.md` and is in a PID-required state, so the
-  existence, readability and metadata-agreement checks all run on real data
-  rather than on fixtures alone.
+  existence, readability, validity and metadata-agreement checks all run on
+  real data rather than on fixtures alone.
+
+### Minimum PID validity
+
+Existence is not enough. A single `touch` of the pointed-to file used to pass
+the whole gate: a zero-byte PID satisfies `PID_FILE_NOT_FOUND` (the file
+exists) and satisfies `BACKLOG_PID_MISMATCH` (it declares no labels, and a
+label the PID omits is not a mismatch). An empty PID therefore established
+delivery readiness while carrying none of the authority a PID exists to carry.
+
+So from `DELIVERY_READY` onwards the declared file must also **be** a PID. Five
+requirements, all of which must hold, or the item is a `PID_INVALID` finding:
+
+| # | requirement | what the validator reads |
+|---|---|---|
+| R1 | identity | the file's **first** ATX heading names the item's `id` as a whole token |
+| R2 | purpose | a section whose heading matches, with a non-trivial body |
+| R3 | scope | a section whose heading matches, with a non-trivial body |
+| R4 | acceptance criteria | a section whose heading matches, with a non-trivial body |
+| R5 | approval evidence | a section whose heading matches, with a non-trivial body |
+
+**Accepted heading spellings.** A heading is normalised by stripping its
+leading `#` characters and surrounding whitespace, stripping a trailing `:`,
+collapsing internal whitespace runs to one space and case-folding. It satisfies
+a requirement when the normalised result is **exactly equal** to one of:
+
+| requirement | accepted spellings |
+|---|---|
+| purpose | `purpose`, `objective` |
+| scope | `scope` |
+| acceptance criteria | `acceptance`, `acceptance criteria` |
+| approval evidence | `approval`, `approval evidence`, `po approval` |
+
+Exact equality, never a substring test. `## Out of scope` and
+`## Non-goals (scope)` both contain "scope" and neither states the item's
+scope; a PID may legitimately carry both *alongside* its `## Scope` section.
+The spelling sets are deliberately short, and this table is the list — a PID
+author should not have to guess what the validator reads.
+
+**Section body.** The lines after a matched heading, up to but not including
+the next ATX heading of any level, or end of file. Each heading occurrence is
+its own section: the bodies of two `## Scope` headings are never pooled, so two
+thin sections cannot add up to one substantive one.
+
+**Non-trivial body.** At least **6 distinct words**, where a word is a maximal
+run of `[A-Za-z0-9]` characters of length 2 or more and distinctness is
+compared case-folded. That single number is what the following rest on:
+
+- a zero-byte or whitespace-only file has no heading at all, so it fails R1–R5
+  outright and never reaches the floor;
+- a heading followed by an empty body yields 0 words;
+- padding such as `xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx` yields 1 distinct word,
+  which is why the floor counts *distinct* words rather than characters, bytes,
+  lines or total words;
+- prose that merely contains the words "purpose", "scope", "acceptance
+  criteria" and "approval" has no section headings and fails before any body is
+  counted.
+
+**R1 is a whole-token test**, not a substring search: a PID headed
+`# GOAL-DCP-0011 — …` does not establish identity for `GOAL-DCP-001`, because
+the occurrence is immediately followed by a character in `[A-Za-z0-9_-]`. A
+file with no ATX heading fails R1. One consequence worth stating: a PID cannot
+be shared by two items with different ids.
+
+**What this establishes, and what it does not.** This is a **structural**
+check. It proves the five things are present and not content-free. It cannot
+and does not judge whether what they say is *good*, correct, complete or
+sufficient — a PID can satisfy every requirement above and still be a bad PID.
+Semantic quality is what the item's PO gate is for, and the rule deliberately
+stops here rather than accumulating heuristics that would let it pretend
+otherwise.
+
+**R5 is not a delivery-acceptance check.** It requires an approval-evidence
+section with content and nothing more: the section's meaning is never parsed,
+and no field whose value depends on the item's current delivery state is read.
+A PID's approval section records approval **of the PID** — the authority that
+permitted the item to leave `PID_DRAFT` and reach `DELIVERY_READY` — not
+acceptance of the delivered work, which is the separate, later `PO_ACCEPTANCE`
+gate. Requiring anything stronger would make an item's PID validity depend on
+its own delivery outcome, which is circular: every state from `DELIVERY_READY`
+onwards requires a valid PID, including the states an item passes through long
+before its delivery is accepted.
+
+**It is state-conditional, exactly like `MISSING_PID`.** `PID_INVALID` is
+evaluated only for the states listed above, and only once `pid_path` has
+resolved to a file that was read successfully. An item in `PID_DRAFT` whose
+`pid_path` points at a half-written draft is correct and yields nothing — that
+state exists to produce the finished document, so failing a draft there would
+make it unusable.
+
+`PID_INVALID` and `BACKLOG_PID_MISMATCH` are **independent** and may
+legitimately co-occur: a structurally incomplete document and a document whose
+metadata contradicts the backlog are different defects, and a reader repairing
+a PID needs to be told both.
 
 ## Identifier rules
 

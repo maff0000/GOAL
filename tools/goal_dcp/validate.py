@@ -58,6 +58,19 @@ required by the contract's finding table:
 2. ``MISSING_PID`` is state-conditional, so it is evaluated only when
    ``state`` itself is a valid state. A broken ``state`` suppresses it.
 
+**A PID that exists is not yet a PID.** ``PID_FILE_NOT_FOUND`` proves the
+pointer resolves and ``BACKLOG_PID_MISMATCH`` proves the metadata agrees, and
+a single ``touch`` of the pointed-to file satisfies both — the file exists, and
+a label the PID omits is not a mismatch. A zero-byte PID therefore used to
+establish delivery readiness while carrying none of the authority a PID exists
+to carry. ``PID_INVALID`` closes that: from ``DELIVERY_READY`` onwards the
+declared file must also *be* a PID — it must name the item and state its
+purpose, scope, acceptance criteria and approval evidence. One file yields at
+most one ``PID_INVALID`` finding, naming every unmet requirement, because the
+defect is the document rather than each heading it lacks. It is
+**structural only**: see :func:`_pid_validity_findings` for what it
+deliberately does not claim to establish.
+
 **Determinism.** Everything emitted is sorted; no set is ever iterated
 without sorting; no timestamp, duration, absolute path, hostname or username
 appears in any message. Byte-identical input yields byte-identical output.
@@ -150,6 +163,73 @@ _PID_LABEL_NAMES: dict[str, str] = {
 
 #: How a PID spells a boolean gate.
 _PID_BOOLEANS: dict[str, bool] = {"yes": True, "no": False}
+
+# ---------------------------------------------------------------------------
+# Minimum PID validity
+# ---------------------------------------------------------------------------
+#
+# A PID that merely *exists* carries no authority. ``touch`` on the pointed-to
+# file satisfies ``PID_FILE_NOT_FOUND`` (the file exists) and satisfies
+# ``BACKLOG_PID_MISMATCH`` (it declares no labels, and a label the PID omits is
+# not a mismatch), so before ``PID_INVALID`` a zero-byte file established
+# delivery readiness. These five requirements are the floor: a PID must *say
+# who it is for* and must actually contain purpose, scope, acceptance criteria
+# and approval evidence.
+
+#: An ATX markdown heading line: one to six ``#`` then whitespace then text.
+#: Setext (underlined) headings are deliberately not recognised — a canonical
+#: PID writes ATX headings, and accepting a second syntax would widen the
+#: surface a future bypass could be built on without adding any authority.
+_ATX_HEADING_PATTERN = re.compile(r"^#{1,6}\s+(?P<text>.+)$")
+
+#: ``requirement -> the normalised headings that satisfy it``.
+#:
+#: Matching is **exact equality** against a normalised heading, never a
+#: substring test: ``## Out of scope`` and ``## Non-goals (scope)`` both
+#: contain "scope" and neither states the item's scope. The spellings are
+#: deliberately few, and they are documented in ``backlog/SCHEMA.md`` so a PID
+#: author can know what the validator reads rather than guessing.
+_PID_SECTION_SPELLINGS: dict[str, frozenset[str]] = {
+    "acceptance criteria": frozenset({"acceptance", "acceptance criteria"}),
+    "approval evidence": frozenset({"approval", "approval evidence", "po approval"}),
+    "purpose": frozenset({"purpose", "objective"}),
+    "scope": frozenset({"scope"}),
+}
+
+#: A word, for the non-triviality floor: a maximal run of alphanumerics. Runs
+#: shorter than two characters are dropped by :func:`_distinct_words`, so
+#: list markers and single letters do not count as content.
+_PID_WORD_PATTERN = re.compile(r"[A-Za-z0-9]+")
+
+#: Shortest run of alphanumerics that counts as a word.
+_PID_MIN_WORD_LENGTH = 2
+
+#: How many *distinct* case-folded words a section body must contain.
+#:
+#: Six is doing specific work, and the number is only defensible alongside what
+#: it rejects:
+#:
+#: * a zero-byte or whitespace-only file has no headings at all, so it fails
+#:   every requirement outright and never reaches this floor;
+#: * a heading with an empty body yields 0 words;
+#: * padding such as ``xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx`` yields 1 distinct
+#:   word, which is why the floor counts distinct words and not characters,
+#:   bytes or total words;
+#: * prose that merely contains the words "purpose", "scope", "acceptance
+#:   criteria" and "approval" has no section headings and fails before any
+#:   body is counted.
+#:
+#: And the honest limit, which no larger number would fix: this is a
+#: **structural** check. It establishes that the five things are present and
+#: not content-free. It cannot and does not judge whether what is written is
+#: *good*, correct, or sufficient — that judgement is the item's PO gate, and
+#: piling on more heuristics here would only make the validator pretend to a
+#: semantic authority it does not have.
+_PID_MIN_DISTINCT_WORDS = 6
+
+#: Characters that make an occurrence of an id part of a longer token. A PID
+#: headed ``# GOAL-DCP-0011`` does not name ``GOAL-DCP-001``.
+_PID_ID_TOKEN_CHARACTERS = "A-Za-z0-9_-"
 
 
 # ---------------------------------------------------------------------------
@@ -528,20 +608,27 @@ def _architecture_ref_findings(
             )
 
 
-def _read_pid_labels(path: pathlib.Path) -> dict[str, str] | None:
-    """Parse bold label lines from a PID markdown file.
+def _read_pid_text(path: pathlib.Path) -> str | None:
+    """Read a PID file as UTF-8 text, or ``None`` when it cannot be read.
 
-    Returns ``label -> value`` keyed by the case-folded label, values stripped
-    of whitespace and surrounding backticks. The first occurrence of a label
-    wins, so a repeated label cannot make the result order-dependent. Returns
-    ``None`` when the file cannot be read as text, so the caller reports a
-    broken pointer rather than raising.
+    Returning ``None`` rather than raising is what lets the caller report a
+    broken pointer as a finding. The file is read **once** and the text handed
+    to every PID check, so label comparison and validity cannot disagree about
+    what the file says.
     """
     try:
-        text = path.read_text(encoding="utf-8")
+        return path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
         return None
 
+
+def _pid_labels(text: str) -> dict[str, str]:
+    """Parse bold label lines out of PID markdown.
+
+    Returns ``label -> value`` keyed by the case-folded label, values stripped
+    of whitespace and surrounding backticks. The first occurrence of a label
+    wins, so a repeated label cannot make the result order-dependent.
+    """
     labels: dict[str, str] = {}
     for line in text.splitlines():
         match = _PID_LABEL_PATTERN.match(line)
@@ -552,6 +639,181 @@ def _read_pid_labels(path: pathlib.Path) -> dict[str, str] | None:
             continue
         labels[key] = match.group("value").strip().strip("`").strip()
     return labels
+
+
+def _heading_text(line: str) -> str | None:
+    """The text of ``line`` when it is an ATX heading, else ``None``."""
+    match = _ATX_HEADING_PATTERN.match(line)
+    if match is None:
+        return None
+    return match.group("text")
+
+
+def _normalise_heading(text: str) -> str:
+    """Normalise heading text to the form :data:`_PID_SECTION_SPELLINGS` uses.
+
+    Whitespace runs collapse to one space, surrounding whitespace and a
+    trailing colon are dropped, and the result is case-folded. So
+    ``##   Approval   Evidence :`` and ``## approval evidence`` are the same
+    heading, while ``## Out of scope`` is not ``## Scope``.
+    """
+    collapsed = " ".join(text.split())
+    return collapsed.rstrip(" :").casefold()
+
+
+def _first_heading(text: str) -> str | None:
+    """The *raw* text of the first ATX heading in ``text``, else ``None``.
+
+    Raw, not normalised: identity is compared against the id as the backlog
+    spells it, and normalisation case-folds.
+    """
+    for line in text.splitlines():
+        heading = _heading_text(line)
+        if heading is not None:
+            return heading
+    return None
+
+
+def _heading_names_id(heading: str, item_id: str) -> bool:
+    """True when ``heading`` contains ``item_id`` as a whole token.
+
+    "Whole token" means the occurrence is not immediately preceded or followed
+    by a character in :data:`_PID_ID_TOKEN_CHARACTERS`, so a PID headed
+    ``# GOAL-DCP-0011 — ...`` does not establish identity for
+    ``GOAL-DCP-001``. Comparison is case-sensitive, because canonical ids are
+    uppercase by :data:`goal_dcp.model.ID_PATTERN` and a heading that spells
+    the id some other way has not named it.
+    """
+    pattern = (
+        rf"(?<![{_PID_ID_TOKEN_CHARACTERS}])"
+        rf"{re.escape(item_id)}"
+        rf"(?![{_PID_ID_TOKEN_CHARACTERS}])"
+    )
+    return re.search(pattern, heading) is not None
+
+
+def _pid_sections(text: str) -> tuple[tuple[str, tuple[str, ...]], ...]:
+    """``(normalised heading, body lines)`` for each ATX heading, in order.
+
+    A section's body is every line after its heading up to, but not including,
+    the next ATX heading of any level (or end of file). Lines before the first
+    heading belong to no section.
+
+    Each heading occurrence gets its own entry; bodies of repeated headings are
+    never merged. Merging them would let two thin ``## Scope`` sections add up
+    to one substantive one, which is a bypass rather than a scope statement.
+
+    This is a line scanner, not a markdown parser, and the one place that is
+    visible is fenced code: a ``## Scope`` line inside a code fence counts as a
+    heading here. That is deliberate rather than overlooked. Tracking fences
+    would mean a markdown parser, which this module will not grow, and the
+    error it would prevent runs in the *lenient* direction only — it can let a
+    section be found that a renderer would not show, never refuse one that is
+    really there. No PID is failed by it, and the PO gate reads the rendered
+    document.
+    """
+    sections: list[tuple[str, list[str]]] = []
+    for line in text.splitlines():
+        heading = _heading_text(line)
+        if heading is not None:
+            sections.append((_normalise_heading(heading), []))
+        elif sections:
+            sections[-1][1].append(line)
+    return tuple((name, tuple(body)) for name, body in sections)
+
+
+def _distinct_words(lines: Iterable[str]) -> int:
+    """How many distinct case-folded words ``lines`` contain.
+
+    A word is a maximal run of alphanumerics at least
+    :data:`_PID_MIN_WORD_LENGTH` characters long; distinctness is case-folded.
+    Counting *distinct* words is the whole point — a repeated padding token
+    counts once, however many times it appears.
+    """
+    return len({
+        word.casefold()
+        for word in _PID_WORD_PATTERN.findall("\n".join(lines))
+        if len(word) >= _PID_MIN_WORD_LENGTH
+    })
+
+
+def _is_substantive(body: Iterable[str]) -> bool:
+    """True when a section body clears the distinct-word floor."""
+    return _distinct_words(body) >= _PID_MIN_DISTINCT_WORDS
+
+
+def _pid_validity_findings(
+    item: Item,
+    label: str,
+    status: dict[str, str],
+    declared: str,
+    text: str,
+) -> Iterator[Finding]:
+    """At most one ``PID_INVALID`` finding: the five minimum requirements.
+
+    The PID file is valid only when all five hold:
+
+    R1 **identity** — the file's first ATX heading names the item's ``id`` as a
+    whole token. A file with no ATX heading at all fails this.
+
+    R2 **purpose**, R3 **scope**, R4 **acceptance criteria**, R5 **approval
+    evidence** — a section exists whose normalised heading is exactly one of
+    that requirement's accepted spellings
+    (:data:`_PID_SECTION_SPELLINGS`), with a body clearing the distinct-word
+    floor (:data:`_PID_MIN_DISTINCT_WORDS`).
+
+    **One file, one finding.** Every unmet requirement is named in a single
+    message rather than emitted as its own finding. Five findings on one
+    zero-byte file would break this module's documented "one defect, one
+    finding" precedence — the defect is *the document*, not each heading it
+    happens to lack. The reasons are sorted, so byte-identical input yields a
+    byte-identical message.
+
+    **R5 is deliberately not read for meaning.** It requires an
+    approval-evidence *section with content* and nothing more: no statement of
+    delivery acceptance, no parsing of what the section says, and no field
+    whose value depends on the item's current delivery state. A PID's approval
+    section records approval **of the PID** — the authority that permitted the
+    item to leave ``PID_DRAFT`` and reach ``DELIVERY_READY`` — not acceptance
+    of the delivered work, which is a separate, later gate. Requiring anything
+    stronger would make an item's PID validity depend on its own delivery
+    outcome, which is circular and would contradict
+    :data:`goal_dcp.model.PID_REQUIRED_STATES`: every state from
+    ``DELIVERY_READY`` onwards requires a valid PID, including the states an
+    item passes through *before* its delivery is accepted.
+
+    R1 is skipped when the item's own ``id`` is absent or wrong-typed: that
+    defect is already reported structurally, and identity against an unusable
+    id would be meaningless. R2–R5 still apply, because they say nothing about
+    the id.
+    """
+    reasons: list[str] = []
+
+    if status["id"] == _OK and item.raw["id"].strip():
+        item_id = item.raw["id"]
+        heading = _first_heading(text)
+        if heading is None or not _heading_names_id(heading, item_id):
+            reasons.append(f"the first heading does not name {item_id!r}")
+
+    sections = _pid_sections(text)
+    for requirement, spellings in sorted(_PID_SECTION_SPELLINGS.items()):
+        satisfied = any(
+            name in spellings and _is_substantive(body) for name, body in sections
+        )
+        if not satisfied:
+            reasons.append(f"no {requirement!r} section with substantive content")
+
+    if not reasons:
+        return
+
+    yield Finding(
+        code="PID_INVALID",
+        item_id=label,
+        message=(
+            f"pid_path {declared!r} is not a valid canonical PID: "
+            + "; ".join(sorted(reasons))
+        ),
+    )
 
 
 def _pid_mismatch_findings(
@@ -616,11 +878,29 @@ def _pid_findings(
     * ``pid_path`` null in a PID-required state -> ``MISSING_PID``;
     * ``pid_path`` not a usable repo-relative path, or naming a file that does
       not exist or cannot be read as UTF-8 text -> ``PID_FILE_NOT_FOUND``;
+    * a readable PID that is not a PID — no identity, or no purpose, scope,
+      acceptance-criteria or approval-evidence section with content ->
+      ``PID_INVALID``, at most once per item;
     * the PID's declared metadata disagreeing with the backlog ->
       ``BACKLOG_PID_MISMATCH``, one per disagreeing label.
 
     ``MISSING_PID`` is evaluated only when ``state`` is itself valid, because
     a broken state cannot be tested for membership meaningfully.
+    ``PID_INVALID`` is evaluated under the same condition *and* only for a
+    state in ``PID_REQUIRED_STATES``: an item in ``PID_DRAFT`` whose
+    ``pid_path`` points at a half-written draft is exactly what that state is
+    for, so failing it there would make the state unusable. This is the same
+    state-conditional boundary ``MISSING_PID`` honours, read the other way
+    round — ``MISSING_PID`` asks whether a PID was declared, ``PID_INVALID``
+    asks whether what was declared is a PID.
+
+    ``PID_INVALID`` and ``BACKLOG_PID_MISMATCH`` are **independent** and may
+    legitimately co-occur. They describe different defects: one is a
+    structurally incomplete document, the other a document whose metadata
+    contradicts the backlog. A PID can be complete and wrong, or right and
+    empty, and a reader repairing it needs to be told both. Neither suppresses
+    the other, and that is not a precedence violation — the precedence rule
+    collapses findings that share *one cause*, and these do not.
     """
     pid_state = status["pid_path"]
     state_usable = status["state"] == _OK and item.raw["state"] in model.STATES
@@ -653,8 +933,8 @@ def _pid_findings(
         )
         return
 
-    pid_labels = _read_pid_labels(target)
-    if pid_labels is None:
+    text = _read_pid_text(target)
+    if text is None:
         yield Finding(
             code="PID_FILE_NOT_FOUND",
             item_id=label,
@@ -662,7 +942,10 @@ def _pid_findings(
         )
         return
 
-    yield from _pid_mismatch_findings(item, label, status, pid_labels)
+    if pid_required:
+        yield from _pid_validity_findings(item, label, status, declared, text)
+
+    yield from _pid_mismatch_findings(item, label, status, _pid_labels(text))
 
 
 def _item_findings(backlog: Backlog, item: Item, index: int) -> Iterator[Finding]:

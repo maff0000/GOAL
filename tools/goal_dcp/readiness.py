@@ -39,8 +39,15 @@ identifier rule in ``goal_dcp.model``:
 1. *Data* — this module requires the item to **declare** a PID. That is a
    pure check on the loaded value, and it is all that can be decided here.
 2. *Validation* — ``goal_dcp.validate`` requires the declared PID file to
-   exist, to be readable, and for its metadata to agree with the backlog
-   (``MISSING_PID``, ``PID_FILE_NOT_FOUND``, ``BACKLOG_PID_MISMATCH``).
+   exist, to be readable, to be structurally valid as a PID, and for its
+   metadata to agree with the backlog (``MISSING_PID``,
+   ``PID_FILE_NOT_FOUND``, ``PID_INVALID``, ``BACKLOG_PID_MISMATCH``).
+
+Layer 2 gained ``PID_INVALID`` without this module gaining a clause, and that
+is the design holding rather than an omission. Judging whether a declared PID
+is a PID means reading the file, which this module must never do; the
+validate-before-answer gate in ``tools/goal-ready`` is what joins the two
+halves, so it needs no second invariant check for the new code either.
 
 ``tools/goal-ready`` validates first and refuses to answer at all from an
 invalid backlog, so a *successful* readiness answer can never contain an item
@@ -229,7 +236,7 @@ def ready_items(
     *claims* a PID, not that the PID exists. ``tools/goal-ready`` validates the
     backlog before answering and refuses to answer from an invalid one, so a
     successful answer cannot contain an item whose declared PID is absent,
-    unreadable or in disagreement with the backlog.
+    unreadable, not actually a PID, or in disagreement with the backlog.
 
     Raises :class:`UnknownAssumedId` if ``assume_closed`` names an id no item
     declares.

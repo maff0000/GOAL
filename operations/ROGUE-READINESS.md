@@ -16,13 +16,17 @@ document.
 One line of JSON on stdout, in the shape `pids/GOAL-DCP-001.md` publishes:
 
 ```json
-{"ready":[{"id":"MT5-GW-001","target_repository":"maff0000/mt5-gateway"}]}
+{"ready":[{"id":"EXAMPLE-ID-001","target_repository":"owner/name"}]}
 ```
 
-That example illustrates the **shape** of the answer and nothing else. Which
-ids are actually in it is whatever the rule below computes from the backlog at
-the moment you run it — including, legitimately, none. Never assume a
-particular id appears, and never take an id from this document.
+That example illustrates the **shape** of the answer and nothing else. It names
+no declared backlog item on purpose: `EXAMPLE-ID-001` and `owner/name` are
+deliberately not the id or the target repository of anything in
+`backlog/backlog.yaml`, so the example cannot be read as a dispatch
+authorisation for any real work. Which ids are actually in the answer is
+whatever the rule below computes from the backlog at the moment you run it —
+including, legitimately, none. Never assume a particular id appears, and never
+take an id from this document.
 
 Each entry carries the item `id` and its declared `target_repository` — the
 repository the work lands in. The `ready` list is sorted by `id` and the JSON
@@ -60,11 +64,33 @@ Exit `1` therefore means "the question was not answered", not "nothing is
 ready". Treat it as a stop, never as an empty list.
 
 This gate is also what makes the readiness answer trustworthy about PIDs. The
-validator reports `MISSING_PID`, `PID_FILE_NOT_FOUND` and
+validator reports `MISSING_PID`, `PID_FILE_NOT_FOUND`, `PID_INVALID` and
 `BACKLOG_PID_MISMATCH`, so a *successful* readiness answer can never contain an
-item whose canonical PID is missing, unreadable or inconsistent with the
-backlog: either the data is coherent and the answer is emitted, or the command
-refuses and names the defect.
+item whose canonical PID is missing, unreadable, not actually a PID, or
+inconsistent with the backlog: either the data is coherent and the answer is
+emitted, or the command refuses and names the defect.
+
+### It also refuses when a required PID exists but is not a PID
+
+This is new, and it changes what exit `1` can mean for ROGUE. `PID_INVALID`
+fires when an item in `DELIVERY_READY` or later declares a PID file that
+exists and reads fine but does not meet **minimum PID validity**: its first
+heading does not name the item, or it has no purpose, scope,
+acceptance-criteria or approval-evidence section with substantive content.
+`backlog/SCHEMA.md` holds the exact rule; `governance/DELIVERY-STATE-MACHINE.md`
+is the authority for which states it applies in.
+
+ROGUE's handling does not change: exit `1` is a stop, the findings name the
+defect, and the next action belongs to the PO — authoring the PID properly, not
+patching the file until the validator goes quiet. What changes is that one more
+class of unbuildable work is now caught *before* a FORGE PL is dispatched
+against it, rather than discovered by the PL on arrival.
+
+Note what the check does **not** claim. It is structural: it establishes that
+the five things are present and not content-free, and says nothing about
+whether they are any good. A PID can satisfy it and still be a bad PID — that
+judgement is the item's PO gate, and ROGUE should not read a GREEN validator
+as the PO having blessed the content.
 
 ## The readiness rule
 
@@ -217,8 +243,22 @@ Two further consequences worth being explicit about:
 - An item leaves the wave by having a canonical PID authored and passed through
   PO review, which is what moves it to `DELIVERY_READY`. It then appears in the
   `ready` answer on its own, with no further bookkeeping. No placeholder or
-  shim PID is ever created to shortcut that; a stub PID would satisfy the
-  validator while delivering none of the authority a PID exists to carry.
+  shim PID is ever created to shortcut that.
+
+  That last sentence used to be a claim about discipline, and it used to come
+  with an admission: a stub PID *would* satisfy the validator while delivering
+  none of the authority a PID exists to carry. **Minimum PID validity is what
+  makes it mechanically true instead.** A `touch`ed file, a copied template
+  with empty sections, or a shim carrying the right bold labels and nothing
+  else is now a `PID_INVALID` finding, and `./tools/goal-ready` refuses to
+  answer at all rather than reporting the item as ready. The shortcut is
+  closed by the tooling, not merely deprecated by this document.
+
+  It is closed, not sealed: the check is structural, so a determined author
+  could still write six distinct words under each required heading. What that
+  buys them is a document a PO can read and reject — which is the right place
+  for that judgement, and a strictly better failure than silent dispatch
+  against an empty file.
 
 ## Two answers, two destinations
 

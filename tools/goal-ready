@@ -24,11 +24,12 @@ not.
 
 Validating first is also what makes the ``ready`` answer strict end to end.
 ``goal_dcp.readiness`` can only check that an item *declares* a PID; the
-validator is what proves the declared PID exists, is readable and agrees with
-the backlog (``MISSING_PID``, ``PID_FILE_NOT_FOUND``,
-``BACKLOG_PID_MISMATCH``). Because this command refuses to answer when any of
-those fire, a *successful* ``ready`` answer can never contain an item whose PID
-does not exist. :func:`ready_invariant_violations` re-checks the data half of
+validator is what proves the declared PID exists, is readable, is actually a
+PID and agrees with the backlog (``MISSING_PID``, ``PID_FILE_NOT_FOUND``,
+``PID_INVALID``, ``BACKLOG_PID_MISMATCH``). Because this command refuses to
+answer when any of those fire, a *successful* ``ready`` answer can never
+contain an item whose PID does not exist — or whose PID is an empty file that
+merely does. :func:`ready_invariant_violations` re-checks the data half of
 that at the last moment anyway — belt and braces on the one output a dispatcher
 acts on.
 

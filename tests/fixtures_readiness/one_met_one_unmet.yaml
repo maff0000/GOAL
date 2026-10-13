@@ -14,7 +14,7 @@ items:
       - DEP-UNMET-001
     po_gate: true
     matt_gate: false
-    pid_path: fixtures/pid-fixture.md
+    pid_path: fixtures_readiness/pid-target.md
     architecture_refs: []
   - id: DEP-MET-001
     title: "Satisfied dependency"

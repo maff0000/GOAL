@@ -23,6 +23,12 @@
 # whether a *dependency* declares a PID, so the other dep_*.yaml fixtures
 # leave DEP-001 without one. Here it matters only because the incidental
 # finding collides with the code under test.
+#
+# DEP-001's PID is fixtures_readiness/pid-dep.md rather than the shared
+# fixtures/pid-fixture.md, and that is minimum PID validity: a PID must name
+# the item that declares it in its first heading, so a file headed PIDFIX-001
+# cannot serve DEP-001 any more. Sharing it would trade the MISSING_PID this
+# fixture used to produce incidentally for an equally incidental PID_INVALID.
 items:
   - id: TARGET-001
     title: "Target item under test"
@@ -49,5 +55,5 @@ items:
     depends_on: []
     po_gate: true
     matt_gate: false
-    pid_path: fixtures/pid-fixture.md
+    pid_path: fixtures_readiness/pid-dep.md
     architecture_refs: []

@@ -257,8 +257,15 @@ def test_an_empty_or_whitespace_pid_path_does_not_count_as_declared(
 
 
 #: The ways a ``DELIVERY_READY`` item's PID can be absent or broken.
+#:
+#: ``PID_INVALID`` belongs here for the same reason the others do: a fixture
+#: item whose declared PID exists but is not a PID is a document the validator
+#: rejects, so leaving it out would let these fixtures quietly become invalid
+#: backlogs while this guard reported them sound. It is also what forced each
+#: ``DELIVERY_READY`` fixture item to declare a PID naming *itself* — a PID can
+#: no longer be shared across items with different ids.
 PID_FINDING_CODES = frozenset(
-    {"MISSING_PID", "PID_FILE_NOT_FOUND", "BACKLOG_PID_MISMATCH"}
+    {"MISSING_PID", "PID_FILE_NOT_FOUND", "PID_INVALID", "BACKLOG_PID_MISMATCH"}
 )
 
 #: ``(fixture file name, item id) -> the one PID finding that item must yield``.

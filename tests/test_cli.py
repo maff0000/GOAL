@@ -384,6 +384,88 @@ def test_a_successful_ready_answer_never_contains_a_pid_less_item(repo_copy):
         assert "MISSING_PID" in result.stderr, arguments
 
 
+#: Substitutes for the canonical PID that defeat every PID check that existed
+#: before minimum PID validity. Neither declares a bold metadata label, so
+#: ``BACKLOG_PID_MISMATCH`` cannot fire; both name a file that exists and reads
+#: as UTF-8, so ``PID_FILE_NOT_FOUND`` cannot fire; and ``pid_path`` stays a
+#: non-null string, so ``MISSING_PID`` cannot fire either.
+#:
+#: The second is the one that matters. A zero-byte file looks like an accident;
+#: a shim with the real heading, the real labels and empty sections looks like
+#: a PID, and is exactly what ``operations/ROGUE-READINESS.md`` says must never
+#: be able to shortcut PO PID authoring.
+INVALID_PID_SUBSTITUTES = {
+    "touched": "",
+    "shim": (
+        "# GOAL-DCP-001 — GitHub Delivery Control Plane Foundation\n"
+        "\n**Lane:** Shared  \n**Target repository:** `maff0000/GOAL`  \n"
+        "**Priority:** P0  \n**Risk:** Medium  \n**Matt gate:** No  \n"
+        "**PO gate:** Yes  \n"
+        "\n## Purpose\n\n## Scope\n\n## Acceptance\n\n## Approval\n"
+    ),
+}
+
+
+@pytest.mark.parametrize("substitute", sorted(INVALID_PID_SUBSTITUTES))
+def test_goal_ready_refuses_to_answer_when_the_required_pid_is_not_a_pid(
+    repo_copy, substitute
+):
+    """A PID that exists but is not a PID stops the answer, at the boundary.
+
+    ``goal_dcp.readiness`` is pure and stays pure: it can only see that an item
+    *declares* a PID. Nothing was added to it and nothing was added to
+    ``tools/goal-ready``. The command already validates before answering and
+    already refuses on any finding, so ``PID_INVALID`` biting the ``ready``
+    answer is a consequence of the existing gate rather than a new check — and
+    that consequence is what is asserted here, out of process, because it is
+    not provable from either module alone.
+
+    Run against a copy: the canonical PID is read, never mutated, and that is
+    asserted rather than assumed.
+    """
+    canonical_before = PID.read_bytes()
+    pid = repo_copy / "pids" / "GOAL-DCP-001.md"
+
+    baseline = run(repo_copy / "tools" / "goal-validate")
+    assert baseline.returncode == 0, baseline.stderr
+
+    pid.write_text(INVALID_PID_SUBSTITUTES[substitute], encoding="utf-8")
+
+    validated = run(repo_copy / "tools" / "goal-validate")
+    assert validated.returncode == 1
+    assert "PID_INVALID" in validated.stderr
+    # The pre-existing checks really are all satisfied, so PID_INVALID is the
+    # only thing standing between this file and a delivery-ready item.
+    for already_covered in ("MISSING_PID", "PID_FILE_NOT_FOUND",
+                            "BACKLOG_PID_MISMATCH"):
+        assert already_covered not in validated.stderr, already_covered
+
+    for arguments in ((), ("--with-pid",), ("--assume-closed", "GOAL-DCP-001"),
+                      ("--pid-wave",), ("--pid-wave", "--with-pid")):
+        result = run(repo_copy / "tools" / "goal-ready", *arguments)
+        assert result.returncode == 1, arguments
+        assert result.stdout == "", arguments
+        assert "refusing to answer" in result.stderr, arguments
+        assert "PID_INVALID" in result.stderr, arguments
+
+    assert PID.read_bytes() == canonical_before
+
+
+def test_the_canonical_pid_satisfies_minimum_pid_validity(repo_copy):
+    """Non-vacuity: the real PID passes the check its substitutes fail.
+
+    Asserted against the same copy the test above perturbs, so "refused" and
+    "answered" are produced by the same command on the same tree, differing
+    only in the PID's content.
+    """
+    validated = run(repo_copy / "tools" / "goal-validate")
+    assert validated.returncode == 0, validated.stderr
+
+    answered = run(repo_copy / "tools" / "goal-ready")
+    assert answered.returncode == 0, answered.stderr
+    assert answered.stdout == '{"ready":[]}\n'
+
+
 def test_every_ready_entry_declares_a_pid_across_every_answerable_projection():
     """Read the invariant back off the command's own output, exhaustively.
 
@@ -604,20 +686,33 @@ def test_goal_ready_emits_the_pid_documented_bytes(arguments):
 
 
 def test_goal_ready_output_is_byte_identical_to_the_pid_example_style():
-    """The PID's example and the command's output are the same serialisation.
+    """The PID's example is the command's serialisation, and names no real work.
 
-    The example is read out of ``pids/GOAL-DCP-001.md`` and re-serialised the
-    way the command serialises. If the two agree byte for byte, the command
-    emits the documented format - without this test having to restate those
-    bytes and drift from both.
+    The example is read out of ``pids/GOAL-DCP-001.md`` rather than restated
+    here, so the published byte contract is checked against the document that
+    publishes it and cannot drift from it. Three things are proven:
 
-    The example's single entry is now looked for in the ``--pid-wave``
-    output rather than the ``ready`` output, and deliberately so: the entry
-    *shape* is what the example pins - key order and whitespace - and that
-    shape is shared by both answers. ``MT5-GW-001`` has no canonical PID, so
-    it correctly appears in the PID-authoring wave and correctly does **not**
-    appear under ``ready``. Asserting it under ``ready`` would be asserting
-    the defect this round repaired.
+    1. the example is canonically serialised - sorted keys, compact separators
+       - so the bytes a consumer is told to expect are the bytes the command
+       produces;
+    2. its entry *shape* - the exact key set and the compact separators - is
+       the shape the command actually emits, read off real command output
+       rather than off a literal written in this test;
+    3. the example names **no id any backlog item declares**.
+
+    (3) is the point of this test. The PID previously published an example
+    naming ``MT5-GW-001`` under the ``ready`` key - a ``PID_DRAFT`` item with
+    no canonical PID, which can never legitimately be reported ready, so the
+    published example asserted the very defect this round removed. Checking the
+    example's ids against ``backlog/backlog.yaml`` is what mechanically
+    prevents the example from ever again describing a real pre-PID item as
+    dispatchable: a future edit that drops a live id into it fails here.
+
+    The shape is compared against ``--pid-wave`` output because the ``ready``
+    answer is correctly empty on this repository (asserted elsewhere in this
+    file, and not duplicated here), and ``goal_dcp.readiness`` builds both
+    answers' entries from one shared function - so the wave's entries carry
+    exactly the shape the ``ready`` entries would.
     """
     example = next(
         line.strip()
@@ -630,18 +725,34 @@ def test_goal_ready_output_is_byte_identical_to_the_pid_example_style():
         == example
     )
 
-    entry = json.dumps(
-        {"id": "MT5-GW-001", "target_repository": "maff0000/mt5-gateway"},
-        sort_keys=True,
-        separators=(",", ":"),
-    )
-    assert entry in example
+    entries = json.loads(example)["ready"]
+    assert entries, "the example must still show a populated entry"
 
-    wave = run(GOAL_READY, "--pid-wave", "--assume-closed", "GOAL-DCP-001").stdout
-    assert entry in wave
+    emitted = json.loads(
+        run(GOAL_READY, "--pid-wave", "--assume-closed", "GOAL-DCP-001").stdout
+    )["pid_authoring_wave"]
+    assert emitted, "the projection must emit entries to read the shape off"
+    emitted_shapes = {frozenset(entry) for entry in emitted}
+    assert len(emitted_shapes) == 1, "the command emits one entry shape"
+    emitted_shape = next(iter(emitted_shapes))
 
-    ready = run(GOAL_READY, "--assume-closed", "GOAL-DCP-001").stdout
-    assert entry not in ready, "an item with no PID must not be reported ready"
+    for entry in entries:
+        assert frozenset(entry) == emitted_shape, entry
+        assert json.dumps(entry, sort_keys=True, separators=(",", ":")) in example
+
+    declared_ids = {
+        item["id"]
+        for item in yaml.safe_load(
+            (REPO_ROOT / BACKLOG_YAML).read_text(encoding="utf-8")
+        )["items"]
+    }
+    assert len(declared_ids) == CANONICAL_ITEM_COUNT, "declared ids not read"
+
+    for entry in entries:
+        assert entry["id"] not in declared_ids, (
+            f"the PID's example names declared item {entry['id']!r}; "
+            "the published example must not describe real work as ready"
+        )
 
 
 def test_goal_ready_pid_wave_is_empty_without_the_projection():

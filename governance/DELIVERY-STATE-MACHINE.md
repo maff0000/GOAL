@@ -64,8 +64,8 @@ decision the PID would depend on. An item blocked later in the sequence will
 normally still have its PID; the requirement simply is not enforced while it
 is suspended.
 
-**PID-required.** A canonical PID must exist, be readable, and agree with the
-backlog:
+**PID-required.** A canonical PID must exist, be readable, be a valid PID, and
+agree with the backlog:
 
 ```text
 DELIVERY_READY  ROGUE_DISPATCHED  FORGE_BUILD  FORGE_AUDIT  REPAIR
@@ -83,10 +83,24 @@ cancellation impossible to record honestly.
 that has no PID stays in a **pre-delivery** state. It does not become
 `DELIVERY_READY`, and it never appears in a readiness answer.
 
+**An existing-but-content-free PID does not satisfy the requirement either.**
+A file that merely exists is not a PID. Before this was enforced, a single
+`touch` of the pointed-to file passed the whole gate — the file existed, and a
+PID that declares no metadata labels contradicts nothing — so a zero-byte
+document could establish delivery readiness while carrying none of the
+authority a PID exists to carry. From `DELIVERY_READY` onwards the declared
+file must therefore also *be* a PID: it must name the item in its first
+heading and state its purpose, scope, acceptance criteria and approval
+evidence, each with substantive content. `backlog/SCHEMA.md` holds the exact
+rule — the accepted heading spellings, the distinct-word floor, and the honest
+statement of what the check does and does not establish. It is a structural
+check; whether a PID is *good* is the PO gate's judgement, not the
+validator's.
+
 What permits the transition into `DELIVERY_READY` is an **approved canonical
-PID**: one that exists, whose metadata agrees with the backlog, and which has
-passed the PO gate the item declares. Only once an item is `DELIVERY_READY`
-may `./tools/goal-ready` surface it.
+PID**: one that exists, is a valid PID, whose metadata agrees with the backlog,
+and which has passed the PO gate the item declares. Only once an item is
+`DELIVERY_READY` may `./tools/goal-ready` surface it.
 
 The reasoning is that `DELIVERY_READY` must mean what its name claims. FORGE
 delivers against a canonical PID; without one there is nothing for a PL to
@@ -101,8 +115,17 @@ Deterministic consequences, enforced by `./tools/goal-validate`:
 - a PID-required state with `pid_path: null` is a `MISSING_PID` finding;
 - a declared PID that does not exist or cannot be read is a
   `PID_FILE_NOT_FOUND` finding;
+- a declared PID that exists and is readable but does not meet minimum PID
+  validity — no identity, or no purpose, scope, acceptance-criteria or
+  approval-evidence section with substantive content — is a `PID_INVALID`
+  finding, one per item, naming every unmet requirement;
 - PID metadata that disagrees with the backlog is a `BACKLOG_PID_MISMATCH`
   finding.
+
+`PID_INVALID` is state-conditional in exactly the way `MISSING_PID` is: it is
+evaluated only in the PID-required states above. An item in `PID_DRAFT` whose
+`pid_path` points at a half-written draft is correct, and yields nothing —
+that state exists to produce the finished document.
 
 An item lacking a PID is therefore not a validation failure to be worked
 around; it is an item whose correct state is `PID_DRAFT` or earlier, and whose
