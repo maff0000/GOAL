@@ -24,7 +24,7 @@ GENERATED_FILES = docsync.GENERATED_FILES
 
 COPIED = ("MANIFEST.md", "backlog/MASTER-BACKLOG.md", "backlog/backlog.yaml")
 
-REGION_NAMES = ("backlog-table", "first-wave", "manifest")
+REGION_NAMES = ("backlog-table", "pid-authoring-wave", "manifest")
 
 
 def git(repo_root, *args):
@@ -140,7 +140,7 @@ def test_drift_is_detected_when_a_region_is_hand_edited(temp_repo):
 
 def test_each_drifted_region_is_reported_separately(temp_repo):
     mutate_region(temp_repo, "backlog/MASTER-BACKLOG.md", "backlog-table")
-    mutate_region(temp_repo, "backlog/MASTER-BACKLOG.md", "first-wave")
+    mutate_region(temp_repo, "backlog/MASTER-BACKLOG.md", "pid-authoring-wave")
     mutate_region(temp_repo, "MANIFEST.md", "manifest")
 
     findings = docsync.check(temp_repo)
@@ -232,7 +232,7 @@ def test_write_never_touches_content_outside_the_markers(temp_repo):
 
 def test_write_preserves_the_specific_human_prose_in_each_document(temp_repo):
     mutate_region(temp_repo, "MANIFEST.md", "manifest")
-    mutate_region(temp_repo, "backlog/MASTER-BACKLOG.md", "first-wave")
+    mutate_region(temp_repo, "backlog/MASTER-BACKLOG.md", "pid-authoring-wave")
 
     docsync.write(temp_repo)
 
@@ -243,7 +243,11 @@ def test_write_preserves_the_specific_human_prose_in_each_document(temp_repo):
 
     master = read(temp_repo, "backlog/MASTER-BACKLOG.md")
     assert master.startswith("# THE GOAL — Initial Master Backlog")
-    assert "## First wave after GOAL-DCP-001" in master
+    assert "## Next PID-authoring wave after GOAL-DCP-001" in master
+    # The prose around the region is what tells a human these items are not
+    # dispatchable. Losing it would be worse than losing the list.
+    assert "not FORGE-dispatchable" in master
+    assert "./tools/goal-ready --pid-wave --assume-closed GOAL-DCP-001" in master
 
 
 def test_write_leaves_untouched_documents_out_of_the_changed_list(temp_repo):
@@ -348,6 +352,6 @@ def test_renderers_are_pure_and_write_nothing(tmp_path):
     before = pathlib.Path(backlog.source_path).read_text(encoding="utf-8")
 
     docsync.render_backlog_table(backlog)
-    docsync.render_first_wave(backlog)
+    docsync.render_pid_authoring_wave(backlog)
 
     assert pathlib.Path(backlog.source_path).read_text(encoding="utf-8") == before

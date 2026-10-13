@@ -10,7 +10,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: low
-    state: DELIVERY_READY
+    state: ARCHITECTURE_REQUIRED
     depends_on:
       - CYCLE-A2
     po_gate: true
@@ -25,7 +25,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: low
-    state: DELIVERY_READY
+    state: ARCHITECTURE_REQUIRED
     depends_on:
       - CYCLE-A1
     po_gate: true
@@ -40,7 +40,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: low
-    state: DELIVERY_READY
+    state: ARCHITECTURE_REQUIRED
     depends_on:
       - CYCLE-B2
     po_gate: true
@@ -55,7 +55,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: low
-    state: DELIVERY_READY
+    state: ARCHITECTURE_REQUIRED
     depends_on:
       - CYCLE-B3
     po_gate: true
@@ -70,7 +70,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: low
-    state: DELIVERY_READY
+    state: ARCHITECTURE_REQUIRED
     depends_on:
       - CYCLE-B1
     po_gate: true

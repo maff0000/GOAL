@@ -9,7 +9,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: low
-    state: DELIVERY_READY
+    state: ARCHITECTURE_REQUIRED
     depends_on: []
     po_gate: "yes"
     matt_gate: false
@@ -23,7 +23,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: low
-    state: DELIVERY_READY
+    state: ARCHITECTURE_REQUIRED
     depends_on: []
     po_gate: true
     matt_gate: false

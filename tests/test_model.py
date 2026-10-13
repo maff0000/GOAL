@@ -410,9 +410,66 @@ def test_in_flight_gates_are_not_accepted_terminal_states():
         assert state not in model.ACCEPTED_TERMINAL_STATES, state
 
 
-def test_delivery_ready_does_not_require_a_pid():
-    assert "DELIVERY_READY" not in model.PID_REQUIRED_STATES
+def test_delivery_ready_requires_a_pid():
+    """No PID = not DELIVERY_READY. This is the semantic the repair installed."""
+    assert "DELIVERY_READY" in model.PID_REQUIRED_STATES
     assert "FORGE_AUDIT" in model.PID_REQUIRED_STATES
+
+
+def test_every_delivery_state_from_delivery_ready_onward_requires_a_pid():
+    """Asserted mechanically off STATES, not by listing states by hand.
+
+    ``STATES`` is in state-machine order, so "DELIVERY_READY and every later
+    delivery state" is exactly the run from ``DELIVERY_READY`` up to (not
+    including) ``CANCELLED``. Comparing against that slice means a new
+    delivery state added to the vocabulary cannot be quietly left out of
+    ``PID_REQUIRED_STATES`` — this test fails until it is handled on purpose.
+    """
+    start = model.STATES.index("DELIVERY_READY")
+    cancelled = model.STATES.index("CANCELLED")
+
+    assert start < cancelled
+    assert model.PID_REQUIRED_STATES == frozenset(model.STATES[start:cancelled])
+
+    # Non-vacuity: the slice really is the whole delivery tail, not one state.
+    assert len(model.PID_REQUIRED_STATES) == 13
+    for state in ("ROGUE_DISPATCHED", "FORGE_BUILD", "REPAIR", "MERGED", "CLOSED"):
+        assert state in model.PID_REQUIRED_STATES, state
+
+
+def test_pre_delivery_states_do_not_require_a_pid():
+    """An item legitimately has no PID before it is delivery-ready.
+
+    ``PID_DRAFT`` is the state in which the PO authors the PID, so requiring
+    one there would make the state unreachable in practice.
+    """
+    for state in (
+        "DISCOVERED", "ARCHITECTURE_REQUIRED", "PID_DRAFT", "PO_REVIEW", "BLOCKED",
+    ):
+        assert state in model.STATES, state
+        assert state not in model.PID_REQUIRED_STATES, state
+
+
+def test_cancelled_does_not_require_a_pid():
+    """Work can be abandoned from any state, including before a PID existed."""
+    assert "CANCELLED" in model.STATES
+    assert "CANCELLED" not in model.PID_REQUIRED_STATES
+
+
+def test_the_canonical_sequence_is_declared_in_order():
+    """ARCHITECTURE_REQUIRED -> PID_DRAFT -> PO_REVIEW -> DELIVERY_READY -> ...
+
+    The ratified sequence, asserted as *order* within ``STATES`` rather than as
+    prose: the PID-required boundary is defined by a slice of this tuple, so
+    the order is load-bearing, not decorative.
+    """
+    sequence = (
+        "ARCHITECTURE_REQUIRED", "PID_DRAFT", "PO_REVIEW", "DELIVERY_READY",
+        "ROGUE_DISPATCHED", "FORGE_BUILD",
+    )
+    positions = [model.STATES.index(state) for state in sequence]
+
+    assert positions == sorted(positions)
 
 
 def test_item_fields_are_the_thirteen_canonical_fields_in_order():

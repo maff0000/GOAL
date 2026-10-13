@@ -598,13 +598,29 @@ def _pid_findings(
 ) -> Iterator[Finding]:
     """``MISSING_PID``, ``PID_FILE_NOT_FOUND`` and PID metadata agreement.
 
-    ``MISSING_PID`` is deliberately state-conditional: it fires only when the
-    item's state means FORGE is already engaged. Most items legitimately have
-    no PID yet, and ``DELIVERY_READY`` does not require one — authoring the
-    PID is part of the dispatch that follows. An unconditional rule would make
-    canonical data permanently invalid, which is a defect rather than a check.
-    It is evaluated only when ``state`` is itself valid, because a broken
-    state cannot be tested for membership meaningfully.
+    ``MISSING_PID`` is state-conditional, against
+    :data:`goal_dcp.model.PID_REQUIRED_STATES`. That set *includes*
+    ``DELIVERY_READY``: an item is only delivery-ready once an approved
+    canonical PID exists for it, so **no PID means not DELIVERY_READY**. An
+    item with no PID belongs in a pre-delivery state — ``PID_DRAFT`` is where
+    the PO authors one — and those states are where a null ``pid_path`` is
+    legitimate.
+
+    Between them, the codes here and the structural codes cover every way a
+    required PID can be absent or broken, one finding per defect:
+
+    * ``pid_path`` key absent -> ``MISSING_FIELD`` (structural, reported
+      upstream; this function returns early rather than piling on);
+    * ``pid_path`` present with the wrong type -> ``INVALID_FIELD_TYPE``
+      (likewise);
+    * ``pid_path`` null in a PID-required state -> ``MISSING_PID``;
+    * ``pid_path`` not a usable repo-relative path, or naming a file that does
+      not exist or cannot be read as UTF-8 text -> ``PID_FILE_NOT_FOUND``;
+    * the PID's declared metadata disagreeing with the backlog ->
+      ``BACKLOG_PID_MISMATCH``, one per disagreeing label.
+
+    ``MISSING_PID`` is evaluated only when ``state`` is itself valid, because
+    a broken state cannot be tested for membership meaningfully.
     """
     pid_state = status["pid_path"]
     state_usable = status["state"] == _OK and item.raw["state"] in model.STATES

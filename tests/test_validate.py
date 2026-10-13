@@ -18,6 +18,7 @@ import subprocess
 import sys
 
 import pytest
+import yaml
 
 from goal_dcp import model
 from goal_dcp.model import BacklogLoadError, load_backlog, sort_findings
@@ -73,6 +74,46 @@ def codes(findings):
     return {finding.code for finding in findings}
 
 
+def item_mapping(**overrides):
+    """A structurally and semantically clean item mapping, with overrides.
+
+    Clean on purpose: a fixture built from this produces no finding at all, so
+    whatever an override provokes is the *complete* finding set and can be
+    asserted as such — the same property the committed fixtures have.
+    """
+    base = {
+        "id": "ALPHA-001",
+        "title": "Alpha",
+        "lane": "shared",
+        "component": "GOAL",
+        "target_repository": "maff0000/GOAL",
+        "priority": "P0",
+        "risk": "low",
+        "state": "ARCHITECTURE_REQUIRED",
+        "depends_on": [],
+        "po_gate": True,
+        "matt_gate": False,
+        "pid_path": None,
+        "architecture_refs": [],
+    }
+    base.update(overrides)
+    return base
+
+
+def write_backlog(tmp_path, items):
+    """Write ``items`` as a backlog at ``<tmp_path>/backlog/backlog.yaml``.
+
+    The ``backlog/`` subdirectory matters: ``repo_root`` is the loaded path's
+    parent-of-parent, so the fixture resolves ``tmp_path`` as its own root and
+    nothing it declares can reach the real repository.
+    """
+    backlog_dir = tmp_path / "backlog"
+    backlog_dir.mkdir(parents=True, exist_ok=True)
+    path = backlog_dir / "backlog.yaml"
+    path.write_text(yaml.safe_dump({"items": items}, sort_keys=True), encoding="utf-8")
+    return path
+
+
 # ---------------------------------------------------------------------------
 # The canonical backlog
 # ---------------------------------------------------------------------------
@@ -94,9 +135,9 @@ def test_canonical_backlog_has_no_dependency_cycles():
 def test_canonical_backlog_exercises_the_missing_pid_rule():
     """The state-conditional PID rule is live on canonical data, not dormant.
 
-    At least one canonical item is in a state that means FORGE is engaged, and
-    every such item declares a PID. Without this, ``MISSING_PID`` could be
-    silently unreachable in practice.
+    At least one canonical item is in a PID-required state, and every such
+    item declares a PID. Without this, ``MISSING_PID`` could be silently
+    unreachable in practice.
     """
     backlog = load_backlog()
     engaged = [
@@ -105,6 +146,24 @@ def test_canonical_backlog_exercises_the_missing_pid_rule():
     ]
     assert engaged
     assert all(item.pid_path for item in engaged)
+
+
+def test_no_canonical_item_in_a_pid_required_state_has_a_null_pid_path():
+    """The canonical-data invariant, stated as the rule rather than as a count.
+
+    ``DELIVERY_READY`` is a PID-required state, so this also asserts that no
+    canonical item claims to be delivery-ready without a PID. Reported per id,
+    so a failure names the offending items rather than just failing.
+    """
+    backlog = load_backlog()
+
+    offenders = sorted(
+        item.id
+        for item in backlog.items
+        if item.state in model.PID_REQUIRED_STATES and not item.pid_path
+    )
+
+    assert offenders == []
 
 
 def test_canonical_backlog_declares_no_shorthand_dependency():
@@ -351,20 +410,107 @@ def test_cycle_output_is_byte_stable():
 # ---------------------------------------------------------------------------
 
 
-def test_missing_pid_is_state_conditional():
-    """FORGE-engaged states require a PID; DELIVERY_READY does not.
+def test_missing_pid_is_state_conditional_and_delivery_ready_requires_one():
+    """DELIVERY_READY requires a PID; a pre-delivery state does not.
 
-    The fixture holds both cases, and only the FORGE_AUDIT item is reported.
+    The fixture holds all three cases at once:
+
+    * ``ALPHA-001`` is ``FORGE_AUDIT`` — FORGE is engaged, PID required;
+    * ``BETA-001`` is ``DELIVERY_READY`` with ``pid_path: null`` — **this is
+      the repaired defect**. No PID means not delivery-ready, so it is RED;
+    * ``GAMMA-001`` is ``PID_DRAFT`` with ``pid_path: null`` — correct, and
+      must produce no finding at all. That is the non-vacuity half: a rule
+      that demanded a PID unconditionally would also "pass" the two
+      assertions above.
     """
-    assert pairs(fixture_findings("missing-pid.yaml")) == [
+    findings = fixture_findings("missing-pid.yaml")
+
+    assert pairs(findings) == [
         ("MISSING_PID", "ALPHA-001"),
+        ("MISSING_PID", "BETA-001"),
     ]
+    assert not [f for f in findings if f.item_id == "GAMMA-001"]
+
+
+@pytest.mark.parametrize("state", sorted(model.PID_REQUIRED_STATES))
+def test_every_pid_required_state_requires_a_pid(tmp_path, state):
+    """Parametrised over the set itself, so no state can be left unproven.
+
+    Listing states by hand here would let a state be added to
+    ``PID_REQUIRED_STATES`` without anything proving the validator honours it
+    for that state. Driving the parametrisation off the set closes that gap by
+    construction.
+
+    A temp fixture rather than a committed one: the point is coverage of the
+    whole set, and 13 near-identical committed files would be worse than the
+    rule they encode.
+    """
+    path = write_backlog(tmp_path, [item_mapping(state=state, pid_path=None)])
+
+    assert pairs(validate(load_backlog(path))) == [("MISSING_PID", "ALPHA-001")]
+
+
+@pytest.mark.parametrize("state", [
+    "DISCOVERED", "ARCHITECTURE_REQUIRED", "PID_DRAFT", "PO_REVIEW", "BLOCKED",
+])
+def test_no_pre_delivery_state_requires_a_pid(tmp_path, state):
+    """The other side of the boundary: a null pid_path is correct here."""
+    assert state not in model.PID_REQUIRED_STATES
+
+    path = write_backlog(tmp_path, [item_mapping(state=state, pid_path=None)])
+
+    assert validate(load_backlog(path)) == ()
+
+
+def test_delivery_ready_with_an_absent_pid_key_is_one_structural_finding():
+    """Absent key -> MISSING_FIELD only. Precedence: one defect, one finding."""
+    findings = fixture_findings("delivery-ready-pid-key-absent.yaml")
+
+    assert pairs(findings) == [("MISSING_FIELD", "ALPHA-001")]
+    assert "MISSING_PID" not in codes(findings)
+
+
+def test_delivery_ready_with_a_wrong_typed_pid_is_one_structural_finding():
+    """Wrong type -> INVALID_FIELD_TYPE only, with no downstream pile-on."""
+    findings = fixture_findings("delivery-ready-pid-wrong-type.yaml")
+
+    assert pairs(findings) == [("INVALID_FIELD_TYPE", "ALPHA-001")]
+    assert "MISSING_PID" not in codes(findings)
+    assert "PID_FILE_NOT_FOUND" not in codes(findings)
 
 
 def test_pid_file_not_found_is_the_separate_broken_pointer_case():
-    assert pairs(fixture_findings("pid-file-not-found.yaml")) == [
-        ("PID_FILE_NOT_FOUND", "ALPHA-001"),
-    ]
+    """A DELIVERY_READY item whose declared PID file does not exist is RED.
+
+    And RED exactly once: ``pid_path`` is a non-null string, so ``MISSING_PID``
+    must not also fire — the item did declare a PID, it just named nothing.
+    """
+    findings = fixture_findings("pid-file-not-found.yaml")
+
+    assert pairs(findings) == [("PID_FILE_NOT_FOUND", "ALPHA-001")]
+    assert "MISSING_PID" not in codes(findings)
+
+
+def test_delivery_ready_with_an_unreadable_pid_file_is_reported(tmp_path):
+    """A PID file that exists but is not UTF-8 text is a broken pointer.
+
+    Built in a temp directory rather than committed: a deliberately
+    undecodable file is not something to carry in the repository, where it
+    would be a binary blob in the manifest and a trap for every tool that
+    reads the tree as text. The fixture is still a file, and the canonical
+    backlog is still untouched.
+    """
+    (tmp_path / "pids").mkdir()
+    (tmp_path / "pids" / "ALPHA-001.md").write_bytes(b"\xff\xfe**Lane:** Shared\n")
+    path = write_backlog(
+        tmp_path,
+        [item_mapping(state="DELIVERY_READY", pid_path="pids/ALPHA-001.md")],
+    )
+
+    findings = validate(load_backlog(path))
+
+    assert pairs(findings) == [("PID_FILE_NOT_FOUND", "ALPHA-001")]
+    assert "MISSING_PID" not in codes(findings)
 
 
 def test_pid_path_is_resolved_only_under_the_backlogs_own_root():
@@ -386,12 +532,19 @@ def test_backlog_pid_agreement_produces_no_finding():
 
 
 def test_backlog_pid_mismatch_reports_one_finding_per_label():
-    """Two labels disagree, so there are exactly two findings."""
+    """Two labels disagree, so there are exactly two findings.
+
+    The item is ``DELIVERY_READY``, so this is also the proof that declaring a
+    PID that exists is not sufficient: its metadata must agree with the
+    backlog. ``MISSING_PID`` must not fire — the PID is there; what it says is
+    wrong.
+    """
     findings = fixture_findings("backlog-pid-mismatch.yaml")
     assert pairs(findings) == [
         ("BACKLOG_PID_MISMATCH", "PIDFIX-001"),
         ("BACKLOG_PID_MISMATCH", "PIDFIX-001"),
     ]
+    assert "MISSING_PID" not in codes(findings)
     # The label each finding is about is part of the contract, so the set of
     # labels is asserted even though prose is not.
     labelled = sorted(

@@ -1,10 +1,15 @@
 # Valid: produces no findings at all. The baseline every other fixture is a
 # single deliberate mutation of.
 #
-# ALPHA-001 is MERGED, which is a state that requires a canonical PID, so it
-# declares one — and that PID agrees with it, so neither MISSING_PID nor
-# BACKLOG_PID_MISMATCH fires. BETA-001 is DELIVERY_READY with no PID, which is
-# correct. Between them they cover the positive side of the PID rules.
+# ALPHA-001 is MERGED and BETA-001 is DELIVERY_READY. Both states require a
+# canonical PID, so both declare one, and each declared PID agrees with its
+# item — so neither MISSING_PID, PID_FILE_NOT_FOUND nor BACKLOG_PID_MISMATCH
+# fires. Between them they cover the positive side of the PID rules at both
+# ends of the PID-required range, against two distinct label sets.
+#
+# BETA-001 is deliberately the harder case: a DELIVERY_READY item that is
+# genuinely delivery-ready. The same item with pid_path: null is the defect,
+# and tests/fixtures/missing-pid.yaml is where that is proven RED.
 items:
   - id: ALPHA-001
     title: "Alpha"
@@ -33,5 +38,5 @@ items:
       - ALPHA-001
     po_gate: true
     matt_gate: true
-    pid_path: null
+    pid_path: fixtures/pid-fixture-beta.md
     architecture_refs: []

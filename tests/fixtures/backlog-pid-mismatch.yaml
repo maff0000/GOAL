@@ -3,6 +3,11 @@
 #   matt_gate  backlog true   vs PID 'No'
 # Every other compared label agrees, and the PID declares no Risk label, so
 # exactly two findings are expected.
+#
+# The item is DELIVERY_READY, which requires a canonical PID. Declaring a PID
+# that exists is therefore still not enough: its metadata must agree with the
+# backlog, or the item is RED. MISSING_PID must not fire here — the PID is
+# declared and present; what is wrong is what it says.
 items:
   - id: PIDFIX-001
     title: "PID disagreement fixture"
@@ -11,7 +16,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: capital
-    state: FORGE_AUDIT
+    state: DELIVERY_READY
     depends_on: []
     po_gate: true
     matt_gate: true

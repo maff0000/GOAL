@@ -1,6 +1,10 @@
 # PID_FILE_NOT_FOUND: pid_path must be a repo-relative POSIX path resolved
 # against the backlog's own repo_root. Neither of these is.
 #
+# Both items are DELIVERY_READY, which requires a canonical PID, so this is
+# also the proof that a DELIVERY_READY item declaring a path that is not a
+# usable repo-relative path is RED.
+#
 #   ABS-001     an absolute path. pathlib discards the root entirely when
 #               joined with one, so without a guard this would read a file
 #               outside the backlog's repository.
@@ -16,7 +20,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: low
-    state: PID_DRAFT
+    state: DELIVERY_READY
     depends_on: []
     po_gate: true
     matt_gate: false
@@ -30,7 +34,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: low
-    state: PID_DRAFT
+    state: DELIVERY_READY
     depends_on: []
     po_gate: true
     matt_gate: false

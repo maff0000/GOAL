@@ -1,10 +1,12 @@
-# MISSING_PID: state-conditional, and deliberately so.
+# MISSING_PID: state-conditional, and the condition starts at DELIVERY_READY.
 #   ALPHA-001  FORGE_AUDIT means FORGE is already engaged, so a canonical PID
 #              must exist; pid_path is null, which is the finding.
-#   BETA-001   DELIVERY_READY with no PID is correct and must NOT be reported.
-#              Authoring the PID is part of the dispatch that follows, so
-#              demanding one here would make readiness unusable for exactly
-#              the items it exists to surface.
+#   BETA-001   DELIVERY_READY with no PID is the defect this round repaired.
+#              An item is only delivery-ready once an approved canonical PID
+#              exists for it: no PID means not DELIVERY_READY. Reported.
+#   GAMMA-001  PID_DRAFT with no PID is correct and must NOT be reported.
+#              PID_DRAFT is exactly the state in which the PO authors the PID,
+#              so demanding one here would make the state unusable.
 items:
   - id: ALPHA-001
     title: "Alpha"
@@ -28,6 +30,20 @@ items:
     priority: P0
     risk: low
     state: DELIVERY_READY
+    depends_on: []
+    po_gate: true
+    matt_gate: false
+    pid_path: null
+    architecture_refs: []
+
+  - id: GAMMA-001
+    title: "Gamma"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: low
+    state: PID_DRAFT
     depends_on: []
     po_gate: true
     matt_gate: false

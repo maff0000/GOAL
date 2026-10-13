@@ -1,6 +1,11 @@
 # PID_FILE_NOT_FOUND: a declared pid_path that points at nothing. This is the
 # broken-pointer case, separate from MISSING_PID (which is a null pid_path in
 # a state that requires one).
+#
+# The item is DELIVERY_READY, which requires a canonical PID. Declaring a path
+# is therefore not enough: an item whose PID file does not exist is RED, and
+# it is RED exactly once — pid_path is a non-null string, so MISSING_PID must
+# not also fire.
 items:
   - id: ALPHA-001
     title: "Alpha"
@@ -9,7 +14,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: low
-    state: PID_DRAFT
+    state: DELIVERY_READY
     depends_on: []
     po_gate: true
     matt_gate: false

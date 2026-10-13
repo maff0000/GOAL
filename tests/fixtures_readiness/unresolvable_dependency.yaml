@@ -14,5 +14,5 @@ items:
       - NOT-DECLARED-001
     po_gate: true
     matt_gate: false
-    pid_path: null
+    pid_path: fixtures/pid-fixture.md
     architecture_refs: []

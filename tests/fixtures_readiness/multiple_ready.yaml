@@ -1,7 +1,15 @@
 # Isolates: output ordering and payload shape. Three dependency-free
 # DELIVERY_READY items declared out of alphabetical order; readiness
-# must return them sorted by id. ALPHA-001 declares a pid_path and the
-# others do not, so --with-pid has both cases to render.
+# must return them sorted by id.
+#
+# All three declare a pid_path, and each declares its own: dispatch readiness
+# requires a declared PID, so a ready item's pid_path is never null and
+# --with-pid has nothing but the non-null case to render here. The null case
+# lives where it is now the honest answer -- the PID-authoring wave, whose
+# items have no PID yet by definition.
+#
+# Each pid_path resolves under this fixture's own repo_root, which is tests/,
+# and each PID's labels agree with its item.
 items:
   - id: ZULU-001
     title: "Zulu item"
@@ -14,7 +22,7 @@ items:
     depends_on: []
     po_gate: true
     matt_gate: false
-    pid_path: null
+    pid_path: fixtures_readiness/pid-zulu.md
     architecture_refs: []
   - id: ALPHA-001
     title: "Alpha item"
@@ -27,7 +35,7 @@ items:
     depends_on: []
     po_gate: true
     matt_gate: false
-    pid_path: pids/ALPHA-001.md
+    pid_path: fixtures_readiness/pid-alpha.md
     architecture_refs: []
   - id: MIKE-001
     title: "Mike item"
@@ -40,5 +48,5 @@ items:
     depends_on: []
     po_gate: true
     matt_gate: false
-    pid_path: null
+    pid_path: fixtures_readiness/pid-mike.md
     architecture_refs: []

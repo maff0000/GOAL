@@ -2,7 +2,7 @@
 """Check or rewrite the generated regions of the human-readable documents.
 
 ``backlog/MASTER-BACKLOG.md`` and ``MANIFEST.md`` restate machine truth that
-lives elsewhere: the backlog table and first wave come from
+lives elsewhere: the backlog table and the PID-authoring wave come from
 ``backlog/backlog.yaml``, the manifest comes from ``git ls-files``. Those
 restatements are generated and mechanically compared, so the human documents
 cannot quietly become a second, wrong source of truth.

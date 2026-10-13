@@ -10,9 +10,16 @@
 #
 # target_repository is a *declared* target. Some declared repositories do not
 # exist yet; that is expected and is never checked against GitHub.
+#
+# A canonical PID is required from DELIVERY_READY onward: no PID means not
+# DELIVERY_READY. An item whose PID has not been authored yet belongs in a
+# pre-delivery state, and PID_DRAFT is the state in which the PO authors one.
+# ./tools/goal-ready --pid-wave lists the items waiting on exactly that;
+# ./tools/goal-ready lists only what FORGE could actually be dispatched
+# against.
 items:
   - id: GOAL-DCP-001
-    title: "GitHub delivery-control foundation"
+    title: "GitHub control-plane authority: machine backlog, validation, dependency graph, strict delivery readiness, generated views, CI enforcement"
     lane: shared
     component: GOAL
     target_repository: maff0000/GOAL
@@ -28,8 +35,11 @@ items:
       - governance/DELIVERY-STATE-MACHINE.md
       - decisions/ADR-DELIVERY-001-GITHUB-AND-MEMORY-FABRIC.md
 
+  # ROGUE consumes canonical GOAL state and safely dispatches independent
+  # FORGE PLs without Matt mediating work selection. This is dispatch control,
+  # NOT automated GitHub-triggered execution — that is GOAL-DCP-003.
   - id: GOAL-DCP-002
-    title: "Machine-readable backlog + dependency/readiness validator"
+    title: "ROGUE dispatcher — deterministic consumption and multi-project dispatch control"
     lane: shared
     component: GOAL/ROGUE
     target_repository: maff0000/GOAL
@@ -45,13 +55,16 @@ items:
       - architecture/DELIVERY-CONTROL-PLANE.md
       - governance/DELIVERY-STATE-MACHINE.md
 
+  # Only after GOAL-DCP-002's dispatcher behaviour is proven. risk is high
+  # because autonomous launch carries operational/execution-system impact; no
+  # auto-merge is in scope here or anywhere else.
   - id: GOAL-DCP-003
-    title: "Multi-project dispatch proof"
+    title: "Automated GitHub-triggered sandboxed delivery launch"
     lane: shared
     component: ROGUE/FORGE
     target_repository: maff0000/GOAL
     priority: P0
-    risk: medium
+    risk: high
     state: ARCHITECTURE_REQUIRED
     depends_on:
       - GOAL-DCP-002
@@ -63,7 +76,7 @@ items:
       - governance/DELIVERY-STATE-MACHINE.md
 
   - id: GOAL-DCP-004
-    title: "Automated PO/Rogue status and stale/blocked brief"
+    title: "Automated PO/ROGUE status and stale/blocked brief"
     lane: shared
     component: GOAL
     target_repository: maff0000/GOAL
@@ -86,7 +99,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: high
-    state: DELIVERY_READY
+    state: PID_DRAFT
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -102,7 +115,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: high
-    state: DELIVERY_READY
+    state: PID_DRAFT
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -118,7 +131,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: high
-    state: DELIVERY_READY
+    state: PID_DRAFT
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -134,7 +147,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: high
-    state: DELIVERY_READY
+    state: PID_DRAFT
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -151,7 +164,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: high
-    state: DELIVERY_READY
+    state: PID_DRAFT
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -167,7 +180,7 @@ items:
     target_repository: maff0000/hermes
     priority: P0
     risk: medium
-    state: DELIVERY_READY
+    state: PID_DRAFT
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -215,7 +228,7 @@ items:
     target_repository: maff0000/ARES
     priority: P0
     risk: medium
-    state: DELIVERY_READY
+    state: PID_DRAFT
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -263,7 +276,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: medium
-    state: DELIVERY_READY
+    state: PID_DRAFT
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -311,7 +324,7 @@ items:
     target_repository: maff0000/DARWIN
     priority: P0
     risk: medium
-    state: DELIVERY_READY
+    state: PID_DRAFT
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -476,7 +489,7 @@ items:
     target_repository: maff0000/mt5-gateway
     priority: P0
     risk: medium
-    state: DELIVERY_READY
+    state: PID_DRAFT
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -545,7 +558,7 @@ items:
     target_repository: maff0000/tron
     priority: P0
     risk: high
-    state: DELIVERY_READY
+    state: PID_DRAFT
     depends_on:
       - GOAL-DCP-001
     po_gate: true

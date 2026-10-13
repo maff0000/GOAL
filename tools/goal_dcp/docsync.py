@@ -3,11 +3,10 @@
 ``backlog/backlog.yaml`` is the machine authority and
 ``backlog/MASTER-BACKLOG.md`` is the human view of it. The failure mode this
 module exists to prevent is the two becoming *independent truths*: a table
-edited by hand, a "first wave" list that no longer matches the dependency
-graph, a manifest that has quietly stopped listing what the repository
-actually contains. Prose cannot be trusted to stay true by discipline alone,
-so the parts that restate machine truth are generated and mechanically
-checked.
+edited by hand, a wave list that no longer matches the dependency graph, a
+manifest that has quietly stopped listing what the repository actually
+contains. Prose cannot be trusted to stay true by discipline alone, so the
+parts that restate machine truth are generated and mechanically checked.
 
 Generated regions are delimited by HTML comments, which render as nothing in
 markdown::
@@ -23,11 +22,13 @@ fails when a restatement has drifted.
 
 Two deliberate properties:
 
-* The documented first wave is **computed**, by projecting ``GOAL-DCP-001``
-  closed and asking :func:`goal_dcp.readiness.ready_items`. It is never typed
-  by hand, so it cannot disagree with the backlog. It also replaces the range
+* The documented PID-authoring wave is **computed**, by projecting
+  ``GOAL-DCP-001`` closed and asking
+  :func:`goal_dcp.readiness.pid_authoring_wave_items`. It is never typed by
+  hand, so it cannot disagree with the backlog. It also replaces the range
   notation the hand-maintained list used with canonical complete ids, which is
-  what makes the list checkable at all.
+  what makes the list checkable at all. It is a list of work awaiting PO PID
+  authoring, **not** a list of FORGE-dispatchable work.
 * :func:`render_manifest` lists **tracked** files, from ``git ls-files``. An
   untracked file is not repository truth and must not appear in the manifest;
   newly committed files therefore make the region drift until it is
@@ -42,14 +43,15 @@ from typing import Callable
 
 from goal_dcp import model
 from goal_dcp.model import Backlog, Finding, sort_findings
-from goal_dcp.readiness import ready_items
+from goal_dcp.readiness import pid_authoring_wave_items
 
-#: The projection used to document the first wave: "once GOAL-DCP-001 is
-#: accepted, what becomes dispatchable?". This is the *input* to the readiness
-#: rule — the id of the work being closed — and not a readiness result. The
-#: answer is whatever the rule computes from the backlog; no first-wave id is
-#: written down anywhere in this package.
-FIRST_WAVE_PROJECTION: frozenset[str] = frozenset({"GOAL-DCP-001"})
+#: The projection used to document the next PID-authoring wave: "once
+#: GOAL-DCP-001 is accepted, which items are waiting only on a PO-authored
+#: canonical PID?". This is the *input* to the wave rule — the id of the work
+#: being closed — and not a result of it. The answer is whatever the rule
+#: computes from the backlog; no wave id is written down anywhere in this
+#: package.
+PID_AUTHORING_WAVE_PROJECTION: frozenset[str] = frozenset({"GOAL-DCP-001"})
 
 BEGIN_MARKER = "<!-- BEGIN GENERATED: {name} -->"
 END_MARKER = "<!-- END GENERATED: {name} -->"
@@ -59,7 +61,7 @@ EM_DASH = "—"
 #: Which generated regions live in which repo-relative document, in the order
 #: they are checked and written.
 GENERATED_FILES: tuple[tuple[str, tuple[str, ...]], ...] = (
-    ("backlog/MASTER-BACKLOG.md", ("backlog-table", "first-wave")),
+    ("backlog/MASTER-BACKLOG.md", ("backlog-table", "pid-authoring-wave")),
     ("MANIFEST.md", ("manifest",)),
 )
 
@@ -143,11 +145,17 @@ def render_backlog_table(backlog: Backlog) -> str:
     return "\n".join(lines)
 
 
-def render_first_wave(backlog: Backlog) -> str:
-    """Render the first wave as computed readiness, never as a typed list."""
-    items = ready_items(backlog, assume_closed=FIRST_WAVE_PROJECTION)
+def render_pid_authoring_wave(backlog: Backlog) -> str:
+    """Render the PID-authoring wave as computed, never as a typed list.
+
+    These items await PO PID authoring. They are not FORGE-dispatchable, so
+    the rendering must not describe them as ready for delivery.
+    """
+    items = pid_authoring_wave_items(
+        backlog, assume_closed=PID_AUTHORING_WAVE_PROJECTION
+    )
     if not items:
-        return "_No item becomes dispatchable under this projection._"
+        return "_No item is awaiting PO PID authoring under this projection._"
     return "\n".join(
         f"- `{_cell(item.id)}` {EM_DASH} {_cell(item.title)} "
         f"(`{_cell(item.target_repository)}`)"
@@ -172,7 +180,9 @@ def render_manifest(repo_root: pathlib.Path) -> str:
 #: repository root, so regions can be planned uniformly.
 _RENDERERS: dict[str, Callable[[Backlog, pathlib.Path], str]] = {
     "backlog-table": lambda backlog, repo_root: render_backlog_table(backlog),
-    "first-wave": lambda backlog, repo_root: render_first_wave(backlog),
+    "pid-authoring-wave": (
+        lambda backlog, repo_root: render_pid_authoring_wave(backlog)
+    ),
     "manifest": lambda backlog, repo_root: render_manifest(repo_root),
 }
 

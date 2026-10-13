@@ -55,10 +55,28 @@ ACCEPTED_TERMINAL_STATES: frozenset[str] = frozenset({
     "MERGED", "DEPLOYMENT_READY", "PAPER", "LIVE", "CLOSED",
 })
 
-# States that mean FORGE is already engaged, so a canonical PID must exist.
+# States that require a canonical PID to exist.
+#
+# DELIVERY_READY is the boundary, and it is *in* this set: an item is only
+# delivery-ready once an approved canonical PID exists for it, so no PID means
+# not DELIVERY_READY. Every later delivery state requires one too — a PID
+# cannot stop existing once FORGE has been dispatched against it.
+#
+# The pre-delivery states (DISCOVERED, ARCHITECTURE_REQUIRED, PID_DRAFT,
+# PO_REVIEW, BLOCKED) are where an item legitimately has no PID yet; PID_DRAFT
+# is precisely the state in which the PO authors one.
+#
+# CANCELLED is excluded deliberately. It is terminal but not accepted, and
+# work can be abandoned from any state — including before a PID was ever
+# authored — so requiring one would make a legitimate cancellation invalid.
+#
+# This is exactly the run of STATES from DELIVERY_READY up to (not including)
+# CANCELLED; ``tests/test_model.py`` asserts that mechanically rather than by
+# eye, so a later delivery state cannot be added to the vocabulary and quietly
+# left out of this set.
 PID_REQUIRED_STATES: frozenset[str] = frozenset({
-    "ROGUE_DISPATCHED", "FORGE_BUILD", "FORGE_AUDIT", "REPAIR",
-    "PO_ACCEPTANCE", "MATT_DECISION", "CANDIDATE", "MERGED",
+    "DELIVERY_READY", "ROGUE_DISPATCHED", "FORGE_BUILD", "FORGE_AUDIT",
+    "REPAIR", "PO_ACCEPTANCE", "MATT_DECISION", "CANDIDATE", "MERGED",
     "DEPLOYMENT_READY", "PAPER", "LIVE", "CLOSED",
 })
 

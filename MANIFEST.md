@@ -37,6 +37,8 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `tests/fixtures/cycle-three-node.yaml`
 - `tests/fixtures/cycle-two-node.yaml`
 - `tests/fixtures/cycle-via-chain.yaml`
+- `tests/fixtures/delivery-ready-pid-key-absent.yaml`
+- `tests/fixtures/delivery-ready-pid-wrong-type.yaml`
 - `tests/fixtures/duplicate-dependency.yaml`
 - `tests/fixtures/duplicate-id.yaml`
 - `tests/fixtures/empty-field.yaml`
@@ -55,6 +57,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `tests/fixtures/missing-pid.yaml`
 - `tests/fixtures/missing-target-repository.yaml`
 - `tests/fixtures/pid-file-not-found.yaml`
+- `tests/fixtures/pid-fixture-beta.md`
 - `tests/fixtures/pid-fixture.md`
 - `tests/fixtures/pid-match.yaml`
 - `tests/fixtures/pid-path-not-repo-relative.yaml`
@@ -74,7 +77,11 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `tests/fixtures_readiness/dep_paper.yaml`
 - `tests/fixtures_readiness/dep_po_acceptance.yaml`
 - `tests/fixtures_readiness/multiple_ready.yaml`
+- `tests/fixtures_readiness/no_pid_declared.yaml`
 - `tests/fixtures_readiness/one_met_one_unmet.yaml`
+- `tests/fixtures_readiness/pid-alpha.md`
+- `tests/fixtures_readiness/pid-mike.md`
+- `tests/fixtures_readiness/pid-zulu.md`
 - `tests/fixtures_readiness/state_not_delivery_ready.yaml`
 - `tests/fixtures_readiness/unresolvable_dependency.yaml`
 - `tests/test_cli.py`

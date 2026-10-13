@@ -9,7 +9,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: low
-    state: DELIVERY_READY
+    state: ARCHITECTURE_REQUIRED
     depends_on:
       - ALPHA-001
     po_gate: true

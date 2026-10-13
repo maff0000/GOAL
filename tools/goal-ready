@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
 """Print the deterministic readiness answer ROGUE dispatches from.
 
-Readiness is the list of items whose own state is ``DELIVERY_READY`` and whose
-every dependency has reached an accepted terminal state. Output is one line of
-compact, key-sorted JSON, so it is diffable and machine-consumable without a
-parser of its own.
+Default mode answers **"what could FORGE be given right now?"**: the items
+whose own state is ``DELIVERY_READY``, which declare a canonical PID, and whose
+every dependency has reached an accepted terminal state. The answer is carried
+under the ``ready`` key.
+
+``--pid-wave`` answers a different question — **"what is waiting on the PO to
+author a PID?"**: the items in ``PID_DRAFT`` whose every dependency has reached
+an accepted terminal state. That answer is carried under the
+``pid_authoring_wave`` key, never under ``ready``, because these items have no
+PID yet and are therefore **not** FORGE-dispatchable.
+
+Output is one line of compact, key-sorted JSON in either mode, so it is
+diffable and machine-consumable without a parser of its own.
 
 This command **validates the backlog first and refuses to answer from invalid
 data**. A readiness answer computed from a malformed backlog is worse than no
@@ -13,9 +22,19 @@ surface as mysterious misordered delivery rather than as the data defect it is.
 Exit 1 with findings on stderr is the correct response; a best-effort answer is
 not.
 
+Validating first is also what makes the ``ready`` answer strict end to end.
+``goal_dcp.readiness`` can only check that an item *declares* a PID; the
+validator is what proves the declared PID exists, is readable and agrees with
+the backlog (``MISSING_PID``, ``PID_FILE_NOT_FOUND``,
+``BACKLOG_PID_MISMATCH``). Because this command refuses to answer when any of
+those fire, a *successful* ``ready`` answer can never contain an item whose PID
+does not exist. :func:`ready_invariant_violations` re-checks the data half of
+that at the last moment anyway — belt and braces on the one output a dispatcher
+acts on.
+
 ``--assume-closed`` is a what-if projection for planning, not a state change.
-It answers "if these items were accepted, what would become dispatchable?" and
-writes nothing.
+It answers "if these items were accepted, what would each of these answers
+become?" and writes nothing.
 """
 
 import argparse
@@ -26,7 +45,12 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from goal_dcp.model import BacklogLoadError, load_backlog, sort_findings  # noqa: E402
-from goal_dcp.readiness import UnknownAssumedId, readiness_payload  # noqa: E402
+from goal_dcp.readiness import (  # noqa: E402
+    READY_KEY,
+    UnknownAssumedId,
+    pid_authoring_wave_payload,
+    readiness_payload,
+)
 from goal_dcp.validate import validate  # noqa: E402
 
 PROGRAM = "goal-ready"
@@ -36,9 +60,10 @@ def parse_args(argv):
     parser = argparse.ArgumentParser(
         prog=PROGRAM,
         description=(
-            "List backlog items that are mechanically dispatchable: state "
-            "DELIVERY_READY with every dependency in an accepted terminal "
-            "state. Refuses to answer from an invalid backlog."
+            "List backlog items FORGE could be dispatched against: state "
+            "DELIVERY_READY, a declared canonical PID, and every dependency "
+            "in an accepted terminal state. Refuses to answer from an invalid "
+            "backlog."
         ),
     )
     parser.add_argument(
@@ -47,14 +72,30 @@ def parse_args(argv):
         metavar="ID[,ID...]",
         help=(
             "what-if projection: treat these canonical complete ids as CLOSED "
-            "when computing readiness. Changes nothing on disk. An id no "
+            "when computing the answer. Changes nothing on disk. An id no "
             "backlog item declares is a usage error, not a silent no-op."
+        ),
+    )
+    parser.add_argument(
+        "--pid-wave",
+        action="store_true",
+        help=(
+            "answer the other question instead: list the items awaiting PO "
+            "PID authoring (state PID_DRAFT with every dependency in an "
+            "accepted terminal state), under the 'pid_authoring_wave' key. "
+            "These items are NOT ready for FORGE dispatch: they have no "
+            "canonical PID yet. FORGE dispatch requires an approved PID and "
+            "then DELIVERY_READY."
         ),
     )
     parser.add_argument(
         "--with-pid",
         action="store_true",
-        help="include each item's pid_path (null when it has no PID yet)",
+        help=(
+            "include each item's pid_path, in either mode. A ready item always "
+            "declares one; a PID-authoring-wave item never does, so its value "
+            "is null"
+        ),
     )
     return parser.parse_args(argv)
 
@@ -62,6 +103,26 @@ def parse_args(argv):
 def parse_assume_closed(raw):
     """Split a comma-separated id list, ignoring surrounding whitespace."""
     return frozenset(part.strip() for part in raw.split(",") if part.strip())
+
+
+def ready_invariant_violations(backlog, payload):
+    """Ids in a ``ready`` payload whose item declares no PID. Normally empty.
+
+    The post-condition for the one answer a dispatcher acts on, checked
+    independently of the rule that produced it. ``ready`` must never carry an
+    item without a PID, and "never" is worth asserting at the boundary rather
+    than trusting across three modules. Returns an empty list for a payload
+    that carries no ``ready`` key at all, which is the correct answer for the
+    PID-authoring wave: its items are *expected* to have no PID.
+    """
+    violations = []
+    for entry in payload.get(READY_KEY, ()):
+        item = backlog.by_id.get(entry["id"])
+        if item is None or not (
+            isinstance(item.pid_path, str) and item.pid_path.strip()
+        ):
+            violations.append(entry["id"])
+    return sorted(violations)
 
 
 def main(argv=None):
@@ -85,13 +146,25 @@ def main(argv=None):
             print(finding.as_line(), file=sys.stderr)
         return 1
 
+    build = pid_authoring_wave_payload if args.pid_wave else readiness_payload
     try:
-        payload = readiness_payload(
+        payload = build(
             backlog, assume_closed=assume_closed, with_pid=args.with_pid
         )
     except UnknownAssumedId as exc:
         print(f"{PROGRAM}: {exc}", file=sys.stderr)
         return 2
+
+    violations = ready_invariant_violations(backlog, payload)
+    if violations:
+        print(
+            f"{PROGRAM}: refusing to emit a readiness answer: "
+            f"{len(violations)} ready item(s) declare no canonical PID "
+            f"({', '.join(violations)}). A ready item must declare a PID; "
+            "this is a defect in the readiness rule, not in the backlog.",
+            file=sys.stderr,
+        )
+        return 1
 
     # Compact separators, not json.dumps' spaced defaults: this is a consumed
     # machine contract, and ``pids/GOAL-DCP-001.md`` publishes its example as
