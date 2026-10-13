@@ -755,13 +755,14 @@ def test_goal_ready_output_is_byte_identical_to_the_pid_example_style():
         )
 
 
-def test_goal_ready_pid_wave_is_empty_without_the_projection():
-    """The wave's own "before" case, at the process boundary."""
+def test_goal_ready_pid_wave_needs_no_projection_once_dcp_001_is_closed():
+    """GOAL-DCP-001 is CLOSED, so the wave is the unprojected answer."""
     result = run(GOAL_READY, "--pid-wave")
 
     assert result.returncode == 0, result.stderr
     assert result.stderr == ""
-    assert result.stdout == '{"pid_authoring_wave":[]}\n'
+    reported = json.loads(result.stdout)["pid_authoring_wave"]
+    assert [(e["id"], e["target_repository"]) for e in reported] == sorted(PID_AUTHORING_WAVE)
 
 
 def test_goal_ready_pid_wave_reports_exactly_the_eleven_ids():
@@ -870,7 +871,7 @@ def test_a_genuinely_ready_item_is_reported_with_its_real_pid(repo_copy):
     file: the empty answers are empty because no item qualifies, not because
     the command can no longer report anything at all.
     """
-    rewrite(repo_copy / BACKLOG_YAML, "state: FORGE_AUDIT", "state: DELIVERY_READY")
+    rewrite(repo_copy / BACKLOG_YAML, "state: CLOSED", "state: DELIVERY_READY")
 
     validated = run(repo_copy / "tools" / "goal-validate")
     assert validated.returncode == 0, validated.stderr
@@ -975,7 +976,7 @@ def test_goal_docs_check_reports_drift_when_the_machine_backlog_changes(repo_cop
     command = repo_copy / "tools" / "goal-docs"
     assert run(command, "--check").returncode == 0
 
-    rewrite(repo_copy / BACKLOG_YAML, "state: FORGE_AUDIT", "state: CLOSED")
+    rewrite(repo_copy / BACKLOG_YAML, "state: CLOSED", "state: FORGE_AUDIT")
 
     drifted = run(command, "--check")
     assert drifted.returncode == 1

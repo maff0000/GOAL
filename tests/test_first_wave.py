@@ -118,17 +118,26 @@ def write_copy(tmp_path, document):
 # ---------------------------------------------------------------------------
 
 
-def test_the_wave_is_absent_before_closure(canonical):
+def test_the_wave_is_absent_before_closure(canonical, tmp_path):
     """Nothing is in the wave while GOAL-DCP-001 is in FORGE_AUDIT.
+
+    The canonical backlog now has GOAL-DCP-001 ``CLOSED``, so the "before"
+    state is reconstructed on a throwaway copy with that one state reverted.
 
     This is what makes the "after" assertion meaningful: the eleven items are
     specifically asserted *absent* first, so the projection is demonstrably
     what admits them.
     """
     assert len(PID_AUTHORING_WAVE) == 11
-    assert pid_authoring_wave_items(canonical) == ()
+    document = yaml.safe_load(canonical.source_path.read_text(encoding="utf-8"))
+    for entry in document["items"]:
+        if entry["id"] == PROJECTION_ID:
+            entry["state"] = "FORGE_AUDIT"
+    before_backlog = write_copy(tmp_path, document)
+    assert pid_authoring_wave_items(before_backlog) == ()
+    assert wave_id_set(canonical) == set(PID_AUTHORING_WAVE)
 
-    before = wave_id_set(canonical)
+    before = wave_id_set(before_backlog)
     for item_id in PID_AUTHORING_WAVE:
         assert item_id in canonical.by_id, f"{item_id} is not declared at all"
         assert item_id not in before, f"{item_id} was in the wave before closure"

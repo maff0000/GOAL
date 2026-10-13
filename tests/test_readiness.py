@@ -69,18 +69,17 @@ def wave_ids(backlog, assume_closed=frozenset()):
 def test_canonical_backlog_has_nothing_ready_without_a_projection():
     """Nothing is dispatchable today, and that is the correct answer.
 
-    Two independent reasons, both real: no canonical item is in
-    ``DELIVERY_READY`` at all, and ``GOAL-DCP-001`` - which everything in the
-    next wave depends on - is in ``FORGE_AUDIT``, deliberately *not* an
-    accepted terminal state. An empty answer here is the rule doing its job on
-    real data, not a tool that failed to find anything.
+    No canonical item is in ``DELIVERY_READY``: the next wave
+    (``GOAL-DCP-001`` is now ``CLOSED``) is still in ``PID_DRAFT`` with no PID.
+    An empty answer here is the rule doing its job on real data, not a tool
+    that failed to find anything.
     """
     backlog = load_backlog()
 
     assert ready_items(backlog) == ()
     assert readiness_payload(backlog) == {READY_KEY: []}
-    assert backlog.by_id["GOAL-DCP-001"].state == "FORGE_AUDIT"
-    assert "FORGE_AUDIT" not in model.ACCEPTED_TERMINAL_STATES
+    assert backlog.by_id["GOAL-DCP-001"].state == "CLOSED"
+    assert "CLOSED" in model.ACCEPTED_TERMINAL_STATES
 
 
 def test_no_canonical_item_claims_delivery_readiness_without_a_pid():
@@ -388,20 +387,20 @@ def test_effective_state_returns_the_declared_state_without_a_projection():
 
 def test_effective_state_returns_closed_for_a_projected_id():
     backlog = load_backlog()
-    item = backlog.by_id["GOAL-DCP-001"]
+    item = backlog.by_id["OPS-SAFE-001"]
 
-    assert item.state == "FORGE_AUDIT"
-    assert effective_state(item, frozenset({"GOAL-DCP-001"})) == "CLOSED"
-    assert effective_state(item, frozenset({"OPS-SAFE-001"})) == "FORGE_AUDIT"
+    assert item.state == "PID_DRAFT"
+    assert effective_state(item, frozenset({"OPS-SAFE-001"})) == "CLOSED"
+    assert effective_state(item, frozenset({"OPS-SAFE-002"})) == "PID_DRAFT"
 
 
 def test_projection_does_not_mutate_the_backlog():
     """assume_closed is a what-if answer, not a state change."""
     backlog = load_backlog()
 
-    ready_items(backlog, frozenset({"GOAL-DCP-001"}))
+    ready_items(backlog, frozenset({"OPS-SAFE-001"}))
 
-    assert backlog.by_id["GOAL-DCP-001"].state == "FORGE_AUDIT"
+    assert backlog.by_id["OPS-SAFE-001"].state == "PID_DRAFT"
 
 
 def test_unknown_assumed_id_raises_rather_than_answering():
