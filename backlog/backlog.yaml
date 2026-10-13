@@ -25,7 +25,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: medium
-    state: FORGE_AUDIT
+    state: CLOSED
     depends_on: []
     po_gate: true
     matt_gate: false
