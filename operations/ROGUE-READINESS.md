@@ -13,20 +13,32 @@ document.
 ./tools/goal-ready
 ```
 
-One line of JSON on stdout:
+One line of JSON on stdout, in the shape `pids/GOAL-DCP-001.md` publishes:
 
 ```json
 {"ready":[{"id":"MT5-GW-001","target_repository":"maff0000/mt5-gateway"}]}
 ```
+
+That example illustrates the **shape** of the answer and nothing else. Which
+ids are actually in it is whatever the rule below computes from the backlog at
+the moment you run it — including, legitimately, none. Never assume a
+particular id appears, and never take an id from this document.
 
 Each entry carries the item `id` and its declared `target_repository` — the
 repository the work lands in. The `ready` list is sorted by `id` and the JSON
 keys are sorted, so the same backlog always produces the same bytes. Diff the
 output across runs and any change is a real change in programme state.
 
+| invocation | answer |
+|---|---|
+| `./tools/goal-ready` | `{"ready":[...]}` — work a FORGE PL could be dispatched on now |
+| `./tools/goal-ready --assume-closed ID[,ID...]` | the same answer under a what-if projection; mutates nothing |
+| `./tools/goal-ready --with-pid` | adds `pid_path` to each entry, in either mode |
+| `./tools/goal-ready --pid-wave` | `{"pid_authoring_wave":[...]}` — items awaiting **PO PID authoring**, which is *not* FORGE-dispatchable work |
+
 | exit | meaning | what ROGUE does |
 |---|---|---|
-| `0` | the backlog validated; the readiness answer is on stdout | act on it |
+| `0` | the backlog validated; the answer is on stdout | act on it |
 | `1` | the backlog is invalid; findings on stderr, **no answer produced** | do not dispatch — the backlog is repaired first |
 | `2` | load or usage error (unreadable backlog, bad arguments) | do not dispatch — fix the invocation or the file |
 
@@ -34,26 +46,34 @@ output across runs and any change is a real change in programme state.
 
 `./tools/goal-ready` runs the full validator first and **refuses to answer from
 an invalid backlog**. When there are findings it prints them to stderr and
-exits `1` without emitting a readiness list at all.
+exits `1` without emitting any list at all.
 
-That refusal is the point. A readiness answer derived from malformed data looks
-exactly like a correct one — a well-formed JSON list of ids — and is
-indistinguishable downstream. If ROGUE dispatched FORGE on a list computed over
-a duplicate id, a dangling dependency, a shorthand alias or a dependency cycle,
-real engineering effort would be committed to a conclusion the data never
-supported. So the command fails loudly instead of answering plausibly. There is
-no flag to bypass the gate.
+That refusal is the point. An answer derived from malformed data looks exactly
+like a correct one — a well-formed JSON list of ids — and is indistinguishable
+downstream. If ROGUE dispatched FORGE on a list computed over a duplicate id, a
+dangling dependency, a shorthand alias, a dependency cycle or a PID that does
+not exist, real engineering effort would be committed to a conclusion the data
+never supported. So the command fails loudly instead of answering plausibly.
+There is no flag to bypass the gate.
 
 Exit `1` therefore means "the question was not answered", not "nothing is
 ready". Treat it as a stop, never as an empty list.
 
+This gate is also what makes the readiness answer trustworthy about PIDs. The
+validator reports `MISSING_PID`, `PID_FILE_NOT_FOUND` and
+`BACKLOG_PID_MISMATCH`, so a *successful* readiness answer can never contain an
+item whose canonical PID is missing, unreadable or inconsistent with the
+backlog: either the data is coherent and the answer is emitted, or the command
+refuses and names the defect.
+
 ## The readiness rule
 
-An item is ready if and only if **both** of these hold:
+An item is ready if and only if **all three** of these hold:
 
-1. `state == DELIVERY_READY`
+1. its own state is `DELIVERY_READY`;
 2. every id in its `depends_on` resolves to a declared item whose state is an
-   **accepted terminal state**
+   **accepted terminal state**;
+3. it declares a canonical PID.
 
 Accepted terminal states:
 
@@ -71,10 +91,37 @@ MERGED  DEPLOYMENT_READY  PAPER  LIVE  CLOSED
   ready**. Shorthand (`DCP-001`), aliases and wildcards (`OPS-SAFE-*`) do not
   resolve, and the validator rejects them before readiness is computed.
 
-Those two conditions are the whole rule. No id is special-cased, no readiness
+Those three conditions are the whole rule. No id is special-cased, no readiness
 list is written down anywhere, and nothing is inferred from titles, markdown
 tables or document text — only from the declared fields. The full state
-vocabulary is in `governance/DELIVERY-STATE-MACHINE.md`.
+vocabulary, the canonical sequence and the PID rule are in
+`governance/DELIVERY-STATE-MACHINE.md`.
+
+### No PID means the item is not ready — and not `DELIVERY_READY` either
+
+Clause 3 is not an extra filter bolted onto the state machine; it is the state
+machine. `DELIVERY_READY` and every later delivery state **require** a
+canonical PID, so an item with no PID stays in a **pre-delivery** state —
+`PID_DRAFT` or earlier — and cannot reach `DELIVERY_READY` at all.
+`governance/DELIVERY-STATE-MACHINE.md` lists both sets in full. What permits
+that transition is an approved canonical
+PID — one that exists, agrees with the backlog, and has passed the item's PO
+gate. Only then may `./tools/goal-ready` surface it.
+
+Put plainly: **no PID = not `DELIVERY_READY`.** A ready item's `pid_path` is
+never `null`.
+
+The reason this matters to ROGUE specifically: FORGE delivers against a
+canonical PID. Without one there is no statement of scope, no non-goals and no
+definition of acceptance, so there is nothing for a PL to build to. An answer
+that listed such work as ready would be promising a dispatch that cannot
+happen, and would quietly move the job of noticing that onto whoever acted on
+it. The canonical sequence — *architecture before PID, PID before build* — is
+what keeps the readiness answer honest: by the time something is ready, the
+authoritative statement of what "done" means already exists.
+
+Items without PIDs are not invisible. They are the subject of `--pid-wave`
+below, and their next action belongs to the PO, not to FORGE.
 
 ## Planning projection — `--assume-closed`
 
@@ -84,8 +131,8 @@ vocabulary is in `governance/DELIVERY-STATE-MACHINE.md`.
 ```
 
 Treats the listed ids as `CLOSED` for the duration of that single answer and
-recomputes readiness against the real backlog. It answers the planning question
-**"what becomes dispatchable if these items close?"**
+recomputes against the real backlog. It answers the planning question **"what
+becomes available if these items close?"**
 
 It is hypothetical and **mutates nothing** — not the backlog, not GitHub, not
 delivery state, not the items named. It is a projection, not a transition.
@@ -98,34 +145,95 @@ confident wrong projection.
 
 This is how ROGUE sees the next wave before committing to it. While an item has
 not reached an accepted terminal state, everything depending on it is correctly
-withheld from the ready list — that is the rule working, not a defect — and
-`--assume-closed` on that item shows what unblocks when it lands. Always run
-the command; never read a wave list out of a markdown file, including this one.
+withheld — that is the rule working, not a defect — and `--assume-closed` on
+that item shows what unblocks when it lands. The flag composes with the others:
+with `--pid-wave` it projects which items would enter the PID-authoring wave,
+rather than which would become dispatchable. Always run the command; never read
+a wave list out of a markdown file, including this one.
 
-## `--with-pid`, and why ROGUE must check it
+## `--with-pid`
 
 ```bash
 ./tools/goal-ready --with-pid
+./tools/goal-ready --pid-wave --with-pid
 ```
 
-Adds `pid_path` to each entry — the item's canonical PID, or `null` when it has
-none.
+Adds `pid_path` to each entry. The flag is uniform: it applies in either mode,
+to `ready` entries and to `pid_authoring_wave` entries alike.
 
-**Readiness does not require a PID to exist.** `DELIVERY_READY` means
-dependency-satisfied and mechanically dispatchable; authoring the canonical PID
-is part of the dispatch that follows, not a precondition for appearing in the
-list. Requiring one here would hide exactly the work that readiness exists to
-surface.
+In a `ready` entry, `pid_path` is **never `null`**, because a ready item always
+declares a canonical PID. The flag is therefore not a check ROGUE performs
+before trusting the answer; it is a convenience, so the dispatch brief can name
+the PID without a second lookup into the backlog. If a `ready` entry ever did
+carry `pid_path: null`, that would be a defect in the tooling, not a routing
+decision for ROGUE to make.
 
-The operationally important consequence: **a ready item whose `pid_path` is
-`null` is not yet FORGE-dispatchable.** FORGE delivers against a canonical PID;
-there is nothing for a PL to build to without one. For such an item ROGUE's
-next action is to have the PO commission the canonical PID, not to start a
-FORGE PL. ROGUE must check `pid_path` rather than assuming that ready means
-immediately buildable.
+In a `pid_authoring_wave` entry — the wave described below — `pid_path` will in
+practice be `null`, and there that is **correct and expected**: these items
+have no authored canonical PID yet, which is the whole reason they are in the
+list rather than in `ready`.
 
-Ready-with-PID and ready-without-PID are both valid answers. They route to
-different places: one to FORGE, one back to the PO.
+That contrast is worth reading twice, because it is exactly the distinction
+this document exists to draw:
+
+| mode | `pid_path: null` means |
+|---|---|
+| `ready` | impossible — a tooling defect if it ever appears |
+| `pid_authoring_wave` | expected — it is why the item is in the list |
+
+So a `null` is not a signal ROGUE interprets case by case. Which key the entry
+arrived under has already decided what it means, and already decided where the
+item routes.
+
+## The PID-authoring wave — `--pid-wave`
+
+```bash
+./tools/goal-ready --pid-wave
+./tools/goal-ready --pid-wave --assume-closed GOAL-DCP-001
+```
+
+```json
+{"pid_authoring_wave":[...]}
+```
+
+The rule: an item is in the wave when its own state is `PID_DRAFT` and every
+dependency has reached an accepted terminal state. It is the deterministic
+answer to a different question from readiness — **"which items are the next
+PO/PID-authoring wave?"** — and like readiness it is computed from the backlog
+every time. The wave is never a written-down list, here or anywhere else.
+
+**This is not a dispatch authorisation.** Nothing in
+`{"pid_authoring_wave":[...]}` is FORGE-dispatchable: these items have no
+approved canonical PID, which is precisely why they are in the wave. The output
+is **advisory input to the PO** — it says "these items are unblocked and need
+canonical PIDs commissioned next", and that is the whole of its authority.
+ROGUE routes it to the PO and dispatches nothing on it.
+
+Two further consequences worth being explicit about:
+
+- ROGUE must **always run the command** and must never read a wave out of a
+  markdown file, including this one. A wave copied into prose is a snapshot
+  that goes stale and then lies with confidence.
+- An item leaves the wave by having a canonical PID authored and passed through
+  PO review, which is what moves it to `DELIVERY_READY`. It then appears in the
+  `ready` answer on its own, with no further bookkeeping. No placeholder or
+  shim PID is ever created to shortcut that; a stub PID would satisfy the
+  validator while delivering none of the authority a PID exists to carry.
+
+## Two answers, two destinations
+
+The two lists must never be confused, so they are deliberately different keys
+with different meanings:
+
+| key | what it means | where ROGUE routes it |
+|---|---|---|
+| `ready` | dependency-satisfied, `DELIVERY_READY`, canonical PID exists | ROGUE may dispatch a FORGE PL |
+| `pid_authoring_wave` | dependency-satisfied, `PID_DRAFT`, PID not yet authored and through PO review | ROGUE routes to the PO to commission a canonical PID |
+
+An item appears in exactly one of them, because the states are mutually
+exclusive. `ready` is work; `pid_authoring_wave` is work *about to be
+specified*. Treating the second as the first is how FORGE gets dispatched with
+nothing to build to — the specific failure these two keys exist to prevent.
 
 ## Document linkage
 
@@ -143,10 +251,11 @@ component PR
 implementation evidence
 ```
 
-A readiness answer gives ROGUE the first link and names the target repository
-for the fourth. The intermediate links are established by dispatch and
-delivery. The chain is what makes programme state reconstructable from GitHub
-alone: if it cannot be reconstructed from GitHub, it is not authoritative.
+A readiness answer gives ROGUE the first link, names the target repository for
+the fourth, and — because readiness requires a PID — guarantees the third
+already exists. The remaining links are established by dispatch and delivery.
+The chain is what makes programme state reconstructable from GitHub alone: if
+it cannot be reconstructed from GitHub, it is not authoritative.
 
 ## What this is not
 
@@ -154,6 +263,10 @@ Per the non-goals of `pids/GOAL-DCP-001.md`:
 
 - **Not automated dispatch.** `./tools/goal-ready` prints JSON and exits. It
   does not invoke FORGE, open an issue, assign work, or start a PL.
+- **Not a daemon, and not a second tool.** Both answers come from this one
+  command, run on demand. Nothing polls, schedules or runs in the background.
 - **Not auto-merge.** Nothing here merges, releases or deploys anything.
+- **Not a PID author.** `--pid-wave` reports which PIDs are needed. Writing
+  them is the PO's work, and no placeholder stands in for one.
 
 ROGUE reads state and decides. Nothing launches itself.

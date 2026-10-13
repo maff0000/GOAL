@@ -61,8 +61,8 @@ dispatches work, or merges anything.
 
 | command | what it does | exit codes |
 |---|---|---|
-| `./tools/goal-validate` | Validates `backlog/backlog.yaml` — duplicate ids, unknown or wildcard dependencies, dependency cycles, invalid lane/state/priority/risk, missing or malformed target repository, state-conditional missing PID, and backlog/PID metadata mismatch. Prints `backlog OK: N items` when clean, otherwise one finding per line to stderr. | `0` valid, `1` findings, `2` load error |
-| `./tools/goal-ready` | Answers "what work is ready next?" as a single line of JSON. Validates first and refuses to answer from an invalid backlog. Options: `--assume-closed ID[,ID...]` for a planning projection, `--with-pid` to include each item's canonical PID path. | `0` ok, `1` invalid backlog, `2` load or usage error |
+| `./tools/goal-validate` | Validates `backlog/backlog.yaml` — duplicate ids, unknown or wildcard dependencies, dependency cycles, invalid lane/state/priority/risk, missing or malformed target repository, state-conditional missing PID (a canonical PID is required from `DELIVERY_READY` onwards), PID pointers that name no readable file, and backlog/PID metadata mismatch. Prints `backlog OK: N items` when clean, otherwise one finding per line to stderr. | `0` valid, `1` findings, `2` load error |
+| `./tools/goal-ready` | Answers "what work is ready next?" as a single line of JSON: items that are `DELIVERY_READY`, have every dependency in an accepted terminal state, and declare a canonical PID. Validates first and refuses to answer from an invalid backlog. Options: `--assume-closed ID[,ID...]` for a planning projection, `--with-pid` to include each item's canonical PID path, and `--pid-wave` for the separate question of which items are awaiting PO PID authoring — advisory input to the PO, not dispatchable work. | `0` ok, `1` invalid backlog, `2` load or usage error |
 | `./tools/goal-docs --check` | Reports drift between the generated regions of `backlog/MASTER-BACKLOG.md` and `MANIFEST.md` and actual repository truth. `--write` rewrites the drifted regions in place. | `0` in sync, `1` drift found, `2` error |
 | `./tools/secret-scan` | Scans the working tree and the full git history with gitleaks. This repository is public and stays public; this is the repeatable proof that no secret has entered it. | `0` clean, `1` findings, `2` gitleaks unavailable |
 
@@ -79,7 +79,11 @@ every pull request, so the plane enforces itself. That workflow only validates:
 it does not merge, deploy, mutate issues or launch FORGE.
 
 See **`operations/ROGUE-READINESS.md`** for how ROGUE consumes
-`./tools/goal-ready` to decide what to dispatch next without asking Matt.
+`./tools/goal-ready` to decide what to dispatch next without asking Matt — and
+for why the two answers it can give route to different places: ready work goes
+to a FORGE PL, while work still awaiting a canonical PID goes back to the PO.
+No PID means the item is not `DELIVERY_READY` and is never dispatchable;
+`governance/DELIVERY-STATE-MACHINE.md` is the authority for that rule.
 
 ## Current MT5 decision
 

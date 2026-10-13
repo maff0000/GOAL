@@ -33,16 +33,34 @@ as `null` (currently only for `pid_path`), not by dropping the key.
 | `component` | string | yes | non-empty | System or estate area the work belongs to. |
 | `target_repository` | string | yes | matches `^[A-Za-z0-9][A-Za-z0-9._-]*/[A-Za-z0-9][A-Za-z0-9._-]*$` | `owner/name` of the repository the work lands in. |
 | `priority` | string | yes | `P0`, `P1`, `P2` | Programme priority. |
-| `risk` | string | yes | `low`, `medium`, `high`, `capital` | Risk class; `capital` means real money is exposed. |
+| `risk` | string | yes | `low`, `medium`, `high`, `capital` | Delivery risk class — see **Risk vocabulary** below. |
 | `state` | string | yes | one of the 19 canonical states below | Current delivery state. |
 | `depends_on` | list of strings | yes (may be empty) | each entry a canonical complete `id` declared by another item | Work that must reach an accepted terminal state first. |
 | `po_gate` | boolean | yes | `true`, `false` | Whether PO acceptance is required. |
 | `matt_gate` | boolean | yes | `true`, `false` | Whether a declared owner/capital decision is required. |
-| `pid_path` | string or null | yes (value may be `null`) | repo-relative POSIX path to an existing file, or `null` | The item's canonical PID, when one exists. |
+| `pid_path` | string or null | yes (value may be `null`) | repo-relative POSIX path to an existing file, or `null` | The item's canonical PID. Non-`null` and pointing at a readable file from `DELIVERY_READY` onwards; `null` only while the item is in a pre-delivery state. |
 | `architecture_refs` | list of strings | yes (may be empty) | repo-relative POSIX paths to existing files | Architecture and decision records governing the item. |
 
 `pid_path` and `architecture_refs` entries are repo-relative POSIX paths,
 resolved against the repository root. They are never absolute.
+
+### Risk vocabulary
+
+`risk` records **delivery** risk — how much can go wrong in building and
+landing the work — not expected trading loss. The ratified baseline reading:
+
+| value | meaning |
+|---|---|
+| `low` | Bounded. Contained blast radius, well-understood change. |
+| `medium` | Meaningful architecture or integration impact. |
+| `high` | Operational, security or execution-system impact. |
+| `capital` | Carries an explicit PAPER/LIVE capital gate. |
+
+This is the initial baseline interpretation, ratified by the Product Owner /
+Central Architecture. `capital` is the only value that implies a gate rather
+than merely a magnitude, and it is why `matt_gate` and `risk: capital` tend to
+travel together — but they are independent fields and neither is derived from
+the other.
 
 ### Canonical states
 
@@ -62,9 +80,10 @@ MERGED, DEPLOYMENT_READY, PAPER, LIVE, CLOSED
 ```
 
 A dependency counts as satisfied **only** in one of these states. This set is
-what readiness computes against: an item is dispatchable when its own state is
-`DELIVERY_READY` and every dependency resolves to a declared item in an
-accepted terminal state.
+what readiness computes dependencies against: an item is dispatchable when its
+own state is `DELIVERY_READY`, every dependency resolves to a declared item in
+an accepted terminal state, and it declares a canonical PID. The PID clause is
+the subject of the next section.
 
 Reasoning for the exclusions:
 
@@ -80,28 +99,51 @@ Reasoning for the exclusions:
 ## `PID_REQUIRED_STATES`
 
 ```text
-ROGUE_DISPATCHED, FORGE_BUILD, FORGE_AUDIT, REPAIR, PO_ACCEPTANCE,
-MATT_DECISION, CANDIDATE, MERGED, DEPLOYMENT_READY, PAPER, LIVE, CLOSED
+DELIVERY_READY, ROGUE_DISPATCHED, FORGE_BUILD, FORGE_AUDIT, REPAIR,
+PO_ACCEPTANCE, MATT_DECISION, CANDIDATE, MERGED, DEPLOYMENT_READY,
+PAPER, LIVE, CLOSED
 ```
 
-These are the states that mean FORGE is already engaged. Once work has been
-dispatched, built, audited, accepted or merged, a canonical PID must exist —
-otherwise there is no authoritative statement of what was built or what
-acceptance meant. An item in one of these states with `pid_path: null` is a
-`MISSING_PID` finding.
+These are the states that mean delivery has been committed to: FORGE is about
+to be engaged, is engaged, or has finished. From `DELIVERY_READY` onwards a
+canonical PID must exist — otherwise there is no authoritative statement of
+what is to be built, what was built, or what acceptance meant. An item in one
+of these states with `pid_path: null` is a `MISSING_PID` finding; a declared
+PID that does not exist or cannot be read is `PID_FILE_NOT_FOUND`; and PID
+metadata that disagrees with the backlog is `BACKLOG_PID_MISMATCH`.
 
-The requirement is deliberately **state-conditional**:
+`DELIVERY_READY` is included, and that inclusion is the substance of the rule:
+**no PID = not `DELIVERY_READY`.** What permits the transition into
+`DELIVERY_READY` is an approved canonical PID — one that exists, agrees with
+this backlog, and has passed the item's declared PO gate. FORGE delivers
+against a PID, so an item without one has nothing for a PL to build to;
+calling it "ready" would promise a dispatch that cannot happen.
 
-- Most backlog items have no PID yet. Requiring one unconditionally would
-  make the canonical data permanently invalid, which is a defect rather than a
-  check.
-- `DELIVERY_READY` does **not** require a PID. `DELIVERY_READY` means
-  dependency-satisfied and mechanically dispatchable; authoring the canonical
-  PID is part of the dispatch that follows, not a precondition for being
-  listed as available work. Demanding a PID here would make readiness
-  unusable for exactly the items it exists to surface.
-- The rule is exercised by canonical data today via `GOAL-DCP-001`, which is
-  in `FORGE_AUDIT` and declares `pids/GOAL-DCP-001.md`.
+The requirement is nonetheless deliberately **state-conditional**:
+
+- Most backlog items have no PID yet. Requiring one unconditionally would make
+  the canonical data permanently invalid, which is a defect rather than a
+  check — and it would be the wrong complaint, because the absence of a PID is
+  normal for work that has not been specified.
+- That is now exactly why such items sit in a **pre-delivery** state.
+  `DISCOVERED`, `ARCHITECTURE_REQUIRED`, `PID_DRAFT`, `PO_REVIEW` and
+  `BLOCKED` do not require a PID; an item with no PID belongs in one of them,
+  not in `DELIVERY_READY`. The validator is not excusing the missing PID, it
+  is checking the state is honest about it.
+- `CANCELLED` requires no PID either. Work can be abandoned before it was ever
+  specified.
+- The canonical sequence is what makes this coherent:
+  `ARCHITECTURE_REQUIRED → PID_DRAFT → PO_REVIEW → DELIVERY_READY →
+  ROGUE_DISPATCHED → FORGE_BUILD`. *Architecture before PID, PID before
+  build.* Each PID-required state is reached only by passing through the
+  states in which the PID is authored and reviewed, so by the time the
+  requirement bites it has already been satisfied in the normal course of
+  events. See `governance/DELIVERY-STATE-MACHINE.md`, which is the authority
+  for the sequence and the sets.
+- The rule is exercised by canonical data today via `GOAL-DCP-001`, which
+  declares `pids/GOAL-DCP-001.md` and is in a PID-required state, so the
+  existence, readability and metadata-agreement checks all run on real data
+  rather than on fixtures alone.
 
 ## Identifier rules
 
