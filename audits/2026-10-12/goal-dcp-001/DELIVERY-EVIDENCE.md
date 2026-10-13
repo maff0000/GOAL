@@ -407,3 +407,33 @@ Presentation target: this increment has **no user-facing browser surface**.
 It delivers repository data, command-line tools, tests and documentation, so
 the Auditor's real-browser verification gate does not apply. The acceptance
 evidence is mechanical command output instead.
+
+---
+
+## SUPERSEDED IN PART — repair round, 2026-10-13
+
+Appended, not rewritten. Everything above is the record of the first round as
+it was issued and remains readable as that. One statement in it is no longer
+the project's rule, and this note is here because this file is where a reader
+following the first round's citations arrives.
+
+**Superseded:** the sentence above reading "`DELIVERY_READY` therefore does not
+require a PID — readiness is exactly the rule in §4 and nothing more", and the
+paragraph following it describing a ready item with a null `pid_path` as a
+valid answer that routes to the PO.
+
+**Current rule, from commit `38768e4`:** a canonical PID is required from
+`DELIVERY_READY` onward — **no PID = not `DELIVERY_READY`**. An item with no
+PID stays in a pre-delivery state and never appears in a readiness answer.
+Dispatch readiness is three clauses, not two: own state `DELIVERY_READY`, every
+dependency accepted-terminal, **and** a declared canonical PID.
+`governance/DELIVERY-STATE-MACHINE.md` is the authority for the rule.
+
+The first round's statement was not a mistake in reading the PID — it followed
+the PID's own two-clause formulation. The Product Owner / Central Architecture
+subsequently judged that formulation internally contradictory and returned
+CHANGES REQUIRED on PR #2, which is what this repair round implements. This is
+a PO / Central Architecture decision.
+
+Repair-round evidence: `audits/2026-10-13/goal-dcp-001/REPAIR-EVIDENCE.md`.
+Repair-round verdict: `audits/2026-10-13/goal-dcp-001/AUDIT-VERDICT.md`.

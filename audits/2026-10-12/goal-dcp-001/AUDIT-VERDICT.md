@@ -145,3 +145,24 @@ in the base commit `acc3f48`, so it predates this increment and is outside its
 scope. `0.0.0.0` is a bind-all placeholder rather than a routable internal
 address, and the surrounding text is the substance of an accepted ADR. Raised
 for the PO, not changed here.
+
+---
+
+## Followed by a repair round — 2026-10-13
+
+The GREEN above stands for what it assessed: commit
+`16e28909c43e8ea07ba27544f66fd830bec794f3`, against the PID as written at the
+time. It is not withdrawn and has not been rewritten.
+
+It is not the last word on this PID. The Product Owner / Central Architecture
+reviewed PR #2 after this audit and returned **CHANGES REQUIRED** — the
+architecture accepted, semantic hardening required. The substance: permitting
+`state: DELIVERY_READY` with `pid_path: null` is internally contradictory, and
+`GOAL-DCP-002` as then defined duplicated what `GOAL-DCP-001` delivers. Both
+were properties of the data and doctrine this audit assessed as conformant,
+because they conformed to the specification as it then stood — the correction
+is to the specification, not to this Auditor's reading of it.
+
+A second, independent Auditor assessed the repaired head
+`653ce7cc2271549e82fbd10e5fbc0f6e17231c5f` and returned GREEN with seven
+findings, none RED. See `audits/2026-10-13/goal-dcp-001/AUDIT-VERDICT.md`.

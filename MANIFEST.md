@@ -17,6 +17,8 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `audits/2026-10-11/mt5/SUMMARY.md`
 - `audits/2026-10-12/goal-dcp-001/AUDIT-VERDICT.md`
 - `audits/2026-10-12/goal-dcp-001/DELIVERY-EVIDENCE.md`
+- `audits/2026-10-13/goal-dcp-001/AUDIT-VERDICT.md`
+- `audits/2026-10-13/goal-dcp-001/REPAIR-EVIDENCE.md`
 - `backlog/MASTER-BACKLOG.md`
 - `backlog/SCHEMA.md`
 - `backlog/backlog.yaml`
