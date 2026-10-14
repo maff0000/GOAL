@@ -87,7 +87,7 @@ BACKLOG_YAML = "backlog/backlog.yaml"
 #: Number of items the canonical backlog declares. Asserted on the success
 #: line because ``backlog OK: N items`` is the contract, not an incidental
 #: message: a command that validated nothing would still print a cheerful OK.
-CANONICAL_ITEM_COUNT = 40
+CANONICAL_ITEM_COUNT = 43
 
 #: The PID-authoring-wave answer under the ``GOAL-DCP-001`` projection, as the
 #: CLI must report it: eleven items, sorted by id, with their declared target
@@ -99,7 +99,7 @@ CANONICAL_ITEM_COUNT = 40
 #: ``{"ready":[]}`` under the same projection, because none of them has a
 #: canonical PID; that is asserted as explicitly as the wave itself.
 PID_AUTHORING_WAVE = (
-    ("ARES-CUR-001", "maff0000/ARES"),
+    ("ARES-CUR-001", "maff0000/trading-ares"),
     ("DARWIN-R1", "maff0000/DARWIN"),
     ("GOAL-CONTRACT-001", "maff0000/GOAL"),
     ("HERMES-CUR-001", "maff0000/hermes"),
@@ -109,7 +109,7 @@ PID_AUTHORING_WAVE = (
     ("OPS-SAFE-001", "maff0000/GOAL"),
     ("OPS-SAFE-002", "maff0000/GOAL"),
     ("OPS-SAFE-003", "maff0000/GOAL"),
-    ("TRON-T1", "maff0000/tron"),
+    ("TRON-D1-RATIFY", "maff0000/tron"),
 )
 
 #: Flags that would turn "this backlog is invalid" into an answer. None of

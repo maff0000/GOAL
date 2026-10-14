@@ -24,33 +24,36 @@ region — change `backlog/backlog.yaml` and run `./tools/goal-docs --write`.
 | HERMES-CUR-001 | shared | HERMES | Authoritative PROD/current-state reconciliation | maff0000/hermes | GOAL-DCP-001 | P0 | medium | PID_DRAFT | Yes | No |
 | HERMES-FACT-001 | shared | HERMES | `goal.market-fact/v1` | maff0000/hermes | HERMES-CUR-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
 | HERMES-GR-001 | research | HERMES | Golden replay proof | maff0000/hermes | HERMES-FACT-001 | P0 | low | ARCHITECTURE_REQUIRED | Yes | No |
-| ARES-CUR-001 | shared | ARES | Canonical generation + legacy reconciliation | maff0000/ARES | GOAL-DCP-001 | P0 | medium | PID_DRAFT | Yes | No |
-| ARES-RISK-001 | shared | ARES | `goal.risk-event/v1` | maff0000/ARES | ARES-CUR-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
-| ARES-PIT-001 | research | ARES | Trading Economics PIT prototype | maff0000/ARES | ARES-RISK-001 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| ARES-CUR-001 | shared | ARES | Canonical generation + legacy reconciliation | maff0000/trading-ares | GOAL-DCP-001 | P0 | medium | PID_DRAFT | Yes | No |
+| ARES-RISK-001 | shared | ARES | `goal.risk-event/v1` | maff0000/trading-ares | ARES-CUR-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
+| ARES-PIT-001 | research | ARES | Trading Economics PIT prototype | maff0000/trading-ares | ARES-RISK-001 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
 | GOAL-CONTRACT-001 | shared | GOAL | `goal.strategy/v1` | maff0000/GOAL | GOAL-DCP-001 | P0 | medium | PID_DRAFT | Yes | No |
 | GOAL-CORE-001 | shared | GOAL | `goal-strategy-core` | maff0000/GOAL | GOAL-CONTRACT-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
-| GOAL-REF-001 | shared | GOAL | independent semantic reference | maff0000/GOAL | GOAL-CORE-001 | P0 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| GOAL-REF-001 | shared | GOAL | independent semantic reference | maff0000/GOAL | GOAL-CONTRACT-001 | P0 | low | ARCHITECTURE_REQUIRED | Yes | No |
 | DARWIN-R1 | research | DARWIN | Source/runtime reconciliation | maff0000/DARWIN | GOAL-DCP-001 | P0 | medium | PID_DRAFT | Yes | No |
 | DARWIN-R2 | research | DARWIN | ResearchEngineAdapter | maff0000/DARWIN | GOAL-CONTRACT-001, DARWIN-R1 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
 | DARWIN-R3 | research | DARWIN | APOLLO narrowed causal proof | maff0000/DARWIN | GOAL-CORE-001, DARWIN-R1 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
 | LEAN-P1 | research | DARWIN | LEAN bounded prototype | maff0000/DARWIN | DARWIN-R2, GOAL-CORE-001 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
-| CER-R1 | research | CER | Research evidence + EdgeProfileVersion | maff0000/CER | DARWIN-R2 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
-| NEO-R1 | research | NEO | Read-only evidence/MCP architecture | maff0000/NEO | CER-R1 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
-| HELIOS-T1 | trading | HELIOS | Refactor to GOAL strategy contract/core | maff0000/HELIOS | GOAL-CORE-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
-| HELIOS-T2 | trading | HELIOS | Live HERMES/ARES adapters | maff0000/HELIOS | HELIOS-T1, HERMES-FACT-001, ARES-RISK-001 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
-| HELIOS-T3 | trading | HELIOS | Signed durable StrategyTrigger | maff0000/HELIOS | HELIOS-T2 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
-| FALCON-T1 | trading | FALCON | Reconcile event registry | maff0000/falcon | HELIOS-T3 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| HSA-C1 | research | HSA | HSA adopts goal.strategy/v1 and the goal.market-fact/v1 fact catalogue | maff0000/HSA | GOAL-CONTRACT-001, HERMES-FACT-001 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| CER-R1 | research | CER | EdgeProfileVersion and contract v1.1 on delivered CER v1.0.0 | maff0000/CER | GOAL-DCP-001 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| NEO-R1 | research | NEO | Read-only evidence/MCP architecture | maff0000/neo | GOAL-DCP-001 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| GOAL-TRIGGER-001 | trading | GOAL | Cross-system trigger contract: trigger envelope, signed canonical form, validity, dedupe key, terminal outcomes and TriggerInbox delivery semantics | maff0000/GOAL | GOAL-DCP-001 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| HELIOS-T1 | trading | HELIOS | Refactor to GOAL strategy contract/core | maff0000/HELIOS | GOAL-CORE-001 | P0 | medium | PID_DRAFT | Yes | No |
+| HELIOS-T2 | trading | HELIOS | Live HERMES adapter | maff0000/HELIOS | HELIOS-T1, HERMES-FACT-001 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| HELIOS-T3 | trading | HELIOS | Signed durable StrategyTrigger | maff0000/HELIOS | HELIOS-T2, GOAL-TRIGGER-001 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| FALCON-T1 | trading | FALCON | Reconcile FALCON event registry with delivered HERMES/ARES/HELIOS reality (excludes strategy_trigger and tron.* families) | maff0000/falcon | GOAL-DCP-001 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
 | MT5-GW-001 | trading | mt5-gateway | Reconcile eight stacked WO branches into canonical Git history | maff0000/mt5-gateway | GOAL-DCP-001 | P0 | medium | PID_DRAFT | Yes | No |
 | MT5-GW-002 | trading | mt5-gateway | Reproducible image/build provenance, version pinning, environment guard, health and CI | maff0000/mt5-gateway | MT5-GW-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
 | MT5-GW-003 | trading | mt5-gateway | Replace raw SlaveService with typed in-container allow-list service; UDS preferred | maff0000/mt5-gateway | MT5-GW-001, MT5-GW-002 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
 | MT5-GW-004 | trading | mt5-gateway | Vantage DEMO execution/reconciliation capability proof | maff0000/mt5-gateway | MT5-GW-003 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
-| TRON-T1 | trading | TRON | Core ledger/reconciliation + Trading Postgres | maff0000/tron | GOAL-DCP-001 | P0 | high | PID_DRAFT | Yes | No |
-| TRON-T2 | trading | TRON | Vantage DEMO broker-neutral adapter | maff0000/tron | TRON-T1, MT5-GW-003, MT5-GW-004 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| TRON-D1-RATIFY | trading | TRON | Ratify TRON D1 design baseline: independent audit, merge to the default branch, and disposition of open decisions | maff0000/tron | GOAL-DCP-001 | P0 | medium | PID_DRAFT | Yes | **Yes** |
+| TRON-T1 | trading | TRON | Core execution journal/reconciliation + Trading Postgres | maff0000/tron | GOAL-DCP-001, TRON-D1-RATIFY | P0 | high | PID_DRAFT | Yes | No |
+| TRON-T2 | trading | TRON | Vantage DEMO broker-neutral adapter | maff0000/tron | TRON-T1, MT5-GW-004 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
 | TRON-T3 | trading | TRON | DIKE/hard risk/kill | maff0000/tron | TRON-T1 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
-| TRON-T4 | trading | TRON | TriggerInbox intake/idempotency | maff0000/tron | TRON-T1, HELIOS-T3 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| TRON-T4 | trading | TRON | TriggerInbox intake/idempotency | maff0000/tron | TRON-T1, GOAL-TRIGGER-001 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
 | TRON-T5 | trading | TRON | SizingPolicy + frozen EdgeProfile binding | maff0000/tron | TRON-T3, CER-R1 | P1 | medium | ARCHITECTURE_REQUIRED | Yes | No |
 | SKEPTIC-T1 | trading | TRON | asynchronous SHADOW reviewer | maff0000/tron | TRON-T1 | P2 | low | ARCHITECTURE_REQUIRED | Yes | No |
-| PAPER-E2E-001 | trading | GOAL | Full paper lane end-to-end proof | maff0000/GOAL | HELIOS-T3, TRON-T2, TRON-T3, TRON-T4 | P0 | capital | ARCHITECTURE_REQUIRED | Yes | **Yes** |
+| PAPER-E2E-001 | trading | GOAL | Full paper lane end-to-end proof on Vantage DEMO (not satisfiable by simulation) | maff0000/GOAL | HELIOS-T3, TRON-T2, TRON-T3, TRON-T4 | P0 | capital | ARCHITECTURE_REQUIRED | Yes | **Yes** |
 | LIVE-GATE-001 | ops | GOAL | Capital readiness + LIVE decision | maff0000/GOAL | PAPER-E2E-001, OPS-SAFE-001, OPS-SAFE-002, OPS-SAFE-003, OPS-LEGACY-001, OPS-CRED-001 | P0 | capital | ARCHITECTURE_REQUIRED | Yes | **Yes** |
 
 <!-- END GENERATED: backlog-table -->
@@ -82,7 +85,7 @@ Reproduce it with:
 
 <!-- BEGIN GENERATED: pid-authoring-wave -->
 
-- `ARES-CUR-001` — Canonical generation + legacy reconciliation (`maff0000/ARES`)
+- `ARES-CUR-001` — Canonical generation + legacy reconciliation (`maff0000/trading-ares`)
 - `DARWIN-R1` — Source/runtime reconciliation (`maff0000/DARWIN`)
 - `GOAL-CONTRACT-001` — `goal.strategy/v1` (`maff0000/GOAL`)
 - `HERMES-CUR-001` — Authoritative PROD/current-state reconciliation (`maff0000/hermes`)
@@ -92,6 +95,6 @@ Reproduce it with:
 - `OPS-SAFE-001` — Backup/off-host/restore programme (`maff0000/GOAL`)
 - `OPS-SAFE-002` — Network/data-store containment (`maff0000/GOAL`)
 - `OPS-SAFE-003` — Secrets/runtime identity hygiene (`maff0000/GOAL`)
-- `TRON-T1` — Core ledger/reconciliation + Trading Postgres (`maff0000/tron`)
+- `TRON-D1-RATIFY` — Ratify TRON D1 design baseline: independent audit, merge to the default branch, and disposition of open decisions (`maff0000/tron`)
 
 <!-- END GENERATED: pid-authoring-wave -->
