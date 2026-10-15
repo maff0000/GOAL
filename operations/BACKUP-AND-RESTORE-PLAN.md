@@ -1,4 +1,4 @@
-# Backup and Restore Plan - dell-debian (local, /data/backups)
+# Backup and Restore Plan - primary development host (local, /data/backups)
 
 Reader: the owner, ROGUE, and whoever later executes this plan. Facts are taken
 from read-only investigation notes dated 2026-10-14/15. Every command below is
@@ -25,29 +25,29 @@ by a scheduled job that is currently producing data (see section 7).
 ### Tier 0 - irreplaceable live state
 | Dataset | Type | Approx size | Covered today |
 |---|---|---|---|
-| Primary dev MariaDB server: `trading*` schemas (Dev, Docs, Dolos, Neo, Proteus, Report, Risk, Scalp, Signals) - holds live trading and market-data records | MariaDB | part of ~237 GB datadir | Designed yes, **failing since 2026-08-11**; last good 2026-08-10 |
-| Same server: ARGUS, TRINITY, plutus, CompaniesHouse schemas | MariaDB | part of the above | **No** (script filters `trading%` only) |
+| Primary dev MariaDB server: the trading-related schemas - hold live trading and market-data records | MariaDB | part of ~237 GB datadir | Designed yes, **failing since 2026-08-11**; last good 2026-08-10 |
+| Same server: further application schemas outside the trading name pattern | MariaDB | part of the above | **No** (script filters `trading%` only) |
 | Primary Redis (market-truth store, password-protected) | Redis | ~173 MB | **No** (only a 2026-05-31 manual copy) |
 
 ### Tier 1 - important application state
 | Dataset | Type | Approx size | Covered today |
 |---|---|---|---|
-| Argus and ArgCat Postgres instances | PostgreSQL | ArgCat ~72 MB | **No** scheduled job |
-| DARWIN Postgres | PostgreSQL | not sized | **No** (ad-hoc pre-migration dumps only, last 2026-09-18) |
-| Infosecurs relocation DB and other app Postgres (one further application DB) | PostgreSQL | ~77 MB / not sized | **No** (manual sets only) |
-| Companies House MariaDB | MariaDB | ~14 GB | **No** (declared out of scope in config) |
-| ARES MariaDB | MariaDB | ~4.6 GB | **No** |
-| Falcon MongoDB | MongoDB | ~460 MB | **No** |
-| Dev Redis and ARES cache Redis | Redis | ~8 MB | **No** |
+| Application Postgres instances | PostgreSQL | smallest ~72 MB | **No** scheduled job |
+| A further application Postgres | PostgreSQL | not sized | **No** (ad-hoc pre-migration dumps only, last 2026-09-18) |
+| Other application Postgres databases | PostgreSQL | ~77 MB / not sized | **No** (manual sets only) |
+| Lead-data MariaDB | MariaDB | ~14 GB | **No** (declared out of scope in config) |
+| Analytics MariaDB | MariaDB | ~4.6 GB | **No** |
+| Application MongoDB | MongoDB | ~460 MB | **No** |
+| Secondary Redis instances | Redis | ~8 MB | **No** |
 
-### Tier 2 - non-git state under /srv and container volumes
+### Tier 2 - non-git state outside git and container volumes
 | Dataset | Notes | Covered today |
 |---|---|---|
-| `/srv-dev` tree (configs, evidence, local-only files) | ~14 GB; `.env`, logs, venvs, node_modules, git packs excluded | Partial: hard-link rsync snapshots (failing intermittently), git bundles only inside the failing daily job |
-| Evidence and artifact directories (hermes-evidence, ares-runtime, ares-artifacts, DARWIN runtime) | Non-git state; app repos themselves are on GitHub | **No** |
-| Gateway/terminal container volumes with state (MT5 terminal data, broker gateway settings) | Contain broker-related configuration; treat as sensitive | **No** |
-| Other service state (LLM gateway, web UI data, Cerberus working data) | Classify per owner | **No** |
-| Graylog Mongo, Apollo dev Postgres containers | Owner must classify "needed or disposable" first | **No** |
+| Development tree (configs, evidence, local-only files) | ~14 GB; environment files, logs, venvs, node_modules, git packs excluded | Partial: hard-link rsync snapshots (failing intermittently), git bundles only inside the failing daily job |
+| Evidence and artifact directories | Non-git state; app repos themselves are on GitHub | **No** |
+| Container volumes with application state | May contain sensitive configuration; treat as sensitive | **No** |
+| Other service state | Classify per owner | **No** |
+| Auxiliary logging and dev database containers | Owner must classify "needed or disposable" first | **No** |
 
 ### Tier 3 - repositories
 Repositories with a GitHub remote are protected by the remote; back up only
@@ -56,8 +56,8 @@ checkout that has branches/commits not on a remote, and `git bundle verify`
 after creating.
 
 ### Deliberately NOT backed up
-Secret files (`.env`, secrets directories, key files). They are excluded by
-design (`EXCLUDE_ENV_FILES=1`). A separate, owner-approved secure method is
+Secret files (environment files, secrets directories, key files). They are excluded by
+design (an explicit exclusion setting). A separate, owner-approved secure method is
 needed to recover secrets; the claim in existing docs that an environment
 recovery document exists is **unverified**. Absence of secrets from backups
 means a full restore also needs those secrets from another source.
@@ -65,7 +65,7 @@ means a full restore also needs those secrets from another source.
 ## 3. Consistent backup procedures (per datastore type)
 
 General rules: run serially, one datastore at a time, at low priority
-(`ionice -c3 nice -n 19`), inside the quiet window, writing to a **temporary
+(`ionice -c3 nice -n 19`), inside the quiet window (after the section 3.7 review), writing to a **temporary
 name** (`*.partial`) and renaming only after checks pass. Credentials come
 from a 0600 file or environment variable, **never on the command line and never
 echoed**. A dedicated least-privilege read account is preferred over a
@@ -78,14 +78,15 @@ privileged one (see section 7 for the account that already exists).
 - Do **not** use `--force` or `|| true` (a mid-dump error must fail the job; the existing script uses both).
 - Schema selection: all non-system schemas (exclude `mysql`, `sys`, `performance_schema`, `information_schema`), not a name pattern. Record the schema list in the manifest so a new schema cannot be silently missed.
 - Capture alongside each dump: per-table row counts and engines (`information_schema`) into `<schema>.counts.tsv`, and the server version.
-- Pre-check: current `Innodb_history_list_length` (see section 7). A very long snapshot transaction on a busy server increases undo history; take dumps per schema and watch it.
+- Pre-check and abort rule: see section 3.7 (history list length). A very long snapshot transaction on a busy server increases undo history; take dumps per schema and watch it.
+- Run the pipeline with `set -o pipefail` so a failing dump is not masked by `gzip`.
 - Pipe through `gzip` into the `.partial` file; check the trailer (section 6) before rename.
-- Large schema (Companies House, ~14 GB) is its own step with its own time budget.
+- Largest schema (~14 GB) is its own step with its own time budget.
 
 ### 3.2 PostgreSQL
-- `pg_dump -Fc --no-owner=false` (custom format; consistent single snapshot by default) per database: `pg_dump -Fc -f <db>.dump <db>`.
-- Cluster-wide roles: `pg_dumpall --globals-only > globals.sql` once per instance.
-- Run inside the container (`docker exec`) or against its published local port, using a password file / `PGPASSFILE`, not argv.
+- `pg_dump -Fc -f <db>.dump.partial <db>` (custom format; consistent single snapshot by default) per database; rename after `pg_restore --list` passes.
+- Cluster-wide roles: `pg_dumpall --globals-only` once per instance, written under `umask 077` to a `.partial` file (it contains role password hashes; treat as secret-bearing, 0600).
+- Run inside the container (`docker exec`) or against a loopback-published port, using a password file / `PGPASSFILE`, not argv.
 - Verify with `pg_restore --list <db>.dump` (must exit 0).
 
 ### 3.3 MongoDB
@@ -99,14 +100,23 @@ privileged one (see section 7 for the account that already exists).
 - Verify: `redis-check-rdb <file>` (and `redis-check-aof` for AOF).
 - Context: a power cut in 2026-05 corrupted an AOF, which is why a copy that was validated, not merely present, matters.
 
-### 3.5 Container volumes and /srv state
+### 3.5 Container volumes and application state
 - Stop-free option: `tar --numeric-owner -C <dir> -czf <name>.tar.gz.partial .` for directories that are quiescent or file-oriented.
 - For volumes belonging to a running database, do **not** tar the live datadir; use the datastore procedures above.
-- Exclude secrets (`.env*`, `secrets/`, key files) explicitly with `--exclude`.
-- For the large `/srv-dev` tree, `rsync -a --link-dest=<previous snapshot>` hard-link snapshots are acceptable (existing design); the summary statistics step must not walk all snapshots (see section 7).
+- Exclude secrets (environment files, secret directories, key files) explicitly with `--exclude`, and write the archive outside the directory being archived.
+- For the large development tree, `rsync -a --link-dest=<previous snapshot>` hard-link snapshots are acceptable (existing design); the summary statistics step must not walk all snapshots (see section 7).
 
 ### 3.6 Repositories
 `git bundle create <repo>.bundle --all`, then `git bundle verify <repo>.bundle`. Only for repos with unpushed refs.
+
+### 3.7 History-list-length gate and pre-dump review (procedure, not executed)
+The primary MariaDB server showed a very large InnoDB undo backlog on the
+baseline date (section 7.8). Before any first dump:
+1. **Pre-dump review (owner and executor together):** read the current `Innodb_history_list_length`, the number of running threads, host load and free space; check for long-open transactions (`information_schema.INNODB_TRX`); confirm engines (BR-11); confirm the quiet window; and record the baseline and the chosen thresholds in the run record. No dump starts without this review being recorded.
+2. **Do-not-start threshold:** do not begin if the history list length is above **10,000,000**, or is rising between two readings taken a few minutes apart, or if any long-open transaction is unexplained. Resolve (owner decision) first.
+3. **Abort threshold during the dump:** sample the value at least every 60 seconds. **Abort the dump** (kill the dump client, remove the `.partial` file, leave live data untouched) if the value exceeds the baseline by **more than 1,500,000**, or exceeds **10,000,000** absolute, or if load or replica/connection health degrades. Resume only after the owner reviews.
+4. Dump one schema at a time and re-check the value between schemas.
+The numeric thresholds are proposals for the owner to confirm or tighten at the review; they are not tuned values.
 
 ## 4. Restore procedures and isolated verification
 
@@ -130,7 +140,7 @@ file. Teardown removes only that container and directory.
 Throwaway `mongod`, `mongorestore --archive=<name>.archive --gzip`, compare collection counts (`db.<c>.countDocuments()`) with counts captured at backup time.
 
 ### 4.4 Redis restore
-Copy the RDB (or AOF directory) into a scratch directory, start `redis-server --port <loopback test port> --dir <scratch>` with no replication configured, compare `DBSIZE` to the value captured at backup time, spot-check some keys, then shut down.
+Copy the RDB (or AOF directory) into a scratch directory, start `redis-server --port <loopback test port> --dir <scratch> --bind 127.0.0.1 --save "" --appendonly no` with no replication configured, compare `DBSIZE` to the value captured at backup time, spot-check some keys, then shut down.
 
 ### 4.5 Files and bundles
 Extract tarballs into a scratch directory (`tar -xzf ... -C /data/restore-test/files`), compare the file list against `tar -tzf`, and spot-check a few files with `sha256sum`. For bundles: `git clone <bundle> <scratch>`.
@@ -176,7 +186,7 @@ Rules: creating a backup never prunes. Pruning, if ever approved, is a
 separate previewed (dry-run listing first) action that never removes the
 newest verified set, never removes a set that lacks a newer verified one, and
 requires explicit owner approval. The existing prune setting is off
-(`PRUNE_ENABLED=0`) and **stays off**; existing directories (137 daily dates,
+(pruning disabled) and **stays off**; existing directories (137 daily dates,
 most empty) are not touched.
 
 ## 6. Integrity and restore verification checks
@@ -209,10 +219,10 @@ distinguishes `written`, `checked`, `restore-tested`.
 | backup-db-hourly | disabled by design since 2026-02-15 | n/a | n/a |
 | backup-rsync-daily | daily 01:00 | FAILED exit 2 (intermittent) | pipeline race, see 7.3 |
 | backup-verify | daily 02:00 | FAILED, killed at the 300 s timeout | see 7.4 |
-| backup-canary, redis-aof-backup | designed, unit files only in the tool's repo directory | **never installed or enabled** | never deployed |
+| backup-canary, redis-aof-backup | designed, unit files only in the tool's source directory | **never installed or enabled** | never deployed |
 
 ### 7.2 Root cause of the database failures
-The backup login stored in the backup tool's `.env` (key names: `PROD_CONTAINER`, `PROD_USER`, `PROD_PASS`, `DEV_CONTAINER`, `DEV_USER`, `DEV_PASS`, `DISCORD_WEBHOOK`) is **rejected by the database server** (access denied, reproduced with a read-only test query). The script discards the client's error output, so it logs only "failed at line 350, exit 1". The first failed run was 2026-08-11; the database admin secret and audit configuration were changed on 2026-08-10, consistent with a credential rotation that never updated the backup login. The alert path (webhook) was never confirmed to deliver. Result: the newest readable database recovery point is **2026-08-10 (daily) / 2026-08-09 (weekly)**.
+The backup login stored in the backup tool's configuration is **rejected by the database server** (access denied, reproduced with a read-only test query). The script discards the client's error output, so it logs only a generic failure line. The first failed run was 2026-08-11. A credential/hardening change on or about 2026-08-10 is a **likely contributing cause (unconfirmed)**: the login may simply not have been updated after it. The alert path was never confirmed to deliver. Result: the newest readable database recovery point is **2026-08-10 (daily) / 2026-08-09 (weekly)**.
 
 ### 7.3 Rsync lane
 - Intermittent failure: a `find | sort -r | head -1` under `pipefail` makes `sort` fail with a broken pipe, exit 2 before any copy (failed 2026-10-11, -12, -14).
@@ -223,22 +233,22 @@ The backup login stored in the backup tool's `.env` (key names: `PROD_CONTAINER`
 Times out at 300 s, reports FAIL on missing schemas/code/bundles (it inspects the empty current dated directory), WARNs on the retired PROD tier, then hangs on a broken pipe. All success markers show `verify_status: unverified`.
 
 ### 7.5 Stale PROD tier noise
-The retired PROD database container has been absent for months (config: `PROD_DB_STATUS=ABSENT`), but the verifier still warns that the weekly PROD set is about 241 days old (last data 2026-02-15). That is stale noise about a dead tier, not a signal about live data.
+The retired PROD database container has been absent for months (recorded as absent in configuration), but the verifier still warns that the weekly PROD set is about 241 days old (last data 2026-02-15). That is stale noise about a dead tier, not a signal about live data.
 
 ### 7.6 Coverage gaps
-See section 2: schemas filtered out by name pattern, all Postgres, Mongo, Redis, ARES DB, Companies House DB, non-git `/srv` state and container volumes have no working scheduled backup. Empty dated directories are created before the first failure point, which hides failures. Dumps are written with `--force ... || true`, so a partial dump can still look valid.
+See section 2: schemas filtered out by name pattern, all Postgres, Mongo, Redis, further MariaDB databases, non-git application state and container volumes have no working scheduled backup. Empty dated directories are created before the first failure point, which hides failures. Dumps are written with `--force ... || true`, so a partial dump can still look valid.
 
-### 7.7 Already-created items (EXISTING STATE - names and paths only)
-Per the stage-2a notes of 2026-10-14, the following were created before the owner pause. **Nothing has been activated.**
-- Database account `backup_ro` (host `localhost`) on the primary dev MariaDB server, intended as least-privilege read access.
-- Secret file `/srv-dev/tradingBackup/.backup_ro.secret` (mode 0600, content not read for this document).
-- Old-state marker copy `/var/tmp/backup-p0/last_success_db_daily.json.pre2a` (saved before any intended re-run).
-- Backup copy of the old env file `/srv-dev/tradingBackup/.env.pre-2026-10-14` (mode 0600, holds the OLD rejected values).
-- `/srv-dev/tradingBackup/.env` is **unchanged** (modification time 2026-07-11); the success marker for the daily database job is unchanged (2026-08-09 content); no restore-test directory exists; no new timers were installed.
-- The account's existence and privileges were not re-queried for this document. Rollback notes are in `/var/tmp/backup-p0/ROLLBACK-2a.md` (drop the user, remove the secret file, restore the env copy).
+### 7.7 Already-created items (EXISTING STATE - generic description only)
+Per notes of 2026-10-14, the following were created before the owner pause. **Nothing has been activated.** Names, locations and details are in the maintainers' private operations record.
+- A dedicated least-privilege read-only database account was created on the primary dev MariaDB server (not activated, not used by any job).
+- A root-only secret file for that account exists (not activated; content not read for this document).
+- A copy of the old success marker was saved before any intended re-run.
+- A dated copy of the backup configuration was made (it holds the old, rejected values).
+- The live backup configuration is **unchanged**; the success marker for the daily database job is unchanged; no restore-test directory exists; no new timers were installed.
+- The account's existence and privileges were not re-queried for this document. Rollback notes exist in the private record (drop the account, remove the secret file, restore the configuration copy).
 
 ### 7.8 History-list-length observation
-A baseline taken 2026-10-14 10:09 on the primary dev MariaDB server showed `Innodb_history_list_length` of about 6.7 million, with 5 connected and 1 running thread, health "healthy", host load average about 4-5. That is a large InnoDB undo backlog (a sign of a long-open or long-lived read view, or purge lag). It is recorded as an observation, not diagnosed. It matters here because a long `--single-transaction` dump can add to it; the first dump should be run per schema with the value watched before and after, and the owner should know about it independently of backups.
+A baseline taken 2026-10-14 10:09 on the primary dev MariaDB server showed `Innodb_history_list_length` of about 6.7 million, with 5 connected and 1 running thread, health "healthy", host load average about 4-5. That is a large InnoDB undo backlog (a sign of a long-open or long-lived read view, or purge lag). It is recorded as an observation, not diagnosed. It matters here because a long `--single-transaction` dump can add to it; the first dump is gated by the review and abort thresholds in section 3.7, and the owner should know about it independently of backups.
 
 ## 8. Known risks register
 
@@ -247,7 +257,7 @@ A baseline taken 2026-10-14 10:09 on the primary dev MariaDB server showed `Inno
 | BR-1 | **No off-host replication.** All backups are on one local disk in the same chassis; a single-disk or host failure loses all backups and the live data together | OPEN, no mitigation in place |
 | BR-2 | **This plan is NOT a completed safety control.** It is documentation only; nothing is protected by it until executed and restore-tested | OPEN |
 | BR-3 | No database recovery point newer than 2026-08-10 (about 66 days at time of writing) | OPEN |
-| BR-4 | Redis, Postgres, Mongo, ARES DB, Companies House DB and several MariaDB schemas have no scheduled backup | OPEN |
+| BR-4 | Redis, Postgres, Mongo, further MariaDB databases and several MariaDB schemas have no scheduled backup | OPEN |
 | BR-5 | No restore has ever been performed or tested; restorability of existing sets is unproven (readability only: gzip and tar tests passed on the 2026-08-10 set) | OPEN |
 | BR-6 | Failure detection is weak: errors hidden, alert delivery unconfirmed, verify job times out, canary lane not installed | OPEN |
 | BR-7 | Existing backup directories are world-readable and contain full database content | OPEN |
@@ -262,13 +272,13 @@ A baseline taken 2026-10-14 10:09 on the primary dev MariaDB server showed `Inno
 
 | Deferred item | Decision point for the owner |
 |---|---|
-| Executing any backup, including a one-off fresh recovery point | Approve a run, its timing outside the quiet window, and the I/O impact on the primary database |
-| Choice of database credential: use the existing least-privilege account or an owner-supplied rotated credential; and editing the backup tool's `.env` | Approve which, and approve the edit (with dated copy) |
+| Executing any backup, including a one-off fresh recovery point | Approve a run, its timing, the section 3.7 review and thresholds, and the I/O impact on the primary database |
+| Choice of database credential: use the existing least-privilege account or an owner-supplied rotated credential; and editing the backup tool's configuration | Approve which, and approve the edit (with dated copy) |
 | New automation: timers, canary, Redis AOF lane, new verify job, alert rewiring | Approve installation and schedule windows |
 | Scripts v2 (stderr not swallowed, schema selection widened, trailer and manifest checks, rsync race and `du` fix, mountpoint check, umask) | Approve development and swap procedure |
 | Off-host copy | Approve a destination class, who provisions it, and whether encryption at rest is required |
 | NAS decision (use an existing network storage target or not; access control; client package install on this host) | Owner decision; no access was attempted |
 | Retention enablement and cleanup of existing mostly-empty dated directories | Approve policy in 5.4 and any pruning separately |
-| Scope calls: Companies House and ARES databases, Apollo/Graylog containers, `/srv` state classification | Confirm in or out of scope |
+| Scope calls: large secondary databases, auxiliary containers, other state classification | Confirm in or out of scope |
 | Isolated restore-test environment creation and cadence | Approve scratch directory and test ports |
 | Secrets recovery route | Approve a method independent of these backups |
