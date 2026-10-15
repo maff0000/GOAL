@@ -3,7 +3,8 @@
 **Work order:** `GOAL-GOLD-MVP`. **Baseline:** GOAL `main` @ `1739e742154c77e9e2a96927dc40d4978b9cd798`. **Date:** 2026-10-15.
 **Author role:** architecture author for the cross-lane structure, working for ROGUE under Central Architecture (CA).
 **Nature:** a proposal for approval. It records no approval, sets no `pid_path`, moves nothing to `DELIVERY_READY`, edits no backlog, and dispatches nothing. The backlog patch in section 11 is specified, not applied.
-**Companion:** `pids/GOLD-MVP-001.md` (integration and acceptance PID candidate). The six audit PID candidates (`GOLD-AUD-A` to `-F`) are drafted by the lane drafters; this document fixes only the frame they must follow. Where this document proposes a lane answer (amend versus new), the lane drafter decides and may override with evidence.
+**Companion:** `pids/GOLD-MVP-001.md` (integration and acceptance PID candidate) and the six audit PID candidates `pids/GOLD-AUD-A.md` to `pids/GOLD-AUD-F.md`. `audits/2026-10-15/gold-mvp/DECISION-REGISTER.md` consolidates every open decision (it supersedes the PD list in section 12, whose ids it keeps).
+**Revision note (consolidation):** this document was first drafted before the lane PIDs existed. The consolidation edit has read all six lane PIDs and reconciled the amend-versus-new answers, the evidence numbering, the lane findings (section 3a), the backlog patch and the decisions to what the lane drafters concluded. Where the lane PIDs contradict each other or this document, the contradiction is recorded in the consolidation report and the decision register, not resolved silently.
 
 ## 1. Objective and frame
 
@@ -15,41 +16,60 @@ Not prerequisites: additional HERMES feeds, broad research-platform expansion, n
 
 Operating model: one ROGUE, many parallel FORGE workers, up to six concurrent workstreams, each worker in its own worktree, each with an independent auditor; no two workers write the same authoritative source, contract, shared database or running service. PID first: amend existing PIDs or add bounded audit increments rather than duplicate.
 
-How "amend versus new" is applied (so six drafters stay consistent). Every audit is tracked as its own backlog item, because a read-only audit must be dispatchable before the existing component PIDs are approved and must carry its own independent auditor and acceptance. The lane answer therefore says something different:
+How "amend versus new" was applied. Every audit is tracked as its own backlog item, because a read-only audit must be dispatchable before the existing component PIDs are approved and must carry its own independent auditor and acceptance. Two forms were offered to the lane drafters:
 
 - **(i) amendment:** the existing PID already covers the scope. The audit item is a declared increment of that PID: the audit PID states `Amends: <ID>`, the existing PID's next revision lists the audit as a named deliverable, and audit closure satisfies that deliverable. The audit PID restates no scope the existing PID owns.
 - **(ii) new bounded audit item:** no existing PID covers the scope, or the existing PID is engineering while this is research. The audit PID states `Complements: <IDs>` and the existing PIDs are not edited.
 
+**Outcome after the lane drafters read the existing PIDs: all six lanes concluded (ii).** Each is a new bounded read-only audit item with a documented amendment fallback (section 3). The original draft expected (i) for A, C and E; that expectation is withdrawn.
+
 ## 2. The portfolio
 
-Seven items: one integration PID and six read-only audit items. All audits: lane research-style read-only work, `depends_on: [GOAL-DCP-001]` only, `po_gate: true`, priority P0, proposed state `PID_DRAFT`.
+Seven items: one integration PID and six read-only audit items. All audits: backlog lane `research` (read-only work; provisional, PO sets final), `depends_on: [GOAL-DCP-001]` only, `po_gate: true`, proposed state `PID_DRAFT`, proposed priority P0 (lane PIDs E and F state P1; see DECISION-REGISTER DR-13). The `amend vs new` column states what each lane drafter concluded after reading the existing PIDs.
 
 | id | lane (area) | scope sentence | amend vs new (existing PID) | evidence PR goes to | read-only permissions (section 6) | gate | collisions (section 5) | independent auditor |
 |---|---|---|---|---|---|---|---|---|
-| `GOLD-MVP-001` | trading / integration | Own the cross-component integration architecture, evidence index, contract compatibility matrix and the single end-to-end Vantage DEMO acceptance of one governed XAUUSD strategy with FALCON evidence; no component implementation. | new (overlaps `PAPER-E2E-001`, decision PD-1) | `maff0000/GOAL` | none beyond reading audit outputs until the acceptance run, which has its own approvals | PO + Matt (proposed) | reads outputs of all six audits; writes only `audits/2026-10-15/gold-mvp/` in GOAL | AUD-3 plus CA acceptance |
-| `GOLD-AUD-A` | A HERMES | Audit the existing PROD XAUUSD Redis publication: keys, schemas, indicator coverage, timeframes, freshness, timestamps, warm-up, validation and status, and compare it with the documented Redis contracts, without mutating production. | **(i) amends `HERMES-CUR-001`** (authoritative PROD/current-state reconciliation); the XAUUSD publication audit is a declared increment, `HERMES-FACT-001` is the downstream consumer | `maff0000/hermes` | repo read; PROD Redis non-blocking read protocol (section 6.2); container labels only | PO + **Matt (production read access; decision PD-5)** | the only audit that touches PROD Redis; HERMES repo shared read with B and E | AUD-1 |
-| `GOLD-AUD-B` | B HELIOS | Locate the previously completed HERMES Redis to HELIOS GOLD integration (external adapter, deployment wiring, legacy), reconcile it with the new HELIOS runtime and the MarketFactFrame, recommend minimum reuse or adaptation, and review HSA strategy packages for a compatible first GOLD strategy. | **(ii) new**, complements `HELIOS-T1` / `HELIOS-T2` (engineering) and `GOLD-STRATEGY-RUNTIME`; no second market-data reader until the first is located | `maff0000/HELIOS` | repos read (HELIOS, GOLD-STRATEGY-RUNTIME, HSA, legacy HELIOS lineage); no PROD Redis (uses A's output and fixtures) | PO | shares HSA read with F; HELIOS repo single evidence writer | AUD-2 |
-| `GOLD-AUD-C` | C shared contracts | Reconcile `GOAL-CONTRACT-001` and `GOAL-TRIGGER-001` with existing implementations and produce governed consumer/provider contracts for HERMES Redis to HELIOS input and for HELIOS signed trigger to durable outbox to TRON inbox: versioning, golden fixtures, rejection behaviour, recovery. | **(i) amends `GOAL-CONTRACT-001` and `GOAL-TRIGGER-001`** (reconciliation addendum). The HERMES to HELIOS input contract is not covered by either; it is delivered as a declared third contract section under `HERMES-FACT-001` ownership (provider) with GOAL approval | `maff0000/GOAL` | repos read (GOAL branches, HELIOS, HERMES, TRON D1 branch, FALCON contracts); no runtime | PO (contracts carry Matt gate in `GOAL-TRIGGER-001` itself) | single owner of the compatibility matrix and the GOAL evidence index; reads outputs of A, B, D, E | AUD-2 |
-| `GOLD-AUD-D` | D TRON / MT5 | Audit the TRON D1 design and implementation candidates, risk rules, journal and trigger-intake assumptions; coordinate with `MT5-GW-001`; identify the smallest missing capabilities for one DEMO execution path. | **(ii) new**, consumes (does not redo) `TRON-D1-RATIFY`, `MT5-GW-001` and the existing MT5 readiness / DEMO-verify records; an increment on `TRON-D1-RATIFY` only if PO prefers (decision PD-3) | `maff0000/tron` (primary), `maff0000/mt5-gateway` (companion note only if a finding needs anchoring there) | repos read (TRON incl. unmerged D1 branch, MT5 gateway, instance template records); docker labels only; **no broker call** | PO | two repos; MT5 instances never touched; TRON D1 branch is `TRON-D1-RATIFY`'s subject | AUD-3 |
-| `GOLD-AUD-E` | E FALCON | Audit the delivered FALCON registry and running ingestion and define the minimum remaining HELIOS and TRON event publication, keeping FALCON outside the executable trigger path. | **(i) amends `FALCON-T1`** (registry reconciliation; the excluded `strategy_trigger` and `tron.*` families are the audit's explicit increment) | `maff0000/falcon` | repo read; FALCON running ingestion read via its own query interface (read-only); no write to the registry | PO | reads FALCON runtime; reads A/D outputs for event-source facts | AUD-1 |
-| `GOLD-AUD-F` | F CER / HSA / DARWIN / NEO | Define how one GOLD strategy is qualified, registered, executed and reviewed (strategy versioning, evidence storage, causal testing, promotion, NEO review architecture) without rebuilding delivered functions, including earlier external repository/SaaS evaluations and reuse recommendations only where they materially reduce MVP engineering. | **(ii) new**, complements `CER-R1`, `NEO-R1`, `HSA-C1`, `DARWIN-R2` (none amended; each later cites the audit) | `maff0000/CER` (primary), companion notes in `maff0000/HSA`, `maff0000/DARWIN`, `maff0000/neo` only where a finding must be anchored there | repos read (CER, HSA, DARWIN, neo, earlier evaluation records); no runtime | PO | four repos read; shares HSA read with B | AUD-3 |
+| `GOLD-MVP-001` | trading (integration) | Own the cross-component integration architecture, evidence index, contract compatibility matrix and the single end-to-end Vantage DEMO acceptance of one governed XAUUSD strategy with FALCON evidence; no component implementation. | new (overlaps `PAPER-E2E-001`, decision PD-1) | `maff0000/GOAL` | none beyond reading audit outputs until the acceptance run, which has its own approvals | PO + Matt (proposed) | reads outputs of all six audits; writes only `audits/2026-10-15/gold-mvp/` in GOAL | AUD-3 plus CA acceptance |
+| `GOLD-AUD-A` | research (area A HERMES) | Audit the existing PROD XAUUSD Redis publication: keys, schemas, indicator coverage, timeframes, freshness, timestamps, warm-up, validation and status, and compare it with the documented Redis contracts, without mutating production. | **(ii) new bounded item**: a strict subset ("Increment A") of `HERMES-CUR-001` scope item 1 (Redis key inventory), complements `HERMES-CUR-001`; the lane PID carries proposed amendment text for CUR-001 (not applied); fallback: fold in as CUR-001 Increment A unchanged. `HERMES-FACT-001` is the downstream consumer | `maff0000/hermes` | repo read; PROD Redis non-blocking read protocol (section 6.2); container labels only | PO + **Matt (production read access; decision PD-5)** | the only audit that touches PROD Redis; HERMES repo shared read with B and E | AUD-1 |
+| `GOLD-AUD-B` | research (area B HELIOS) | Locate the previously completed HERMES Redis to HELIOS GOLD integration (external adapter, deployment wiring, legacy), reconcile it with the new HELIOS runtime and the MarketFactFrame, recommend minimum reuse or adaptation, and review HSA strategy packages for a compatible first GOLD strategy. | **(ii) new**: a pre-increment of `HELIOS-T2` (the live-transport owner), complements `HELIOS-T1` and `GOLD-STRATEGY-RUNTIME`; no second market-data reader may be built or prototyped by the audit. The lane PID states no explicit fallback; the implied one is to fold it into the HELIOS-T2 PID as a named pre-deliverable (DR-14) | `maff0000/HELIOS` | repos read (HELIOS, GOLD-STRATEGY-RUNTIME, HSA, legacy HELIOS lineage); no PROD Redis (uses A's output and fixtures) | PO | shares HSA read with F; HELIOS repo single evidence writer | AUD-2 |
+| `GOLD-AUD-C` | research (area C shared contracts) | Reconcile `GOAL-CONTRACT-001` and `GOAL-TRIGGER-001` with existing implementations and produce governed consumer/provider contracts for HERMES Redis to HELIOS input and for HELIOS signed trigger to durable outbox to TRON inbox: versioning, golden fixtures, rejection behaviour, recovery. | **(ii) new thin item**: CP-1 (HERMES Redis to HELIOS input) has no home in either PID or in `HERMES-FACT-001` (no PID); `GOAL-CONTRACT-001` / `GOAL-TRIGGER-001` remain the approval owners of the normative text and their blockers (D-3 Matt gate); `GOLD-AUD-C` freezes nothing (packages are PROPOSED); fallback: amendment of both PIDs (decision D-C2); CP-1 freeze owner is D-C1 | `maff0000/GOAL` | repos read (GOAL branches, HELIOS, HERMES, TRON D1 branch, FALCON contracts); no runtime | PO (contracts carry Matt gate in `GOAL-TRIGGER-001` itself) | single owner of the compatibility matrix and the GOAL evidence index; reads outputs of A, B, D, E | AUD-2 |
+| `GOLD-AUD-D` | research (area D TRON / MT5) | Audit the TRON D1 design and implementation candidates, risk rules, journal and trigger-intake assumptions; coordinate with `MT5-GW-001`; identify the smallest missing capabilities for one DEMO execution path. | **(ii) new thin item**: composes `TRON-D1-RATIFY` and the merged / open MT5 work (`MT5-GW-001`, PR #9, readiness, DEMO-verify) into one six-hop gap matrix without redoing them; fallback: the same deliverables become an appendix to the ratification package plus a stub item (PD-3) | `maff0000/GOAL` (audit record) with mirror PRs in `maff0000/tron` and `maff0000/mt5-gateway` (lane PID position; the first draft of this table named `tron` primary: DR-15) | repos read (TRON incl. unmerged D1 branch, MT5 gateway, instance template records); docker labels only; **no broker call** | PO | two repos; MT5 instances never touched; TRON D1 branch is `TRON-D1-RATIFY`'s subject | AUD-3 |
+| `GOLD-AUD-E` | research (area E FALCON) | Audit the delivered FALCON registry and running ingestion and define the minimum remaining HELIOS and TRON event publication, keeping FALCON outside the executable trigger path. | **(ii) new thin item**: a carve-out from `FALCON-T1` (T1 excludes exactly the `strategy_trigger` and `tron.*` families this audit must cover; T1 writes registry files, E is read-only); composes RECON-F's FALCON-T2/T3; fallback: append the deliverables to FALCON-T1 as a verification increment (cost: reverses T1's carve-out, mixes risk postures) | `maff0000/falcon` | repo read; FALCON running ingestion read via its own query interface (read-only); no write to the registry | PO | reads FALCON runtime; reads A/D outputs for event-source facts | AUD-1 |
+| `GOLD-AUD-F` | research (area F CER / HSA / DARWIN / NEO) | Define how one GOLD strategy is qualified, registered, executed and reviewed (strategy versioning, evidence storage, causal testing, promotion, NEO review architecture) without rebuilding delivered functions, including earlier external repository/SaaS evaluations and reuse recommendations only where they materially reduce MVP engineering. | **(ii) new thin item**: complements `CER-R1`, `NEO-R1`, `HSA-C1`, `DARWIN-R2` (none amended; Deliverable 8 holds ready-to-apply amendment text; fallback: apply it and cancel the item after one audit PR) | `maff0000/GOAL` (audit record, cross-index) with evidence PRs in `maff0000/CER`, `HSA`, `DARWIN` and (PO-approved, private) `neo` (lane PID position; the first draft named CER primary with companion notes: DR-15) | repos read (CER, HSA, DARWIN, neo, earlier evaluation records); no runtime | PO | four repos read; shares HSA read with B | AUD-3 |
 
 Notes on the table.
 
 - Branch naming in the evidence repository: `wo/GOLD-AUD-<L>-<slug>`. The lane drafters' PID-authoring branches in GOAL already exist as `wo/GOAL-GOLD-AUD-<L>`; those carry PID text only, not evidence.
-- Gate columns are proposals for the backlog. `matt_gate` is false except `GOLD-MVP-001` (risk `capital`, PAPER rule) and `GOLD-AUD-A` (production access, PD-5).
+- Gate columns are proposals for the backlog. `matt_gate` is false except `GOLD-MVP-001` (risk `capital`, PAPER rule) and `GOLD-AUD-A`, whose Matt gate is **true pending the production-access decision** (PD-5 / lane A decision D1): if Matt waives it in one line before the patch is applied, flip it to false; otherwise it stays true.
 - Auditor identities are roles AUD-1, AUD-2, AUD-3 (section 9.1), not named individuals; ROGUE binds them at dispatch.
 
-## 3. Amend versus new, summarised
+## 3. Amend versus new, as concluded by the lane drafters
 
-| lane | answer | existing PID | consequence if PO prefers the other answer |
-|---|---|---|---|
-| A | (i) | `HERMES-CUR-001` | (ii) works too; the cost is a duplicate scope line when the CUR-001 PID is authored |
-| B | (ii) | `HELIOS-T1/T2` are engineering and cannot hold a research audit | none material |
-| C | (i) | `GOAL-CONTRACT-001`, `GOAL-TRIGGER-001` | (ii) would create a third contract owner; rejected |
-| D | (ii) | `TRON-D1-RATIFY` is a Matt-gated ratification, not a read-only audit; folding D in would put an audit behind a Matt decision | (i) delays D |
-| E | (i) | `FALCON-T1` | (ii) works |
-| F | (ii) | `CER-R1`, `NEO-R1`, `HSA-C1` are builds | amending four PIDs at once would be four competing writes |
+All six lane drafters read the existing PIDs and concluded **(ii) new bounded audit item**. The per-lane reasoning and the fallback route (kept documented so the PO can still choose an amendment) are:
+
+| lane | conclusion | existing PID relationship | why not an amendment | fallback route if PO prefers the other answer |
+|---|---|---|---|---|
+| A | new bounded item: strict subset ("Increment A") of `HERMES-CUR-001` scope item 1 | complements `HERMES-CUR-001` | CUR-001 is DEV+PROD, SQL+Redis, git graph, image identity; its open decisions (snapshot timing, who probes, HMT-2) would hold the audit hostage; A is narrower and deeper (XAU_USD publication, fixtures); CUR-001 blocks `HERMES-FACT-001` | proposed CUR-001 amendment text is in the lane PID (not applied); or fold A into CUR-001 as Increment A unchanged |
+| B | new: pre-increment of `HELIOS-T2` | complements `HELIOS-T1`, `HELIOS-T2`, `GOLD-STRATEGY-RUNTIME` | `HELIOS-T1` is a refactor to a contract not yet frozen; live transport belongs to T2; an audit would couple to an unfrozen contract | not stated in the lane PID; implied: name it a pre-deliverable of the `HELIOS-T2` PID |
+| C | new thin item | complements `GOAL-CONTRACT-001`, `GOAL-TRIGGER-001` (remain approval owners) | CP-1 has no home (CONTRACT-001 excludes fact payloads; `HERMES-FACT-001` has no PID); TRIGGER-001 is High risk, Matt-gated, with its own blockers; both PIDs are about 360 lines; `GOLD-AUD-C` freezes nothing | amendment of both PIDs (lane decision D-C2); CP-1 freeze owner is D-C1 |
+| D | new thin item | composes `TRON-D1-RATIFY`, `MT5-GW-001` and existing MT5 records | `TRON-D1-RATIFY` is a Matt-facing decision package for one artefact; folding in would put a programme audit behind a Matt decision | the same deliverables as one appendix to the ratification package plus a stub item; matrix and increment list are written to be transplantable |
+| E | new thin item | complements `FALCON-T1` (carve-out) and RECON-F's FALCON-T2/T3 | T1 explicitly excludes the `strategy_trigger` and `tron.*` families E must cover; T1 writes, E is read-only; E needs running-ingestion checks | append deliverables to `FALCON-T1` as a verification increment (reverses the carve-out, mixes risk postures) |
+| F | new thin item | complements `CER-R1`, `NEO-R1`, `HSA-C1`, `DARWIN-R2` | those rows are build-shaped, single-repository and partly mis-described or undefined (RECON-G, RECON-H1); amending four PIDs at once is four competing writes | Deliverable 8 holds the ready-to-apply amendment text; apply it and cancel the item after one audit PR |
+
+The first draft of this section expected (i) for A, C and E (amendment with an `Amends:` line). That is withdrawn: the lane PIDs state `Complements:` lines, and no existing PID is edited by any audit.
+
+## 3a. Lane findings that change the plan
+
+Each lane PID recorded discoveries during drafting (all read-only; marked in the PIDs as proven, partial or UNVERIFIED). They change the plan as follows. Cited PID in brackets.
+
+- **A, HERMES publication** (`pids/GOLD-AUD-A.md`). The documented tick contracts are the only registered contracts in the HERMES manifest and are marked "designed, publisher not built"; the candle, indicator, feed-health and catalog key families exist only in Memory Fabric (no repository document registers them), and the two fabric sources disagree on key counts by about 250 times (about 1,107 versus about 284,000), so which instance is "PROD" is itself open. Plan effect: A's job is to establish what is actually published and make the first repository record of it; `HERMES-FACT-001` cannot be written against documents that do not exist.
+- **B, HELIOS reader** (`pids/GOLD-AUD-B.md`). No completed HERMES Redis to new-HELIOS integration was found: HELIOS has no Redis client (and the pure engine bans one); `GOLD-STRATEGY-RUNTIME` is wiring only (its own delta record says HELIOS has no live HERMES transport); the deployed GOLD stack is fixture-fed; branch `WO-HELIOS-HERMES-PROD-INTEGRATION-PROOF-0001` ended `WAITING_FOR_HERMES_BACKFILL` with no code; legacy HELIOS and the trading-host bridge read databases, not Redis. HSA's first-GOLD candidate `gold_context_breakout` 1.0.0 needs simple moving averages while HELIOS facts carry EMAs (SMA versus EMA naming), and HSA says `XAUUSD` where HERMES and HELIOS say `XAU_USD`. Plan effect: **the HERMES to HELIOS reader is a BUILD item inside `HELIOS-T2` scope**, not an adaptation; the B audit's output is the reuse inventory, gap list and minimum adaptation plan that scope that build, and a claim of "not found" carries a recorded negative-search method.
+- **C, contracts** (`pids/GOLD-AUD-C.md`). The TradingTriggerInbox specification exists nowhere (re-checked in TRON D1, TRON main, HELIOS main, FALCON main). CP-1 mismatches to reconcile: HERMES `schema_version` `v1` versus HELIOS `<namespace>/<x.y.z>` (and HELIOS itself uses `helios.market_fact/1.0.0` in one place and `hermes.market_fact/1.0.0` in fixtures and tests), millisecond versus microsecond timestamps, JSON float versus exact decimal, `is_closed` versus `complete`, two Redis keys (candles, indicators) versus one frame, indicator sets (HERMES publishes more, HELIOS refuses unknown), `regime` (HERMES forbids it, ARES owns it, HELIOS wants it), RSI method naming (HERMES documents Cutler SMA-14; the HELIOS method, Wilder per the portfolio brief, is not stated in any lane PID), and `ingested_at_utc` having no HERMES source. CP-2 mismatches: three identity names (`trigger_id` free string in FALCON, deterministic `trg1_` in `GOAL-TRIGGER-001`, `action_id` in TRON), fingerprint and parameter-set naming, millisecond versus UTC strings, and TRON's closed terminal set lacking the outcomes the trigger contract names. HELIOS has no trigger, signing or outbox code. Plan effect: the compatibility matrix cannot be filled from documents; both boundaries need adapters or renames before `HELIOS-T3` and `TRON-T4` can be proven together.
+- **D, TRON / MT5** (`pids/GOLD-AUD-D.md`). TRON has no runtime code on `main`; the D1 branch is 20 commits of documents, schemas and one docs test (148 tests prove consistency, not execution), with no PR; D1 has no exposure, position-count, order-size, loss or risk-lock checks and its kill-switch check has no setter; the typed MT5 gateway is not built (raw RPyC bridge only); PR #9 (instance template) is open. Plan effect: a TRON runtime, its risk gates and the typed gateway are builds; D's gap matrix sizes them to the one-order path.
+- **E, FALCON** (`pids/GOLD-AUD-E.md`). FALCON is delivered (28 registered families; ingestion containers running), but only HERMES and ARES market-status events are actually emitted; HELIOS publication is synchronous and blocking (a sink failure exits the process); TRON has no claim/disposition or reconcile family; HELIOS and TRON ingestion inputs are deliberately not published; and about 15 documents carry stale "Graylog as trigger transport" language. Plan effect: minimum publication work (P-H1..P-F2) is small but real and sequences after `GOAL-TRIGGER-001`; FALCON stays outside the executable trigger path.
+- **F, qualification to review** (`pids/GOLD-AUD-F.md`). A 10-hop path matrix is the unit of work: the running DARWIN production image is not an ancestor of `main` and lacks APOLLO and migrations 0006 to 0013; no `APOLLO_PROOF` run exists (006B emits `APOLLO_RESULT` only, single timeframe, ATOMIC, LONG only, so the chained two-timeframe gold candidate may be out of scope); `EdgeProfileVersion` is defined nowhere; the NEO observer fails every cycle (missing fabric config key since 2026-07-17); NEO has no CER client. External repository and SaaS evaluations: recommend **adopting none for the MVP** (the backtrader and backtesting.py reviews predate APOLLO; GPL and AGPL licence posture unresolved). Plan effect: the MVP review step is a read-only NEO report, not the full evidence gateway.
+
+**Effect on the critical path.** The audits do not add scope, but they change what the serial chains consist of. (1) The strategy chain gets longer in its middle: `HELIOS-T2` is a build of a Redis reader plus a contract adapter (CP-1 reconciliation), not an adaptation, so the reader build is a long pole alongside `GOAL-CONTRACT-001` and `HELIOS-T3`. (2) The trigger path is a long pole: no inbox specification, no HELIOS signer or outbox, no TRON runtime, no typed gateway; `GOAL-TRIGGER-001` (Matt gate, blockers D-1..D-4, D-12) and `TRON-D1-RATIFY` (Matt gate) gate it. (3) The MT5 gateway chain remains four serial items before `TRON-T2`. (4) Evidence (FALCON) and the review step (F) are shorter than first feared and sequence after the trigger path. The earlier hope in section 8.3 that audit B might shrink `HELIOS-T2` to adaptation is not supported by the evidence found.
 
 ## 4. Dependency and ownership matrix
 
@@ -203,16 +223,18 @@ Handling: the Redis credential is supplied to the client only through an environ
 
 ### 7.1 Ten-item checklist (every audit PR; the PR body links each item to a section/file)
 
-1. [ ] PID/WO id and exact scope (the approved audit PID, quoted scope sentence).
-2. [ ] Source repositories, revisions (full SHA) and documentation references, captured at audit start; any later movement of a source noted.
-3. [ ] Existing implementation classified per capability: proven, partially proven, unverified, missing (with the proof method for each).
-4. [ ] Actual versus expected contract, field by field, for each interface in scope.
+The numbering and wording below are CA's. Each lane PID's "Evidence PR checklist" maps its own deliverables to these ten numbers; no lane may renumber them.
+
+1. [ ] PID/WO identifier and exact audited scope.
+2. [ ] Source repositories, revisions and relevant documentation references (full SHA, captured at audit start; later movement of a source noted).
+3. [ ] Existing implementation: proven, partially proven, unverified or missing (with the proof method for each).
+4. [ ] Actual versus expected contract comparison (field by field, for each interface in scope).
 5. [ ] Tests, fixtures and evidence references (paths, commands, results; nothing fabricated; non-runnable items labelled).
-6. [ ] Defects and compatibility gaps, each with severity (BLOCKER / MAJOR / MINOR) and an id.
-7. [ ] Reusable code and documents (path and revision), with the reuse boundary.
-8. [ ] Minimum recommended implementation changes, each tied to an existing or proposed item and its owner.
+6. [ ] Specific defects and compatibility gaps (each with severity BLOCKER / MAJOR / MINOR and an id).
+7. [ ] Reusable code and documentation (path and revision, with the reuse boundary).
+8. [ ] Minimum recommended implementation changes (each tied to an existing or proposed item and its owner).
 9. [ ] Safety and deployment constraints (what must not be touched; what changes would need a gate).
-10. [ ] Independent audit verdict (GREEN / AMBER / RED), unresolved findings, auditor identity role, and what the verdict does not cover.
+10. [ ] Independent audit verdict (GREEN / AMBER / RED) and any unresolved findings, with auditor identity role and what the verdict does not cover.
 
 ### 7.2 Naming, checks and rules
 
@@ -268,11 +290,11 @@ Serial engineering chains (after PID approvals, from the backlog as it stands wi
 
 The long poles are the MT5 gateway chain (four serial items before TRON-T2) and the strategy chain (five). Audits shorten them by:
 
-1. **A** shows whether the PROD publication already satisfies the fact set one strategy needs, so `HERMES-FACT-001` can be an adaptation or declaration of what exists, and no new feed is requested.
-2. **B** finds whether the earlier HERMES to HELIOS integration (adapter, wiring) can be adapted into `HELIOS-T2`, shrinking `HELIOS-T2` from construction to adaptation, and picks the first strategy so `GOAL-CONTRACT-001` is validated against a real package.
+1. **A** shows whether the PROD publication already satisfies the fact set one strategy needs, so `HERMES-FACT-001` can be an adaptation or declaration of what exists, and no new feed is requested (the lane PID found that the candle and indicator families are documented only in fabric, so the repository record starts with this audit).
+2. **B** was expected to find an earlier HERMES to HELIOS integration that could shrink `HELIOS-T2` from construction to adaptation. The lane PID found none (section 3a), so `HELIOS-T2` stays a construction; B still scopes it to a minimum adaptation plan, and picks the first strategy so `GOAL-CONTRACT-001` is validated against a real package.
 3. **C** freezes the minimum contracts early, which unlocks `GOAL-CORE-001`, `HELIOS-T3` and `TRON-T4` authoring in parallel.
 4. **D** states the smallest DEMO path, so `MT5-GW-003/-004` and `TRON-T2/T3` are scoped to the minimum rather than the full gateway ambition, and confirms whether the sizing gap needs its own item.
-5. **E** confirms what FALCON already carries, so only the missing event families are built.
+5. **E** confirms what FALCON already carries (28 registered families, only two emitting), so only the missing HELIOS and TRON publication work is built.
 6. **F** confirms CER/HSA/DARWIN already cover registration and qualification, so none of `CER-R1`, `HSA-C1`, `DARWIN-R2` becomes a prerequisite of the MVP.
 
 No audit shortens the path by adding scope; if one finds the path longer (a BLOCKER), it says so.
@@ -310,9 +332,9 @@ Rules: an auditor is never the drafter or worker of the lane; an auditor reviews
 | # | risk | mitigation |
 |---|---|---|
 | R-1 | A lane audit touches production state | read-only protocol and wrapper (6.2), reviewed first; PD-5; single lane |
-| R-2 | The previously completed HERMES to HELIOS integration is not found (B) | stop condition in B's PID: report as missing; do not build a second reader |
+| R-2 | The previously completed HERMES to HELIOS integration is not found (B) | realised in B's drafting (section 3a): the reader is a build item in `HELIOS-T2` scope; B's stop condition holds (no second reader may be built or prototyped by the audit; a negative result needs a recorded search method) |
 | R-3 | Contract drift while six audits run | source-revision tables; C owns one matrix; contract changes after acceptance restart affected rows |
-| R-4 | Duplicate scope with existing PIDs (`HERMES-CUR-001`, `FALCON-T1`, `TRON-D1-RATIFY`) | amend-versus-new frame (1, 3); `Amends:`/`Complements:` lines |
+| R-4 | Duplicate scope with existing PIDs (`HERMES-CUR-001`, `FALCON-T1`, `TRON-D1-RATIFY`) | all six lanes are new bounded items with `Complements:` lines and a documented amendment fallback (section 3); no existing PID is edited |
 | R-5 | `GOLD-MVP-001` overlaps `PAPER-E2E-001` | PD-1; recommended option keeps both with a clear dependency |
 | R-6 | Hidden missing items (fixed-size sizing, FALCON event publication, MT5 typed API) | listed in the gap register and PD-3/PD-4; audits D and E confirm shape |
 | R-7 | Simulation mistaken for DEMO proof; PAPER set early | GOLD-MVP-001 AC-9 to AC-11 and S-6; title and ADR-MT5-001 reference |
@@ -324,12 +346,18 @@ Rules: an auditor is never the drafter or worker of the lane; an auditor reviews
 | R-13 | Audit scope creeps into implementation | each audit PID carries a no-implementation non-goal; auditor checks the file list |
 | R-14 | Auditor independence eroded when one auditor covers two lanes | pairing chosen to avoid reviewing one's own lane; CA acceptance is separate |
 
-## 11. Backlog patch description (specified, not applied)
+## 11. Backlog patch description (specified, NOT applied here)
+
+**This section is a specification only.** The consolidation work order did not edit `backlog/backlog.yaml`, set any `pid_path`, move any item to `DELIVERY_READY`, record any approval or dispatch anything. The patch is applied later, by ROGUE, after the PO approves.
+
+**Ordering and expected counts.** The patch is applied **after GOAL PR #5 merges** (PR #5 takes the backlog from 40 to 43 items by adding `GOAL-TRIGGER-001`, `TRON-D1-RATIFY`, `HSA-C1`). Expected pinned item counts: 40 on `main` today; 43 after PR #5; **49 after part 1** (43 + 6 audit items); **50 after part 2** (49 + `GOLD-MVP-001`). If part 1 were applied on today's `main` before PR #5 the count would be 46, and PR #5 would then have to be rebased onto it (not recommended). The count-pinning tests (`tests/test_cli.py`, `tests/test_model.py`, `tests/test_first_wave.py`) must be updated in the same change as each patch part. Part 2 additionally waits for the PO ruling on PD-1.
+
+**Lane A matt gate.** `GOLD-AUD-A` carries `matt_gate: true` pending the production-access decision (PD-5; lane decision D1). It is the only audit with a Matt gate.
 
 ### 11.1 Interaction with GOAL PR #5 and PR #6
 
 - **PR #5** (`wo/GOAL-RECON-PR`, OPEN) takes the backlog from 40 to 43 items (adds `GOAL-TRIGGER-001`, `TRON-D1-RATIFY`, `HSA-C1`) and edits `backlog/backlog.yaml`, `MASTER-BACKLOG.md`, `MANIFEST.md` and three tests that pin the item count (`tests/test_cli.py`, `tests/test_model.py`, `tests/test_first_wave.py`). This portfolio's `GOLD-MVP-001` depends on `GOAL-TRIGGER-001` and `TRON-D1-RATIFY` (transitively), which exist only on #5. Therefore **part 2 (GOLD-MVP-001 and the PAPER-E2E-001 edge) must be applied after #5 merges**. **Part 1 (the six audit items, depending only on `GOAL-DCP-001`) is independent of #5** and may be applied on `main` first or after #5; applied after #5 it is simplest because both edit the same file and the same count-pinning tests.
-- Both patches touch `backlog/backlog.yaml`: apply serially, never as two concurrent writers. The pinned item count becomes 49 after part 1 on top of #5 and 50 after part 2 (43 + 6 + 1); on today's `main` it would be 46 after part 1 alone. The count-pinning tests must be updated in the same change (as #5 does).
+- Both patches touch `backlog/backlog.yaml`: apply serially, never as two concurrent writers. The pinned item count becomes 49 after part 1 on top of #5 and 50 after part 2 (43 + 6 + 1); on today's `main` it would be 46 after part 1 alone. The count-pinning tests must be updated in the same change (as #5 does). Lane values below were normalised to `research` for all six audits and risk to `medium` for C and D, to match the lane PIDs; priority is kept P0 pending DR-13.
 - **PR #6** (`wo/GOAL-BACKUP-PLAN`, OPEN) is documentation only (`MANIFEST.md`, two `operations/` files). No backlog interaction; the only collision is `MANIFEST.md` with #5 and with any later change, resolved by `./tools/goal-docs --write` at integration.
 - Generated documents (`MASTER-BACKLOG.md`, `MANIFEST.md`) are regenerated by ROGUE at integration; this work order did not run `goal-docs --write`.
 
@@ -338,8 +366,8 @@ Rules: an auditor is never the drafter or worker of the lane; an auditor reviews
 ```yaml
   # GOLD MVP read-only audit items (CA directive 2026-10-15). Read-only, no engineering dependency.
   - id: GOLD-AUD-A
-    title: "GOLD MVP audit A: HERMES PROD XAUUSD Redis publication (read-only, increment of HERMES-CUR-001)"
-    lane: shared
+    title: "GOLD MVP audit A: HERMES PROD XAUUSD Redis publication (read-only; strict subset of HERMES-CUR-001 scope item 1)"
+    lane: research
     component: HERMES
     target_repository: maff0000/hermes
     priority: P0
@@ -348,7 +376,7 @@ Rules: an auditor is never the drafter or worker of the lane; an auditor reviews
     depends_on:
       - GOAL-DCP-001
     po_gate: true
-    matt_gate: true
+    matt_gate: true   # true pending the production-access decision (PD-5)
     pid_path: null
     architecture_refs:
       - architecture/DELIVERY-CONTROL-PLANE.md
@@ -356,7 +384,7 @@ Rules: an auditor is never the drafter or worker of the lane; an auditor reviews
 
   - id: GOLD-AUD-B
     title: "GOLD MVP audit B: locate and reconcile the HERMES Redis to HELIOS GOLD integration and review HSA packages (read-only)"
-    lane: trading
+    lane: research
     component: HELIOS
     target_repository: maff0000/HELIOS
     priority: P0
@@ -372,12 +400,12 @@ Rules: an auditor is never the drafter or worker of the lane; an auditor reviews
       - audits/2026-10-15/gold-mvp/PORTFOLIO.md
 
   - id: GOLD-AUD-C
-    title: "GOLD MVP audit C: shared contract reconciliation, compatibility matrix and evidence index (read-only, increment of GOAL-CONTRACT-001 and GOAL-TRIGGER-001)"
-    lane: shared
+    title: "GOLD MVP audit C: shared contract reconciliation, compatibility matrix and evidence index (read-only; complements GOAL-CONTRACT-001 and GOAL-TRIGGER-001)"
+    lane: research
     component: GOAL
     target_repository: maff0000/GOAL
     priority: P0
-    risk: low
+    risk: medium
     state: PID_DRAFT
     depends_on:
       - GOAL-DCP-001
@@ -390,11 +418,11 @@ Rules: an auditor is never the drafter or worker of the lane; an auditor reviews
 
   - id: GOLD-AUD-D
     title: "GOLD MVP audit D: TRON design, risk rules, journal, trigger intake and the smallest MT5 DEMO execution path (read-only)"
-    lane: trading
+    lane: research
     component: TRON/MT5
-    target_repository: maff0000/tron
+    target_repository: maff0000/GOAL
     priority: P0
-    risk: low
+    risk: medium
     state: PID_DRAFT
     depends_on:
       - GOAL-DCP-001
@@ -407,8 +435,8 @@ Rules: an auditor is never the drafter or worker of the lane; an auditor reviews
       - audits/2026-10-15/gold-mvp/PORTFOLIO.md
 
   - id: GOLD-AUD-E
-    title: "GOLD MVP audit E: FALCON registry and ingestion, minimum HELIOS and TRON event publication (read-only, increment of FALCON-T1)"
-    lane: trading
+    title: "GOLD MVP audit E: FALCON registry and ingestion, minimum HELIOS and TRON event publication (read-only; complements FALCON-T1)"
+    lane: research
     component: FALCON
     target_repository: maff0000/falcon
     priority: P0
@@ -427,7 +455,7 @@ Rules: an auditor is never the drafter or worker of the lane; an auditor reviews
     title: "GOLD MVP audit F: strategy qualification, registration, execution and NEO review across CER, HSA, DARWIN and NEO (read-only)"
     lane: research
     component: CER/HSA/DARWIN/NEO
-    target_repository: maff0000/CER
+    target_repository: maff0000/GOAL
     priority: P0
     risk: low
     state: PID_DRAFT
@@ -477,15 +505,17 @@ Rules: an auditor is never the drafter or worker of the lane; an auditor reviews
 
 Edge change (needs PD-1 option (b)): `PAPER-E2E-001.depends_on` gains `GOLD-MVP-001`. Later, after audits D and E: add the minimum sizing item and the minimum FALCON publication item to `GOLD-MVP-001.depends_on` once those items exist (PD-4).
 
-State is `PID_DRAFT` for all seven because their PID candidates are drafted; none may carry a `pid_path` until CA/PO approval, none is `DELIVERY_READY`. `./tools/goal-validate` on the patched backlog is expected clean (all ids resolve; part 2 requires #5). ROGUE regenerates generated documents and updates the item-count tests in the same change.
+State is `PID_DRAFT` for all seven because their PID candidates are drafted (`pids/GOLD-AUD-A.md` to `-F.md` and `pids/GOLD-MVP-001.md` exist in the consolidated branch, unapproved); none may carry a `pid_path` until CA/PO approval, none is `DELIVERY_READY`. The `target_repository` of D and F is `maff0000/GOAL` as in their lane PIDs (evidence mirrors go to component repositories; DR-15). `./tools/goal-validate` on the patched backlog is expected clean (all ids resolve; part 2 requires #5). ROGUE regenerates generated documents and updates the item-count tests in the same change.
 
-## 12. PO decisions needed (consolidated, with recommendations)
+## 12. PO decisions needed (original PD list; superseded by `DECISION-REGISTER.md`)
+
+The register consolidates PD-1 to PD-12 with every lane PID's open decisions and the PR #5 and #6 items, de-duplicated and ranked. The PD ids below are kept as references. Lane drafters' conclusions on PD-3 (D is a new item) and the amend-or-new questions of A, B, C, E, F are recorded in section 3; the PO confirms them in the register.
 
 | id | decision | options | recommendation | blocks |
 |---|---|---|---|---|
 | PD-1 | `GOLD-MVP-001` versus `PAPER-E2E-001` | (a) supersede; (b) keep both, `PAPER-E2E-001` depends on `GOLD-MVP-001`; (c) keep independent | (b) | approval of `GOLD-MVP-001` |
 | PD-2 | Header gates of `GOLD-MVP-001` | risk `capital` + Matt gate; or `high` with Matt gate at PAPER only | `capital`, Matt gate true | approval of `GOLD-MVP-001` |
-| PD-3 | Is lane D a new item or an increment of `TRON-D1-RATIFY` | new (recommended) or fold in | new: keeps the audit outside a Matt-gated ratification | dispatch of D |
+| PD-3 | Is lane D a new item or an increment of `TRON-D1-RATIFY` | new (lane D drafter concluded new) or fold in | new: keeps the audit outside a Matt-gated ratification | dispatch of D |
 | PD-4 | Add the missing MVP items: minimum fixed-size sizing (TRON-owned) and minimum FALCON `strategy_trigger`/`tron.*` publication | add after audits D and E confirm shape; fold into TRON-T3/T2 and FALCON-T3/T4 subset; wait for TRON-T5 | add bounded items after D and E report; do not wait for TRON-T5/CER-R1 | acceptance, not approval |
 | PD-5 | Read-only production Redis access for lane A | allow under 6.2 with Matt notification; require Matt gate; repo-only audit | allow under the 6.2 protocol; Matt informed and may waive the gate in one line; gate true by default until waived | start of A's runtime half |
 | PD-6 | Are all six audits dispatched concurrently | all six in wave 0; stagger C last | all six (the permission design makes them collision-free) | ROGUE scheduling |
@@ -498,4 +528,4 @@ State is `PID_DRAFT` for all seven because their PID candidates are drafted; non
 
 ## 13. Method and limits
 
-Read, read-only, on 2026-10-15: GOAL `main` @ `1739e74` documents listed in `pids/GOLD-MVP-001.md` Evidence; PR #5 and #6 file lists via `gh`; branch diffs and the reconciliation summary; the contract/trigger PIDs' headings and Current state; MT5 readiness headings and PR topology; TRON D1 ratification package head; GROUP-E, RECON-H1 and RECON-H2 excerpts; local git logs of the HELIOS and GOLD-STRATEGY-RUNTIME clones. Not done: no production system, Redis, broker, container or database was accessed; the six audit PID candidates and the lane drafters' branches were not read; component repositories beyond the cited excerpts were not audited (that is what the audits are for). Statements about the content of the PROD XAUUSD publication, the location of the earlier HERMES to HELIOS integration, and the TRON/MT5 implementation candidates are UNVERIFIED here by design. No `goal-docs --write`, no backlog edit, no `pid_path`, no approval record, no dispatch, no push.
+Read, read-only, on 2026-10-15: GOAL `main` @ `1739e74` documents listed in `pids/GOLD-MVP-001.md` Evidence; PR #5 and #6 file lists via `gh`; branch diffs and the reconciliation summary; the contract/trigger PIDs' headings and Current state; MT5 readiness headings and PR topology; TRON D1 ratification package head; GROUP-E, RECON-H1 and RECON-H2 excerpts; local git logs of the HELIOS and GOLD-STRATEGY-RUNTIME clones. Consolidation edit (later the same day): the seven drafted branches were merged into one branch and all six lane PIDs were read; sections 1 to 3a, 7.1, 8.3, 10, 11 and 12 were reconciled to them. Not done: no production system, Redis, broker, container or database was accessed; component repositories beyond the cited excerpts were not audited (that is what the audits are for). Statements about the content of the PROD XAUUSD publication, the location of the earlier HERMES to HELIOS integration, and the TRON/MT5 implementation candidates are UNVERIFIED here by design. No `goal-docs --write`, no backlog edit, no `pid_path`, no approval record, no dispatch, no push.

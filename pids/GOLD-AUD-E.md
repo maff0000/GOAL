@@ -1,15 +1,18 @@
 # GOLD-AUD-E — FALCON evidence audit and minimum HELIOS/TRON publication set (GOLD MVP Lane E)
 
-**Lane:** Research (read-only)  
+**Lane:** research  
 **Target repository:** `maff0000/falcon` (evidence PR; GOAL carries the cross-component index only)  
 **Priority:** P1  
 **Risk:** Low  
 **Matt gate:** No  
 **PO gate:** Yes  
-**Delivery:** ROGUE → FORGE
+**Delivery:** ROGUE → FORGE  
+**Complements:** `FALCON-T1` (carve-out: the excluded `strategy_trigger` and `tron.*` families), RECON-F's FALCON-T2/T3; amendment fallback in Dependencies and interfaces
 
-Header values are PROVISIONAL: `GOLD-AUD-E` is not in `backlog/backlog.yaml` at base `1739e74`; the
-GOLD-MVP master PID owns its registration. The lane value `research` is the CA frame.
+
+Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
+`audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
+six audits (CA frame). The PO sets final values.
 
 ## Status
 
@@ -179,23 +182,40 @@ authority (falcon Decision 15, `TRON-FALCON-CONTRACT.md` "Idempotency").
 ## Deliverables
 
 One evidence PR into `maff0000/falcon` (docs only, under `docs/evidence/GOLD-AUD-E/`, with
-`DOCUMENTATION-MANIFEST.json` updated as falcon CI requires) plus one GOLD-MVP index row. Ten evidence
-items:
+`DOCUMENTATION-MANIFEST.json` updated as falcon CI requires) plus one GOLD-MVP index row. Ten deliverable parts
+(EP-1 to EP-10; their mapping to CA's evidence numbering follows the table below the parts list):
 
 | # | Evidence item | Content |
 |---|---|---|
-| E1 | Delivered inventory | PIDs, PRs, merged SHAs, what is delivered versus design-only, with the PID-05 stale status header noted |
-| E2 | Running ingestion record | Container names, status, restart policy, health, labels; systemd finding; legacy-stack exclusion; UNVERIFIED list with reason |
-| E3 | Registry matrix | All 28 families by producer: registered, schema, fixture, emitting (yes/no), reconciliation owner (T1, T3, new) |
-| E4 | HELIOS needs | Families HELIOS must emit versus registered; mismatches from PID07 sections 12 and 18; `helios.health` ruling options |
-| E5 | TRON needs | Lifecycle gap analysis (below); mapping to registered `tron.*`; missing families |
-| E6 | Ingestion contract | mTLS per-producer identity binding, five identities, spoof results, publication gating of HELIOS and TRON inputs, authorisation path |
-| E7 | Volume and retention | Cadence-derived events per day per producer (estimate, labelled), retention class per family, UNMEASURED items |
-| E8 | Trigger-id hook | Field-level mapping from GOAL-TRIGGER-001 to registered fields; conflicts with `helios.strategy_trigger` and `tron.trigger_observed` |
-| E9 | Outside-the-path proof requirements | Mechanical publisher requirements (below) and a test per requirement |
-| E10 | Stale-language inventory | The file and line list in Current state 9, verdict per row, amendment route (falcon PID/amendment process) |
+| EP-1 | Delivered inventory | PIDs, PRs, merged SHAs, what is delivered versus design-only, with the PID-05 stale status header noted |
+| EP-2 | Running ingestion record | Container names, status, restart policy, health, labels; systemd finding; legacy-stack exclusion; UNVERIFIED list with reason |
+| EP-3 | Registry matrix | All 28 families by producer: registered, schema, fixture, emitting (yes/no), reconciliation owner (T1, T3, new) |
+| EP-4 | HELIOS needs | Families HELIOS must emit versus registered; mismatches from PID07 sections 12 and 18; `helios.health` ruling options |
+| EP-5 | TRON needs | Lifecycle gap analysis (below); mapping to registered `tron.*`; missing families |
+| EP-6 | Ingestion contract | mTLS per-producer identity binding, five identities, spoof results, publication gating of HELIOS and TRON inputs, authorisation path |
+| EP-7 | Volume and retention | Cadence-derived events per day per producer (estimate, labelled), retention class per family, UNMEASURED items |
+| EP-8 | Trigger-id hook | Field-level mapping from GOAL-TRIGGER-001 to registered fields; conflicts with `helios.strategy_trigger` and `tron.trigger_observed` |
+| EP-9 | Outside-the-path proof requirements | Mechanical publisher requirements (below) and a test per requirement |
+| EP-10 | Stale-language inventory | The file and line list in Current state 9, verdict per row, amendment route (falcon PID/amendment process) |
 
-**TRON lifecycle gap analysis (E5, audit to confirm).** CA lifecycle: claim, risk, order, fill, reconcile.
+**Mapping of the deliverable parts to CA's evidence numbering.**
+
+CA's ten mandatory evidence items, in CA's numbering (the numbering is CA's and is not to be changed by a lane): (1) PID/WO identifier and exact audited scope; (2) source repositories, revisions and relevant documentation references; (3) existing implementation: proven, partially proven, unverified or missing; (4) actual versus expected contract comparison; (5) tests, fixtures and evidence references; (6) specific defects and compatibility gaps; (7) reusable code and documentation; (8) minimum recommended implementation changes; (9) safety and deployment constraints; (10) independent audit verdict and any unresolved findings.
+
+| CA # | CA evidence item | This audit puts it in | Proof method |
+|---|---|---|---|
+| 1 | PID/WO identifier and exact audited scope | Evidence PR header: quoted scope; EP-1 delivered inventory | Quote equals approved PID |
+| 2 | Source repositories, revisions and documentation references | Audited falcon SHA and every cited path and commit (EP-1, EP-3); stale-document list at the audited SHA (EP-10) | `grep -n` re-run at the audited SHA matches the line numbers |
+| 3 | Existing implementation: proven, partially proven, unverified or missing | EP-1, EP-2 (running ingestion), EP-3 (28-family registry matrix), EP-4 / EP-5 (HELIOS and TRON versus registered); UNVERIFIED table with reasons | Matrix regenerated by a script from the registry; diff empty |
+| 4 | Actual versus expected contract comparison | EP-4, EP-5, EP-6 (ingestion contract), EP-8 (trigger-id hook mapping from `GOAL-TRIGGER-001` to registered fields; conflicts with `helios.strategy_trigger` and `tron.trigger_observed`) | Field-level mapping, no narrative cells |
+| 5 | Tests, fixtures and evidence references | EP-9 outside-the-path requirements, each with a test; regeneration script; fixtures named in the work list; audit log of runtime commands | Each requirement has a test; command log within allowed list |
+| 6 | Specific defects and compatibility gaps | Conflicts and registry debt in EP-3, EP-4, EP-5, EP-8; stale Graylog-as-transport language (EP-10) | Each gap with owner (T1, T3, new) |
+| 7 | Reusable code and documentation | Reusable: registry, fixtures, validator, non-blocking publisher pattern of PID-06 for HERMES and ARES (EP-1, EP-9) | Path and commit cited |
+| 8 | Minimum recommended implementation changes | Minimum publication work list P-H1..P-H4, P-T1, P-T2, P-F1, P-F2 with owner, delta, fixture, acceptance and sequencing (EP-4, EP-5, EP-7) | No row makes FALCON a precondition of a HELIOS or TRON decision |
+| 9 | Safety and deployment constraints | Safety: read-only runtime reads only, no event injection, no credential read; EP-6 authorisation path; EP-7 volume and retention (estimate labelled) | `git diff --stat` docs only; secret-scan clean |
+| 10 | Independent audit verdict and unresolved findings | Independent auditor (AUD-1) verdict file with unresolved findings | falcon CI green; fresh auditor GREEN with exact SHAs |
+
+**TRON lifecycle gap analysis (EP-5, audit to confirm).** CA lifecycle: claim, risk, order, fill, reconcile.
 Registered closest matches: claim to `tron.trigger_observed` (observed, not claimed: no claim or
 disposition family, no inbox receipt); risk to `tron.admission_decision`; order to `order_intent`,
 `order_submitted`, `order_update`; fill to `fill`, `position_state`, `protection_state`, `exit`,
@@ -203,7 +223,7 @@ disposition family, no inbox receipt); risk to `tron.admission_decision`; order 
 (`trigger_received`, `trigger_disposed` with the closed outcome vocabulary of GOAL-TRIGGER-001) and broker
 reconciliation result. Decision: extend by registered type within an existing family, or add families.
 
-**Minimum remaining publication work (E4/E5 output; owner is the component repository's persona, FALCON
+**Minimum remaining publication work (EP-4/EP-5 output; owner is the component repository's persona, FALCON
 side by Rogue):**
 
 | ID | Work | Owner | Schema / registry delta | Fixture | Sequencing |
@@ -221,16 +241,16 @@ side by Rogue):**
 
 Mechanical; every row passes or the audit is not accepted.
 
-1. E1 to E10 exist in the evidence PR, each with at least one cited repository path and commit SHA.
-2. The registry matrix in E3 has exactly 28 rows and is reproducible: a script in the PR regenerates it
+1. EP-1 to EP-10 exist in the evidence PR, each with at least one cited repository path and commit SHA.
+2. The registry matrix in EP-3 has exactly 28 rows and is reproducible: a script in the PR regenerates it
    from `registry/event_family_registry.v1.json` and a diff against the committed table is empty.
-3. Every claim in E2 carries its command (read-only) and output excerpt without secrets; every
+3. Every claim in EP-2 carries its command (read-only) and output excerpt without secrets; every
    unavailable fact appears in an UNVERIFIED table with the reason.
 4. The stale inventory lists at least the Current state 9 rows, re-verified by `grep -n` at the audited
    SHA, line numbers matching.
 5. The minimum work table has, per row: owner, delta, fixture, acceptance test and sequencing, and no row
    makes FALCON a precondition of a HELIOS or TRON decision.
-6. E9 states these requirements and a test for each: publication is asynchronous and non-blocking; the
+6. EP-9 states these requirements and a test for each: publication is asynchronous and non-blocking; the
    queue is bounded and drop-on-full is counted; FALCON unreachable, slow, rejecting or full leaves
    evaluation, claim, risk, order and reconcile outcomes byte-identical and timing within a stated bound;
    no publisher or TRON reads FALCON to decide, validate, dedupe or authorise; the durable record of a
@@ -251,7 +271,7 @@ Mechanical; every row passes or the audit is not accepted.
 - A secret, IP address or account identifier appears in any draft evidence: stop, redact, re-run
   `./tools/secret-scan`.
 - falcon main moves from `8f218ec` during the audit: re-base findings or pin the audited SHA and say so.
-- GOAL-TRIGGER-001 changes the trigger id or evidence-event names after the hook is recorded: stop E8 and
+- GOAL-TRIGGER-001 changes the trigger id or evidence-event names after the hook is recorded: stop EP-8 and
   re-read.
 
 ## Open decisions
@@ -260,7 +280,7 @@ Mechanical; every row passes or the audit is not accepted.
 |----|----------|-------|--------|
 | D-1 | Amend FALCON-T1 or new item (this PID recommends new) | PO | approval |
 | D-2 | Confirm FALCON is evidence-only and never gates entries (reverses Decision 16 coupling; RECON-F B2) | PO (CA) | approval |
-| D-3 | CA's numbered list of 10 evidence items was not in the author's brief; E1 to E10 here are derived from the directive and discovery list. Reconcile to CA's list | PO (CA) | approval |
+| D-3 | Retired: CA's numbered evidence list has been supplied and applied (see Deliverables); no decision remains | none | none |
 | D-4 | Authenticated Graylog read access for the audit (read-only account, or HELM-run read-only export) to close the UNVERIFIED rows | Matt (credentials) / HELM | later (audit may close with UNVERIFIED) |
 | D-5 | Durable backfill after FALCON outage: accepted loss (PID-06 precedent) or gap-fill from publisher and TRON journals | PO | later (FALCON-T2/T3) |
 | D-6 | Where trigger evidence emission lives (publisher component versus HELIOS) | PO | later (HELIOS-T3 PID; GOAL-TRIGGER-001 D-10) |
@@ -283,7 +303,7 @@ Mechanical; every row passes or the audit is not accepted.
 ## Evidence PR checklist
 
 - [ ] Branch `wo/GOAL-GOLD-AUD-E` in falcon, base audited SHA stated in the PR body
-- [ ] `docs/evidence/GOLD-AUD-E/` contains E1 to E10 and the regeneration script
+- [ ] `docs/evidence/GOLD-AUD-E/` contains EP-1 to EP-10 and the regeneration script; CA evidence items 1 to 10 present in CA numbering (table in Deliverables)
 - [ ] `DOCUMENTATION-MANIFEST.json` updated; internal links resolve
 - [ ] UNVERIFIED table present with reasons; no credential value anywhere
 - [ ] No IPs, accounts, credentials or key material (secret-scan and manual read)

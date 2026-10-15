@@ -1,12 +1,18 @@
 # GOLD-AUD-A — HERMES PROD XAUUSD Redis publication audit (GOLD MVP Lane A)
 
-**Lane:** Research (read-only audit)  
+**Lane:** research  
 **Target repository:** `maff0000/hermes`  
 **Priority:** P0  
 **Risk:** Medium  
 **Matt gate:** Yes, for production read access only (Open decision D1); no other Matt gate  
 **PO gate:** Yes  
-**Delivery:** ROGUE → HELM-lane operator (evidence run) → FORGE (docs/fixtures PR only)
+**Delivery:** ROGUE → HELM-lane operator (evidence run) → FORGE (docs/fixtures PR only)  
+**Complements:** `HERMES-CUR-001` (strict subset 'Increment A' of its scope item 1); amendment fallback below
+
+Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
+`audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
+six audits (CA frame). The PO sets final values.
+
 
 ## Status
 
@@ -244,20 +250,22 @@ Paths in `maff0000/hermes` (names proposed, final names by PL):
 7. Private evidence bundle reference (hash and storage identifier only).
 8. GOAL cross-component index entry (pointer to hermes PR and SHA; written by the PL).
 
-## Evidence PR checklist (CA's 10 mandatory items)
+## Evidence PR checklist (CA's ten mandatory evidence items, CA numbering)
 
-| # | Item | PR location | Proof method |
+CA's ten mandatory evidence items, in CA's numbering (the numbering is CA's and is not to be changed by a lane): (1) PID/WO identifier and exact audited scope; (2) source repositories, revisions and relevant documentation references; (3) existing implementation: proven, partially proven, unverified or missing; (4) actual versus expected contract comparison; (5) tests, fixtures and evidence references; (6) specific defects and compatibility gaps; (7) reusable code and documentation; (8) minimum recommended implementation changes; (9) safety and deployment constraints; (10) independent audit verdict and any unresolved findings.
+
+| CA # | CA evidence item | This audit puts it in | Proof method |
 |---|---|---|---|
-| 1 | Actual Redis keys | inventory.json `families[]`; AUDIT section 1 | count per pattern reproduces from the protocol SCAN log; auditor re-runs SCAN |
-| 2 | Schemas | inventory.json `schema`; fixtures | every fixture validates against its recorded field list; script check in PR |
-| 3 | Indicator coverage | AUDIT section 3 matrix | matrix cell for each of 8 `FACT_FIELDS` indicators x 7 timeframes is PRESENT/NULL/ABSENT, no blanks |
-| 4 | Timeframes | AUDIT section 3; inventory.json | M1, M5, M15, M30, H1, H4, D1 each have an explicit row |
-| 5 | Freshness | AUDIT section 4 | lag figures recomputed from fixture timestamps by a test |
-| 6 | Timestamps | AUDIT section 4 | four times recorded separately per key; none merged or inferred |
-| 7 | Historical warm-up | AUDIT section 5 | first/last/expected/present per timeframe; recomputed from index fixtures |
-| 8 | Validation | AUDIT section 6 | each validation field listed with observed values; "never observed" explicit |
-| 9 | Status | AUDIT section 6 | each status key/field with observed enumeration and a stale/failure observation or "not observed" |
-| 10 | Documented-vs-actual comparison | contract-comparison.md | every documented key and every observed family has exactly one classification row |
+| 1 | PID/WO identifier and exact audited scope | PR description header and AUDIT section 0: quoted scope sentence of the approved PID; D1 approval quoted | Quoted text equals the approved PID scope; approval timestamp precedes bundle capture |
+| 2 | Source repositories, revisions and documentation references | AUDIT section 0 and `inventory.json` `sources[]`: full SHAs of hermes and HELIOS, documentation paths, PROD instance identification (D2) | Every SHA re-resolves; auditor re-reads each cited document |
+| 3 | Existing implementation: proven, partially proven, unverified or missing | `inventory.json` `families[]` and the AUDIT coverage matrix (Scope 1, 3, 5, 6, 7, 8): each family, timeframe and indicator marked proven / partial / unverified / missing (PRESENT / NULL / ABSENT cells map to these) | Count per pattern reproduces from the protocol SCAN log; matrix of 8 `FACT_FIELDS` indicators x 7 timeframes has no empty cell; auditor re-runs SCAN |
+| 4 | Actual versus expected contract comparison | `contract-comparison.md` (Scope 9): each documented key and each observed family classified MATCH, DIVERGENT, UNDOCUMENTED or DOCUMENTED-NOT-LIVE; field list, types, TTL, the four timestamps kept separate, freshness and status enumerations | Exactly one classification row per documented key and per observed family |
+| 5 | Tests, fixtures and evidence references | `tests/fixtures/prod_audit/xau_usd/` with `MANIFEST.json`; `protocol.md` command log; script checks (fixtures validate against recorded field lists; lag and warm-up figures recomputed) | SHA-256 in MANIFEST verifies; recomputed lag and warm-up equal reported values |
+| 6 | Specific defects and compatibility gaps | `defects.md`: id, evidence, severity, proposed owner, closing work item | Every DIVERGENT or UNDOCUMENTED row has a defect entry |
+| 7 | Reusable code and documentation | AUDIT section 'Reuse': `utils/tick_contract_v1.py`, candle and indicator builders, sanitised golden samples reusable by HERMES-FACT-001, HERMES-GR-001 and the HELIOS consumer mapping (path and revision, reuse boundary) | Each reuse entry cites path and revision |
+| 8 | Minimum recommended implementation changes | AUDIT section 'Recommendations': minimum changes, each mapped to `HERMES-FACT-001`, `HERMES-CUR-001`, `HELIOS-T2` or OPS-SAFE-002/003 (listed, not fixed) | Each recommendation names an existing or proposed owning item |
+| 9 | Safety and deployment constraints | `protocol.md` allow-list and S8 before/after (`run_id`, `DBSIZE`); sanitisation record; perimeter observations escalated to OPS-SAFE-002 only; recreate-skew note | Script asserts every logged command is allow-listed; `run_id` unchanged; S5 grep and secret-scan empty |
+| 10 | Independent audit verdict and unresolved findings | Verdict file in the PR by the independent auditor (AUD-1) with unresolved findings and what the verdict does not cover | Fresh auditor GREEN / AMBER / RED with exact SHAs; PO acceptance recorded separately |
 
 ## Acceptance
 

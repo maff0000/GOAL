@@ -6,7 +6,13 @@
 **Risk:** low  
 **Matt gate:** No  
 **PO gate:** Yes  
-**Delivery:** ROGUE → FORGE (read-only audit increment)
+**Delivery:** ROGUE → FORGE (read-only audit increment)  
+**Complements:** `HELIOS-T2` (this audit is a pre-increment of it), `HELIOS-T1`, `HERMES-FACT-001`, `GOLD-STRATEGY-RUNTIME`
+
+Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
+`audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
+six audits (CA frame). The PO sets final values.
+
 
 ## Status
 
@@ -222,23 +228,23 @@ In scope, all read-only:
 
 1. **Evidence PR** into `maff0000/HELIOS` containing
    `docs/evidence/GOLD-AUD-B.md` (sanitised) and supporting tables, plus a
-   `maff0000/GOAL` cross-component index entry. Checklist:
+   `maff0000/GOAL` cross-component index entry. The checklist is CA's ten mandatory evidence items in CA's numbering:
 
-   | # | Evidence item | Present |
-   |---|---|---|
-   | 1 | Search method and exact commands, including the negative-search record | [ ] |
-   | 2 | Candidate inventory (path, repo, commit, nature, status, mark) | [ ] |
-   | 3 | Source-level reading of each candidate that touches HERMES data | [ ] |
-   | 4 | HERMES-to-`MarketFactFrame` field mapping with gaps | [ ] |
-   | 5 | Schema version and provenance reconciliation | [ ] |
-   | 6 | Reuse / adapt / rewrite classification per component | [ ] |
-   | 7 | Gap list, each gap with an owner repository | [ ] |
-   | 8 | Minimum adaptation plan mapped to `HELIOS-T2` and `HERMES-FACT-001` | [ ] |
-   | 9 | HSA package ranking and what must change | [ ] |
-   | 10 | Sanitisation attestation and unchanged-HELIOS test result | [ ] |
+   CA's ten mandatory evidence items, in CA's numbering (the numbering is CA's and is not to be changed by a lane): (1) PID/WO identifier and exact audited scope; (2) source repositories, revisions and relevant documentation references; (3) existing implementation: proven, partially proven, unverified or missing; (4) actual versus expected contract comparison; (5) tests, fixtures and evidence references; (6) specific defects and compatibility gaps; (7) reusable code and documentation; (8) minimum recommended implementation changes; (9) safety and deployment constraints; (10) independent audit verdict and any unresolved findings.
 
-   The ten items above are the evidence set for Central Architecture; if the
-   CA's own numbering differs, this table is mapped to it in the PR body.
+   | CA # | CA evidence item | This audit puts it in | Proof method |
+   |---|---|---|---|
+   | 1 | PID/WO identifier and exact audited scope | `docs/evidence/GOLD-AUD-B.md` header: quoted scope sentence; audit id | Quote equals approved PID |
+   | 2 | Source repositories, revisions and documentation references | Search method and exact commands including the negative-search record; revisions (full SHA) of HELIOS, GOLD-STRATEGY-RUNTIME, HSA, legacy lineage; documentation references | Commands re-run to the recorded SHAs |
+   | 3 | Existing implementation: proven, partially proven, unverified or missing | Candidate inventory (path, repo, commit, nature, status, mark) and source-level reading of each candidate touching HERMES data; reuse / adapt / rewrite classification per component; marks PROVEN / PARTIAL / UNVERIFIED map to proven / partially proven / unverified, absent artefacts to missing | Every row has a mark; every PROVEN row names a path or command and a commit or date |
+   | 4 | Actual versus expected contract comparison | HERMES-to-`MarketFactFrame` field mapping, schema version and provenance reconciliation, HSA package field needs versus the mapping | Field-level, no narrative cells; every gap named |
+   | 5 | Tests, fixtures and evidence references | Unchanged-HELIOS test result (baseline 1005 at `7f7193d`); throwaway no-network container reproduction of the probe's accept and refuse results using captured sanitised samples | Same pass count; no test or source file modified |
+   | 6 | Specific defects and compatibility gaps | Gap list, each gap with an owner repository and a closing proof | Every gap has owner and closing proof |
+   | 7 | Reusable code and documentation | Reuse inventory and HSA package ranking with what must change in each | Each GOLD-capable package has a ranked row |
+   | 8 | Minimum recommended implementation changes | Minimum adaptation plan mapped to `HELIOS-T2` and `HERMES-FACT-001`: ordered, with target repository, owner persona, dependency and closing proof | Each step maps to an existing item |
+   | 9 | Safety and deployment constraints | Sanitisation attestation; recorded command log (no write, no `docker exec`, no unit-state change); no second reader | Sanitisation grep empty; auditor repeats it |
+   | 10 | Independent audit verdict and unresolved findings | Independent auditor (AUD-2) verdict file with unresolved findings | Fresh auditor GREEN / AMBER / RED with exact SHAs |
+
 2. **Reuse inventory** (table, item 2 and 6).
 3. **Gap list** (item 7).
 4. **Minimum adaptation plan** (item 8): ordered, each step with target

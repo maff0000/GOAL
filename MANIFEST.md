@@ -22,6 +22,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `audits/2026-10-13/goal-dcp-001/FINAL-AUDIT-VERDICT.md`
 - `audits/2026-10-13/goal-dcp-001/FINAL-RECONCILIATION-EVIDENCE.md`
 - `audits/2026-10-13/goal-dcp-001/REPAIR-EVIDENCE.md`
+- `audits/2026-10-15/gold-mvp/PORTFOLIO.md`
 - `backlog/MASTER-BACKLOG.md`
 - `backlog/SCHEMA.md`
 - `backlog/backlog.yaml`
@@ -35,6 +36,13 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `operations/ROGUE-DISPATCH-GOAL-DCP-001.md`
 - `operations/ROGUE-READINESS.md`
 - `pids/GOAL-DCP-001.md`
+- `pids/GOLD-AUD-A.md`
+- `pids/GOLD-AUD-B.md`
+- `pids/GOLD-AUD-C.md`
+- `pids/GOLD-AUD-D.md`
+- `pids/GOLD-AUD-E.md`
+- `pids/GOLD-AUD-F.md`
+- `pids/GOLD-MVP-001.md`
 - `templates/DECISION-BRIEF.md`
 - `tests/fixtures/README.md`
 - `tests/fixtures/backlog-pid-mismatch.yaml`

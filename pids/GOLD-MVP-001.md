@@ -1,6 +1,6 @@
 # GOLD-MVP-001 — GOLD MVP cross-component integration and acceptance (one governed XAUUSD strategy on Vantage DEMO)
 
-**Lane:** Trading (proposed backlog value `trading`)  
+**Lane:** trading  
 **Target repository:** `maff0000/GOAL`  
 **Priority:** P0  
 **Risk:** Capital (proposed; carries the explicit PAPER gate, see Open decisions D-2)  
@@ -8,7 +8,7 @@
 **PO gate:** Yes  
 **Delivery:** ROGUE → FORGE
 
-Header values are PROPOSED. `GOLD-MVP-001` is not yet in `backlog/backlog.yaml`; the exact
+Header values are PROPOSED (lane vocabulary is the backlog set {shared, research, trading, ops}). `GOLD-MVP-001` is not yet in `backlog/backlog.yaml`; the exact
 backlog patch is specified in `audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11 and is not applied.
 Central Architecture/PO set the final values.
 
@@ -46,7 +46,7 @@ fabric-only claims are labelled. Anything not read in a source is UNVERIFIED. Th
 | HERMES | Market-truth contracts and replay in `maff0000/hermes` (HMT-1, RECON-H1 table); a PROD XAUUSD Redis publication is stated to exist | publication contents UNVERIFIED here: audited by `GOLD-AUD-A` |
 | HERMES data provenance | live facts come from one venue feed, microstructure truth is CME gold futures, execution is a Vantage MT5 gold CFD; the alignment basis is named only in an unauthorised HMT-3H candidate (RECON-H1 section 2.6) | proven as a gap; see D-6 |
 | HELIOS | `maff0000/HELIOS` `main` @ `7f7193d` (PR #1, independent PRODUCT_GREEN, 1005 tests per GROUP-E-REPORT), execution-blind enforced by a vocabulary test, HSA package loader, FALCON publication boundary, Docker runtime | proven for v1; live HERMES client is a file-feed fixture source only (RECON-H2 table); an earlier Redis-to-HELIOS proof branch stops at `WAITING_FOR_HERMES_BACKFILL` |
-| Earlier HERMES-to-HELIOS GOLD integration | `GOLD-STRATEGY-RUNTIME` `main` @ `5891415` composes HSA + HELIOS + CER as one platform (RUNTIME_PRODUCT_GREEN, assurance-tooling residual); its architecture predates TRON and the trigger (RECON-H1 section 1) | partially located; reconciliation is `GOLD-AUD-B` |
+| Earlier HERMES-to-HELIOS GOLD integration | `GOLD-STRATEGY-RUNTIME` `main` @ `5891415` composes HSA + HELIOS + CER as one platform (RUNTIME_PRODUCT_GREEN, assurance-tooling residual); its architecture predates TRON and the trigger (RECON-H1 section 1) | located and negative: no completed HERMES Redis to new-HELIOS integration exists (HELIOS has no Redis client; the deployed GOLD stack is fixture-fed; the proof branch ended `WAITING_FOR_HERMES_BACKFILL`), so the HERMES to HELIOS reader is a build item in `HELIOS-T2` scope (GOLD-AUD-B Current state; PORTFOLIO section 3a); to be proven by `GOLD-AUD-B` |
 | Strategy contract | `GOAL-CONTRACT-001` and `GOAL-TRIGGER-001` PID candidates on `wo/GOAL-CONTRACT-TRIGGER` @ `64c843b`, plus `ADR-CONTRACT-001`; none approved; three live strategy representations with no shared contract (HSA package, HELIOS package, DARWIN `StrategyVersion`) | candidates only |
 | Trigger transport | the TradingTriggerInbox specification was searched for and NOT found (GOAL-TRIGGER-001 Current state 1); three incompatible inbound models exist (FALCON discovery, TRON D1 Redis board, backlog titles) | missing |
 | TRON | `maff0000/tron` `main` @ `5577039` is `PID.md` + scripts only; the D1 design baseline is on an unmerged branch (20 commits) pending `TRON-D1-RATIFY` (Matt gate); no runtime code | design only |
@@ -241,7 +241,7 @@ Sources read 2026-10-15 (read-only): GOAL `README.md`, `architecture/DELIVERY-CO
 `wo/GOAL-CONTRACT-TRIGGER` @ `64c843b`; `wo/GOAL-TRON-D1-RATIFY` @ `d5f6d32`; `wo/GOAL-MT5-READINESS` @ `fe43db3`;
 `wo/GOAL-MT5-DEMO-VERIFY` @ `da2e4ea`; `wo/GOAL-PID-WAVE1-E-helios` (`GROUP-E-REPORT.md`);
 `wo/GOAL-RECON-H1-datachain` and `-H2-tradechain` reports; `gh pr list` for GOAL; local `git log` of the HELIOS and
-GOLD-STRATEGY-RUNTIME clones; `audits/2026-10-15/gold-mvp/PORTFOLIO.md` (this work order). Not read: any production
+GOLD-STRATEGY-RUNTIME clones; `audits/2026-10-15/gold-mvp/PORTFOLIO.md` (this work order); the six lane PID candidates `pids/GOLD-AUD-A.md` to `-F.md` (their findings are summarised in PORTFOLIO section 3a). Not read: any production
 service, Redis, broker or container; component repositories beyond the logs cited.
 
 ## Approval

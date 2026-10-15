@@ -1,12 +1,18 @@
 # GOLD-AUD-F — Lane F audit: CER / HSA / DARWIN / NEO qualification-to-review path
 
-**Lane:** Research  
+**Lane:** research  
 **Target repository:** `maff0000/GOAL`  
 **Priority:** P1  
 **Risk:** Low  
 **Matt gate:** No  
 **PO gate:** Yes  
-**Delivery:** ROGUE → FORGE (read-only audit; evidence PRs into component repositories, GOAL cross-index)
+**Delivery:** ROGUE → FORGE (read-only audit; evidence PRs into component repositories, GOAL cross-index)  
+**Complements:** `CER-R1`, `NEO-R1`, `HSA-C1`, `DARWIN-R2` (none amended; Deliverable 8 holds ready-to-apply amendment text)
+
+Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
+`audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
+six audits (CA frame). The PO sets final values.
+
 
 ## Status
 
@@ -138,27 +144,29 @@ At closure the component repositories and GOAL hold a dated, reproducible audit 
 7. **Cross-index** in GOAL listing the four component evidence PRs and their merge SHAs.
 8. **Amendment text proposals** (not applied) for CER-R1, NEO-R1, HSA-C1 and DARWIN-R2, plus candidate rows only where a gap has no home. Informed by RECON-G S1-S8 and RECON-H1 P-14.
 
-CA evidence items (the numbered list was not supplied to this author; this mapping follows the directive wording and is for CA to reconcile):
+CA's ten mandatory evidence items, in CA's numbering, as carried by `AUDIT-F.md`:
 
-| Item | Evidence | Satisfied by |
-|---|---|---|
-| E1 | Strategy versioning | Deliverable 1 section, matrix hops 1-2 |
-| E2 | Evidence storage | Deliverable 1, matrix hop 6 |
-| E3 | Causal-testing capability | Deliverable 1, matrix hops 3-5 |
-| E4 | Promotion architecture | Deliverable 1, matrix hop 7 |
-| E5 | NEO review architecture | Deliverable 1, matrix hops 9-10 |
-| E6 | Qualification-to-review path | Deliverable 2 |
-| E7 | Reuse without rebuild | Deliverable 5 |
-| E8 | External repository and SaaS evaluations | Deliverable 4 |
-| E9 | MVP minimum, sequencing against the trigger path | Deliverable 3 |
-| E10 | Amendments, gaps and open decisions | Deliverables 6 and 8 |
+CA's ten mandatory evidence items, in CA's numbering (the numbering is CA's and is not to be changed by a lane): (1) PID/WO identifier and exact audited scope; (2) source repositories, revisions and relevant documentation references; (3) existing implementation: proven, partially proven, unverified or missing; (4) actual versus expected contract comparison; (5) tests, fixtures and evidence references; (6) specific defects and compatibility gaps; (7) reusable code and documentation; (8) minimum recommended implementation changes; (9) safety and deployment constraints; (10) independent audit verdict and any unresolved findings.
+
+| CA # | CA evidence item | This audit puts it in | Proof method |
+|---|---|---|---|
+| 1 | PID/WO identifier and exact audited scope | AUDIT-F section 0: quoted scope (qualify, register, execute, review one GOLD strategy) | Quote equals approved PID |
+| 2 | Source repositories, revisions and documentation references | Base SHAs for GOAL, DARWIN, CER, HSA, HELIOS, GOLD-STRATEGY-RUNTIME and neo; documentation references; the external evaluation sources (Deliverable 1 and 4) | Auditor re-reads each at the SHA |
+| 3 | Existing implementation: proven, partially proven, unverified or missing | Path matrix of 10 hops, each exists / partial / missing with a re-runnable citation (Deliverable 2): strategy versioning, evidence storage, causal testing, promotion, NEO review | Every hop has a mark and a citation |
+| 4 | Actual versus expected contract comparison | Representation comparison HSA / HELIOS / DARWIN / CER for `gold_context_breakout` 1.0.0 (identity and fingerprint across hops), evidence-class sufficiency per promotion state, APOLLO 006B scope versus the candidate | Same identity and fingerprint tested hop to hop |
+| 5 | Tests, fixtures and evidence references | Re-runnable commands, count checks (10 hops; every `trinity:repo_review:*` key and archaeology document in the register), before and after identity snapshots | Snapshots equal; counts match |
+| 6 | Specific defects and compatibility gaps | Gap list with owner or 'no home' (Deliverable 6): deployment gap, undefined `EdgeProfileVersion`, NEO observer failure, no APOLLO_PROOF runs | Each missing mark names an owner or 'no home' |
+| 7 | Reusable code and documentation | No-rebuild register (Deliverable 5) and external evaluation register with reuse recommendations, licence and service flags (Deliverable 4) | Each reuse recommendation names the engineering saved and any new service |
+| 8 | Minimum recommended implementation changes | MVP minimum for the first GOLD strategy and sequencing against the trigger path (Deliverable 3); amendment text proposals for CER-R1, NEO-R1, HSA-C1, DARWIN-R2 (Deliverable 8), not applied | Each change maps to an existing item or 'no home' |
+| 9 | Safety and deployment constraints | Safety and deployment constraints: NEO practice executor assessed from source only, no broker call, no installation of evaluated code, licence posture (D9), no third-party service as a prerequisite | No outbound call to any evaluated service in the record; secret-scan clean |
+| 10 | Independent audit verdict and unresolved findings | Independent auditor (AUD-3) verdict file with unresolved findings; evidence PR list with SHAs | Fresh auditor GREEN with exact SHAs; PO acceptance recorded |
 
 ## Acceptance
 
 GREEN requires, mechanically:
 
 1. Every matrix hop carries an exists / partial / missing mark and at least one citation (repository path with commit SHA, or a command with its captured output) that an auditor re-runs and reproduces.
-2. A count check passes: the matrix has 10 hops, the evidence table has E1-E10, the external register lists every Fabric key under `trinity:repo_review:*` and every legacy reuse document under DARWIN `docs/archaeology/`.
+2. A count check passes: the matrix has 10 hops, the evidence table has CA items 1 to 10, the external register lists every Fabric key under `trinity:repo_review:*` and every legacy reuse document under DARWIN `docs/archaeology/`.
 3. `./tools/goal-validate` and `./tools/secret-scan` are GREEN on every GOAL commit; a grep for IPv4 addresses, ports and key-like strings over all committed files returns nothing.
 4. Before and after each inspected system, identity is unchanged: git HEAD of each inspected checkout, container ids and start times, and `git status` are recorded and equal. No file under `/srv/NEO`, `/srv/DARWIN`, `/srv/CER` or `/srv/HSA` changed.
 5. No external code was installed or executed; no outbound call to any evaluated service is in the record.
@@ -195,7 +203,7 @@ Do not invent around a stop condition.
 
 **D7 — Meaning or fate of `LEAN-P1` and `DARWIN-R2` (RECON-H1 D-5, P-10; later).** Owner PO.
 
-**D8 — Meaning of CA's "10 evidence items" (blocks approval).** The numbered list was not provided; E1-E10 above are this author's reading. Owner CA.
+**D8 — Retired.** CA's numbered evidence list has been supplied and applied (see Deliverables); no decision remains.
 
 **D9 — Licence posture for GPL / AGPL libraries (blocks any reuse recommendation being acted on).** backtrader fork is GPL-3.0 and backtesting.py is AGPL-3.0; compatibility with the repository visibility and licence of DARWIN and GOAL is UNVERIFIED. Owner PO.
 
@@ -222,7 +230,7 @@ Do not invent around a stop condition.
 - [ ] `maff0000/GOAL`: audit record, matrix, external register, amendment proposals, cross-index. PR link and SHA: ____
 - [ ] Each PR passes secret-scan; no address, port, account or credential text
 - [ ] Before and after identity snapshots attached and equal (Acceptance 4)
-- [ ] CA evidence items E1-E10 each mapped to a section (D8 reconciled)
+- [ ] CA evidence items 1 to 10 each present in `AUDIT-F.md` in CA numbering
 - [ ] Fresh independent FORGE Auditor verdict recorded
 
 ## Approval

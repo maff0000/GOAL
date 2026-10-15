@@ -1,12 +1,18 @@
 # GOLD-AUD-D — GOLD MVP Lane D: TRON / MT5 minimum DEMO execution path gap analysis
 
-**Lane:** Research (read-only)  
+**Lane:** research  
 **Target repository:** `maff0000/GOAL` (evidence PRs also into `maff0000/tron` and, for MT5 facts, `maff0000/mt5-gateway`)  
 **Priority:** P0  
 **Risk:** Medium (read-only audit; the path it analyses is capital-adjacent)  
 **Matt gate:** No  
 **PO gate:** Yes  
 **Delivery:** ROGUE → FORGE  
+**Complements:** `TRON-D1-RATIFY` (consumed, not redone), `MT5-GW-001`; amendment fallback in Purpose
+
+Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
+`audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
+six audits (CA frame). The PO sets final values.
+
 **Audit id:** GOLD-AUD-D (child audit of GOLD-MVP-001)  
 **Depends on:** `GOAL-DCP-001` only  
 **Status:** DRAFT CANDIDATE
@@ -158,22 +164,24 @@ All deliverables are committed under `audits/<date>/gold-aud-d/` in a GOAL evide
 8. **Findings and contradictions** (`FINDINGS.md`): contradictions between cited documents and current repositories, each classed PROVEN / INFERRED / UNPROVEN.
 9. **Evidence hashes** (`EVIDENCE-HASHES.txt`) and the Evidence PR checklist below.
 
-### CA evidence items mapping
+### Evidence items (CA numbering)
 
-The CA's ten evidence items are carried by GOLD-MVP-001. Until the parent PID is merged this PID uses the placeholders E1..E10 below; the parent author replaces them with the CA's numbering.
+The ten evidence items below are CA's, in CA's numbering. The deliverable numbers refer to the Deliverables list above.
 
-| Id | Evidence | Deliverable |
-|----|----------|-------------|
-| E1 | Baseline SHAs and refs read (GOAL, TRON, mt5-gateway) | 1 |
-| E2 | TRON D1 and implementation-candidate inventory | 1, 3 |
-| E3 | Risk rules and hard-gate coverage against the path | 2 (H3), 6 |
-| E4 | Execution journal assumptions and minimum viable journal | 2 (H2) |
-| E5 | Trigger-intake assumptions versus GOAL-TRIGGER-001 | 4 |
-| E6 | MT5 gateway state after MT5-GW-001 | 2 (H4, H5), 8 |
-| E7 | Other execution candidates assessed for reuse | 3 |
-| E8 | Gap matrix exists / partial / missing | 2 |
-| E9 | Minimal increment list with owner and classification | 5, 6 |
-| E10 | Ordering against the typed-gateway requirement | 7 |
+CA's ten mandatory evidence items, in CA's numbering (the numbering is CA's and is not to be changed by a lane): (1) PID/WO identifier and exact audited scope; (2) source repositories, revisions and relevant documentation references; (3) existing implementation: proven, partially proven, unverified or missing; (4) actual versus expected contract comparison; (5) tests, fixtures and evidence references; (6) specific defects and compatibility gaps; (7) reusable code and documentation; (8) minimum recommended implementation changes; (9) safety and deployment constraints; (10) independent audit verdict and any unresolved findings.
+
+| CA # | CA evidence item | This audit puts it in | Proof method |
+|---|---|---|---|
+| 1 | PID/WO identifier and exact audited scope | Evidence PR header (quote of the single question and the CA directive); deliverable 1 | Quote equals approved PID |
+| 2 | Source repositories, revisions and documentation references | `BASELINE.md` (deliverable 1): refs and SHAs of GOAL, TRON (main and the D1 branch) and mt5-gateway (main and PR #9), documents read | Baseline commands re-run to the recorded SHAs and counts |
+| 3 | Existing implementation: proven, partially proven, unverified or missing | `GAP-MATRIX.md` (deliverable 2, at least 24 rows over hops H1..H6) and `CANDIDATES.md` (deliverable 3): each capability exists / partial / missing, mapped to proven / partially proven / unverified / missing, with citation | Every exists / partial cell cites a path with SHA or a PR number |
+| 4 | Actual versus expected contract comparison | `TRIGGER-ASSUMPTIONS.md` (deliverable 4): intake assumptions of TRON D1, TRON-T1/T4 and HELIOS-T3 versus `GOAL-TRIGGER-001`; MT5 gateway state versus the template contract (GAP-MATRIX H4, H5) | Each assumption classed covered / contradicted / unspecified |
+| 5 | Tests, fixtures and evidence references | `EVIDENCE-HASHES.txt` (deliverable 9) and the recorded re-confirmation command transcripts; reference to the D1 gate (148 tests) | Hash list verifies; commands reproduce |
+| 6 | Specific defects and compatibility gaps | `FINDINGS.md` (deliverable 8): contradictions and defects, each PROVEN / INFERRED / UNPROVEN, plus the gap matrix rows with status missing | No finding without a class; UNPROVEN items name the needed observation |
+| 7 | Reusable code and documentation | `CANDIDATES.md`: reuse verdict (learn / adapt design / reject) per candidate, including NEO's practice bridge and legacy executors (source read only) | Verdict and reason per candidate |
+| 8 | Minimum recommended implementation changes | `INCREMENTS.md` (deliverable 5) and `ORDERING.md` (deliverable 7): smallest ordered increments with owner, repository, backlog id, done-test; typed gateway before TRON integration or PAPER proof | Each increment maps to a backlog id or template increment, or a justified new id |
+| 9 | Safety and deployment constraints | `PROOF-CLASSES.md` (deliverable 6) credential-free / DEMO read-only / write-approval; no broker call, bridge connection or legacy executor interaction (signed statement in `FINDINGS.md`); public-repo scan | No credential-free increment references a broker, instance, account or secret; scan empty |
+| 10 | Independent audit verdict and unresolved findings | Independent auditor (AUD-3) verdict file with unresolved findings | Fresh auditor GREEN with exact SHA; merge authorised separately by the PO |
 
 ## Acceptance
 
@@ -233,7 +241,7 @@ Required evidence package (PR into GOAL under `audits/`, mirrors into the compon
 - [ ] `maff0000/tron` evidence PR: TRON facts (inventory, gate coverage, journal, trigger assumptions) under `audits/`, no change to `main` content outside `audits/`
 - [ ] `maff0000/mt5-gateway` evidence PR: MT5 facts (state after MT5-GW-001, gap rows) under `docs/evidence/`, no change to source, compose or template files
 - [ ] Cross-index entry in GOAL pointing to both mirror PRs and to GOLD-MVP-001
-- [ ] E1..E10 mapped to the CA's numbering in the parent PID
+- [ ] CA evidence items 1 to 10 present in CA numbering (table in Deliverables)
 - [ ] Public-repo scan clean (acceptance 11)
 - [ ] No change to `backlog/backlog.yaml` or other PIDs (acceptance 9)
 - [ ] No broker call, bridge connection or legacy executor interaction occurred (statement signed in `FINDINGS.md`)

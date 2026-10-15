@@ -1,16 +1,19 @@
 # GOLD-AUD-C — Shared contract reconciliation and consumer/provider packages (CP-1, CP-2)
 
-**Lane:** research (read-only audit; the contract packages it produces are specifications)  
+**Lane:** research  
 **Target repository:** `maff0000/GOAL`  
 **Priority:** P0  
 **Risk:** Medium (specification only; no runtime change)  
 **Matt gate:** No (D-3 of GOAL-TRIGGER-001 keeps its own Matt gate; this item does not decide it)  
 **PO gate:** Yes  
 **Delivery:** ROGUE -> FORGE (evidence and contract PRs into `maff0000/GOAL`)  
-**depends_on:** `GOAL-DCP-001` only (CLOSED)
+**depends_on:** `GOAL-DCP-001` only (CLOSED)  
+**Complements:** `GOAL-CONTRACT-001`, `GOAL-TRIGGER-001` (approval owners; this item freezes nothing); amendment fallback in D-C2
 
-Header values are PROVISIONAL: `GOLD-AUD-C` is not in `backlog/backlog.yaml` and this candidate does not edit it. Master author folds it into
-`pids/GOLD-MVP-001.md` on `wo/GOAL-GOLD-MVP`.
+Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
+`audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
+six audits (CA frame). The PO sets final values.
+This item is a read-only audit; the contract packages it produces are specifications marked PROPOSED.
 
 ## Status
 
@@ -219,18 +222,22 @@ Paths proposed for the evidence PR (fixed in the first PL step); all inside `maf
    second checker).
 5. Evidence PR(s) to `maff0000/GOAL` mapped to CA's ten evidence items using the checklist below.
 
-### Evidence PR checklist (PL maps each to CA's numbering at dispatch)
+### Evidence PR checklist (CA's ten mandatory evidence items, CA numbering)
 
-- [ ] E-1 Base SHAs of every cited repository and branch recorded; working trees unmodified.
-- [ ] E-2 HERMES published-surface inventory for CP-1 (keys, envelope, version strings, ACL boundary).
-- [ ] E-3 HELIOS input contract and rejection rules captured and cross-referenced.
-- [ ] E-4 Trigger, signing and outbox code search results (negative results stated with scope and commands).
-- [ ] E-5 TRON intake assumptions and terminal states mapped to CP-2 outcomes.
-- [ ] E-6 FALCON registry and trigger schema delta table.
-- [ ] E-7 Contradiction-register re-test of C-1..C-14, T-1..T-11.
-- [ ] E-8 CP-1 and CP-2 packages with golden fixtures and rejection matrices.
-- [ ] E-9 Compatibility-matrix contribution and conformance test obligations.
-- [ ] E-10 Validation output (`goal-validate`, `secret-scan`, tests) and open-decision list.
+CA's ten mandatory evidence items, in CA's numbering (the numbering is CA's and is not to be changed by a lane): (1) PID/WO identifier and exact audited scope; (2) source repositories, revisions and relevant documentation references; (3) existing implementation: proven, partially proven, unverified or missing; (4) actual versus expected contract comparison; (5) tests, fixtures and evidence references; (6) specific defects and compatibility gaps; (7) reusable code and documentation; (8) minimum recommended implementation changes; (9) safety and deployment constraints; (10) independent audit verdict and any unresolved findings.
+
+| CA # | CA evidence item | This audit puts it in | Proof method |
+|---|---|---|---|
+| 1 | PID/WO identifier and exact audited scope | Evidence PR header: quoted scope (exactly CP-1 and CP-2) and the Interaction statement (no competing freeze) | Quote equals approved PID |
+| 2 | Source repositories, revisions and documentation references | `RECONCILIATION.md`: base SHAs of every cited repository and branch (working trees unmodified), documentation references | Script lists every cited file and commit and re-reads it at the recorded SHA |
+| 3 | Existing implementation: proven, partially proven, unverified or missing | `RECONCILIATION.md`: HERMES published-surface inventory, HELIOS input contract and rejection rules, trigger / signing / outbox search results (negative results with scope and commands), TRON intake assumptions and terminal states, FALCON registry and trigger-schema delta, TradingTriggerInbox specification status; each classified proven / partially proven / unverified / missing | Negative results state scope and commands |
+| 4 | Actual versus expected contract comparison | Mapping tables (no empty cell, no `TBD`) and the re-test of C-1..C-14 and T-1..T-11 as CONFIRMED / CHANGED / NEW | Two independent validators agree; every C and T row covered |
+| 5 | Tests, fixtures and evidence references | CP-1 and CP-2 packages: golden valid and invalid fixtures with declared rejection codes, rejection matrices, failure and recovery scenarios, offline tests | `python3 -m pytest tests/ -q` exits 0; no fixture has an undeclared code |
+| 6 | Specific defects and compatibility gaps | Findings AC-n and the compatibility-matrix contribution (rows per provider / consumer version, status COMPATIBLE / ADAPTER / INCOMPATIBLE) | No row reads COMPATIBLE where a fixture fails |
+| 7 | Reusable code and documentation | Reusable fixtures (the 15 HELIOS malformed cases), schemas and the reference-model tooling used only by tests | Each reuse entry cites path and revision |
+| 8 | Minimum recommended implementation changes | Conformance test obligations per side and register-row proposals offered to the owning PIDs (never edited here) | Each NEW finding offered to its owning PID |
+| 9 | Safety and deployment constraints | Safety section: public-repo sanitisation (no credentials, hosts, accounts, broker symbols, real keys), no runtime contact, forbidden-content test, open-decision list | `./tools/secret-scan` CLEAN; forbidden-content test passes |
+| 10 | Independent audit verdict and unresolved findings | Independent auditor (AUD-2) verdict file plus `goal-validate`, `secret-scan` and test output | Fresh auditor GREEN with exact SHAs; PO acceptance recorded |
 
 ## Acceptance
 
