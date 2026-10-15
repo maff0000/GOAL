@@ -5,14 +5,14 @@
 **Evidence:** primary PR in `maff0000/hermes`, branch `wo/GOLD-AUD-A-evidence`, path `docs/evidence/GOLD-AUD-A/` (programme-controller rulings 1 to 3; `PORTFOLIO.md` appendix)  
 **Priority:** P0  
 **Risk:** Medium  
-**Matt gate:** Yes, for production read access only (Open decision D1); no other Matt gate  
+**Matt gate:** Yes, for production Redis read access only (Open decision D1: Matt's express permission, HELM-operated bounded protocol; the gate stays TRUE until he expressly permits); no other Matt gate, and none on the GitHub / source analysis, which may proceed meanwhile  
 **PO gate:** Yes  
 **Delivery:** ROGUE → HELM-lane operator (evidence run) → FORGE (docs/fixtures PR only)  
 **Complements:** `HERMES-CUR-001` (strict subset 'Increment A' of its scope item 1); amendment fallback below
 
 Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
 `audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
-six audits (CA frame). The PO sets final values.
+six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is not yet recorded and is entered by CA/PO only.
 
 
 ## Status
@@ -41,7 +41,7 @@ Why not an amendment of HERMES-CUR-001:
 Non-duplication (proposed CUR-001 amendment text for CA to apply; this PID does not edit it):
 *"Scope item 1 key inventory is satisfied for XAU_USD by the GOLD-AUD-A evidence PR; CUR-001 keeps
 all other Scope items and other instruments, and cites rather than re-runs that inventory."*
-Fallback if CA prefers one item: fold this PID in as CUR-001 "Increment A" unchanged.
+Fallback if CA prefers one item: fold this PID in as CUR-001 "Increment A" unchanged. (Not taken: the CA/PO adjudication 2026-10-15 confirms this as a separate audit work item, not an amendment.)
 
 ## Purpose
 
@@ -241,11 +241,14 @@ covering at least one full M15 and one H1 boundary, plus (if D3 agrees) one H4 b
 wall-clock <= 6 hours. Analysis and PR: <= 2 days. Overrun is a stop condition, not an extension.
 
 **S8 Before/after proof.** Record `INFO server` (`uptime_in_seconds`, `run_id`) and `DBSIZE` before
-and after. Unchanged `run_id` and no restart is the no-mutation proof; key count may change only by
-normal HERMES publishing and must be explained.
+and after. An unchanged `run_id` establishes that there was no restart; it is NOT proof that no data was
+mutated (CA/PO adjudication 2026-10-15). Data-mutation checks use this audit's own before/after comparison of
+the sampled keys (existence, `TTL`/`PTTL` and a hash of each sampled value), taken within this read-only
+protocol and its caps. Key count may change only by normal HERMES publishing and must be explained.
 
-**S9 Gate.** Production read access is not assumed. It requires the Matt/PO approval in D1, recorded
-in the PR description before the run.
+**S9 Gate.** Production read access is not assumed. It requires Matt's express permission (D1) and a
+HELM-operated bounded protocol, recorded in the PR description before the run. Until then only the
+GitHub / source analysis half proceeds.
 
 ## Deliverables
 
@@ -289,8 +292,9 @@ GREEN requires all of the following; each has a proof method:
    timestamp precede the bundle capture time.
 2. **Allow-list compliance.** The protocol log contains only S1 commands. Proof: script in the PR
    asserts every logged command is in the allow-list and none in S2; independent auditor check.
-3. **No mutation.** S8 before/after shows unchanged `run_id`, no restart, no unexpected keyspace
-   change. Proof: bundle excerpts.
+3. **No restart and no mutation.** S8 before/after shows unchanged `run_id` (no restart; this alone is not
+   proof of no data mutation) and, for the sampled keys, an unchanged key/TTL/value-hash comparison apart from
+   explained normal HERMES publishing, and no unexpected keyspace change. Proof: bundle excerpts.
 4. **Checklist complete.** All 10 rows present and each proof method succeeds; coverage matrix has
    no empty cell.
 5. **Independent re-derivation.** A second operator or auditor repeats the inventory SCAN and a
@@ -305,11 +309,15 @@ GREEN requires all of the following; each has a proof method:
 9. **Defects.** Every DIVERGENT or UNDOCUMENTED row has a defect entry with owner and closing item.
 10. Fresh independent auditor GREEN; exact SHAs in the PR; PO acceptance recorded.
 
+### Disposition table
+
+**Disposition table (REQUIRED; CA/PO legacy application doctrine 2026-10-15).** The evidence PR contains `DISPOSITION.md` (format: `PORTFOLIO.md` section 7.4): one row per reusable component in scope — the HERMES publication surfaces and contract documents, the builders and validators (`utils/tick_contract_v1.py`, candle and indicator builders), the existing fixtures, and the currently deployed publisher as observed — each with generation (legacy / newer canonical / currently deployed), the criteria assessed (architecture fit, code quality, determinism, test evidence, maintainability, contracts, operational dependencies, integration cost), a verdict REUSE | REFACTOR | REPLACE | RETIRE, evidence, and the approximate comparative engineering cost of reuse versus refactor versus a clean build. A verdict is a recommendation only: nothing is retired, shut down or mutated, and the lane cannot be accepted without this table (it is part of CA evidence items 7 and 8).
+
 ## Stop conditions
 
 Stop and return to PO/CA (do not improvise) if:
 
-- D1 production read access is not approved, or requires a credential to be created or handed to a
+- D1 production read access has no express Matt permission, or requires a credential to be created or handed to a
   FORGE engineer;
 - any step would need a non-allow-listed command, a restart, or a code or config change;
 - a command raises latency or memory warnings, or the time-box S7 is exceeded;
@@ -324,12 +332,12 @@ Stop and return to PO/CA (do not improvise) if:
 
 | # | Decision | Owner | Blocks |
 |---|---|---|---|
-| D1 | Is read-only production Redis access approved, via which HELM-lane operator and read path? Recommendation: yes, under S1-S9, recorded by PO; Matt confirms because production access is involved. | PO + Matt | approval |
+| D1 | Production Redis read access. Per CA/PO adjudication 2026-10-15: requires Matt's express permission and a HELM-operated bounded protocol; the gate remains TRUE until Matt expressly permits; GitHub / source analysis proceeds meanwhile. Open: Matt's permission, and which HELM-lane operator and read path. | Matt (permission), HELM | the runtime half only (not approval, not the source half) |
 | D2 | Which Redis instance is "PROD" for Lane A: the cloud HERMES cache, or another instance? Memory notes record PROD location/status as unverified and sources disagree. Recommendation: operator identifies it by `/buildinfo` `ENVIRONMENT=PROD` match and records the evidence; if ambiguous, stop. | PO | approval |
 | D3 | Sampling duration: minimum is one full M15 and H1 boundary; include an H4 boundary (up to 4 h) and a session close? Recommendation: M15+H1 now, H4 boundary only if it falls in the window, no deliberate wait. | PO | later (before run) |
 | D4 | Public or private samples: the fixtures live under `docs/evidence/GOLD-AUD-A/fixtures/xau_usd/` in hermes (ruling 3). Open: sanitised excerpts public with full captures private by identifier (recommended), or all samples private. GOAL stays pointer-only. | PO | later |
 | D5 | Run before or after the pending PROD recreate? Recommendation: now, and flag the config-ahead skew; a short delta afterwards is a separate small increment. | PO | approval |
-| D6 | Fold into CUR-001 as Increment A (fallback in Relationship section) or keep as separate item (recommended). | CA/PO | approval |
+| D6 | RESOLVED by CA/PO adjudication 2026-10-15: kept as a separate audit work item, not folded into CUR-001. | CA/PO | none |
 | D7 | Authority for undocumented key families (candle, indicator, feed-health, catalog): should the audit's comparison table become the proposed contract registry in hermes docs? Recommendation: audit records only; registry belongs to HERMES-FACT-001. | PO | later |
 
 ## Evidence

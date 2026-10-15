@@ -3,14 +3,13 @@
 **Lane:** trading  
 **Target repository:** `maff0000/GOAL`  
 **Priority:** P0  
-**Risk:** Capital (proposed; carries the explicit PAPER gate, see Open decisions D-2)  
-**Matt gate:** Yes (proposed; see D-2)  
+**Risk:** Capital (carries the explicit PAPER gate; D-2 resolved by CA/PO adjudication 2026-10-15)  
+**Matt gate:** Yes: capital-risk, for the FINAL DEMO acceptance (and the PAPER transition); not for the six audit investigations (CA/PO adjudication 2026-10-15; D-2 resolved)  
 **PO gate:** Yes  
 **Delivery:** ROGUE → FORGE
 
-Header values are PROPOSED (lane vocabulary is the backlog set {shared, research, trading, ops}). `GOLD-MVP-001` is not yet in `backlog/backlog.yaml`; the exact
+Header values follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is not yet recorded and is entered by CA/PO only. `GOLD-MVP-001` is not yet in `backlog/backlog.yaml`; the exact
 backlog patch is specified in `audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11 and is not applied.
-Central Architecture/PO set the final values.
 
 ## Status
 
@@ -24,6 +23,8 @@ DRAFT CANDIDATE for Central Architecture review. Not approved. Not DELIVERY_READ
 4. The MVP takes no new third-party engine or SaaS dependency. External evaluations (lane F) are information only, not MVP options.
 5. The minimum fixed-size DEMO risk and sizing policy has no owner today; it is recorded as the named gap `GAP-TRON-FIXED-SIZE-DEMO-RISK` (Current state, Dependencies, Open decisions D-3), and `GOLD-MVP-001` acceptance requires it.
 6. No strategy is selected before the actual HERMES PROD facts (audit A) and the candidate requirements (audit B) have been reconciled. Sequence: audits A and B, reconciliation, strategy selection (PO decision), `GOLD-MVP-001` acceptance planning.
+
+7. **Legacy application doctrine** (CA/PO legacy application doctrine 2026-10-15; `PORTFOLIO.md` appendix D). Legacy HELIOS and NEO implementations have no automatic right to remain part of THE GOAL; each audit ends every reusable component in REUSE, REFACTOR, REPLACE or RETIRE with evidence and a comparative cost (`PORTFOLIO.md` section 7.4). This PID consolidates those dispositions in its integration architecture for any component on the critical path and applies the same table to any reusable component it introduces. Verdicts are recommendations only; nothing is retired, shut down or mutated. The objective is the strongest achievable GOLD MVP architecture, not maximum legacy reuse.
 
 This PID owns **cross-component integration and acceptance only**. It is not a component implementation PID:
 every component change lands in the component's own PID (HERMES, HELIOS, TRON, MT5 gateway, FALCON, CER and
@@ -51,15 +52,15 @@ fabric-only claims are labelled. Anything not read in a source is UNVERIFIED. Th
 | area | what exists (source) | status |
 |---|---|---|
 | Control plane | GOAL `main` @ `1739e74`, `GOAL-DCP-001` CLOSED (merged PR #2, #4); validator, readiness, secret scan | proven |
-| Pending programme changes | GOAL PR #5 (`wo/GOAL-RECON-PR`, OPEN): factual corrections, adds `GOAL-TRIGGER-001`, `TRON-D1-RATIFY`, `HSA-C1`, re-points edges; GOAL PR #6 (`wo/GOAL-BACKUP-PLAN`, OPEN): documentation only | proven (`gh pr list`) |
+| Pending programme changes | GOAL PR #5 (`wo/GOAL-RECON-PR`, OPEN, head `e2671ff`; current at time of writing, reconcile at merge): factual corrections, adds `GOAL-TRIGGER-001`, `TRON-D1-RATIFY`, `HSA-C1`, re-points edges; GOAL PR #6 (`wo/GOAL-BACKUP-PLAN`, OPEN, head `84fc7ce`; current at time of writing, reconcile at merge): documentation only | proven (`gh pr list`) |
 | HERMES | Market-truth contracts and replay in `maff0000/hermes` (HMT-1, RECON-H1 table); a PROD XAUUSD Redis publication is stated to exist | publication contents UNVERIFIED here: audited by `GOLD-AUD-A` |
 | HERMES data provenance | live facts come from one venue feed, microstructure truth is CME gold futures, execution is a Vantage MT5 gold CFD; the alignment basis is named only in an unauthorised HMT-3H candidate (RECON-H1 section 2.6) | proven as a gap; see D-6 |
 | HELIOS | `maff0000/HELIOS` `main` @ `7f7193d` (PR #1, independent PRODUCT_GREEN, 1005 tests per GROUP-E-REPORT), execution-blind enforced by a vocabulary test, HSA package loader, FALCON publication boundary, Docker runtime | proven for v1; live HERMES client is a file-feed fixture source only (RECON-H2 table); an earlier Redis-to-HELIOS proof branch stops at `WAITING_FOR_HERMES_BACKFILL` |
-| Earlier HERMES-to-HELIOS GOLD integration | `GOLD-STRATEGY-RUNTIME` `main` @ `5891415` composes HSA + HELIOS + CER as one platform (RUNTIME_PRODUCT_GREEN, assurance-tooling residual); its architecture predates TRON and the trigger (RECON-H1 section 1) | located and negative: no completed HERMES Redis to new-HELIOS integration exists (HELIOS has no Redis client; the deployed GOLD stack is fixture-fed; the proof branch ended `WAITING_FOR_HERMES_BACKFILL`), so the reader is a build item: the HELIOS-side external adapter outside the pure engine (CA guidance 2026-10-15, item 1; its PID owner and repository are DR-34 and DR-35; GOLD-AUD-B Current state; PORTFOLIO section 3a); to be proven by `GOLD-AUD-B` |
+| Earlier HERMES-to-HELIOS GOLD integration | `GOLD-STRATEGY-RUNTIME` `main` @ `5891415` composes HSA + HELIOS + CER as one platform (RUNTIME_PRODUCT_GREEN, assurance-tooling residual); its architecture predates TRON and the trigger (RECON-H1 section 1) | bounded conclusion (CA/PO adjudication 2026-10-15): lane B searched the HELIOS, GOLD-STRATEGY-RUNTIME, falcon and TRADER trees, branches, `gh repo list`, systemd units and timers, container names and labels, fabric key names, HERMES consumer docs and legacy archive manifests; in those locations HELIOS has no Redis client, the deployed GOLD stack is fixture-fed and the proof branch ended `WAITING_FOR_HERMES_BACKFILL`; **no completed integration was found in the searched locations; absence elsewhere is UNVERIFIED** and `GOLD-AUD-B` re-runs and extends the search. On that basis the reader is planned as a build item: the HELIOS-side external adapter outside the pure engine (CA guidance 2026-10-15, item 1; its PID owner and repository are DR-34 and DR-35; GOLD-AUD-B Current state; PORTFOLIO section 3a); to be proven by `GOLD-AUD-B` |
 | Strategy contract | `GOAL-CONTRACT-001` and `GOAL-TRIGGER-001` PID candidates on `wo/GOAL-CONTRACT-TRIGGER` @ `64c843b`, plus `ADR-CONTRACT-001`; the `GOAL-TRIGGER-001` backlog item is added by GOAL PR #5 (OPEN); none on `main`, none approved; three live strategy representations with no shared contract (HSA package, HELIOS package, DARWIN `StrategyVersion`) | candidates only |
 | Trigger transport | the TradingTriggerInbox specification was searched for and NOT found (GOAL-TRIGGER-001 Current state 1); three incompatible inbound models exist (FALCON discovery, TRON D1 Redis board, backlog titles); `GOAL-TRIGGER-001` is the sole owner of trigger, outbox and inbox semantics (CA guidance 2026-10-15, item 2), so the other models are to be reconciled to it | missing |
 | TRON | `maff0000/tron` `main` @ `5577039` is `PID.md` + scripts only; the D1 design baseline is on an unmerged branch (20 commits) pending `TRON-D1-RATIFY` (Matt gate); no runtime code | design only |
-| MT5 gateway | 8 stacked open PRs, linear, 27 commits, no CI, no typed service; a DEMO instance exists and is healthy; one earlier record shows a broker-reported DEMO trade mode; raw `SlaveService` is the only control surface (MT5-READINESS headlines 3 to 6) | partially proven; `MT5-GW-001` to `-004` are the engineering chain |
+| MT5 gateway | canonical `maff0000/mt5-gateway` `main` @ `6263d61f4cb0d4d5b16337e67c30f409bc9c5051`: Gate A CLOSED GREEN WITH NOTICES (PR #9 merged); follow-up issue #10 tracks template-hardening notices incl. secrets ownership and symlink handling, to be resolved before the template is used; no typed service per the earlier readiness reading (to be re-confirmed by `GOLD-AUD-D`); raw `SlaveService` is the only control surface and TRON never connects to it; a DEMO instance exists and one earlier record shows a broker-reported DEMO trade mode; the functional Vantage DEMO proof remains a separate gated workstream; the GitHub PRIVATE visibility change is eligible for Matt's authorisation (this replaces the earlier stale 'stacked open PRs' reading; MT5-READINESS headlines 3 to 6 pre-date it) | partially proven; `MT5-GW-001` to `-004` are the engineering chain |
 | FALCON | delivered registry and ingestion; `strategy_trigger` and `tron.*` families are excluded from `FALCON-T1` and have no frozen contract (RECON-F, RECONCILIATION-SUMMARY section 2 row 7) | partially proven |
 | CER / HSA / DARWIN / NEO | CER v1.0.0 delivered; HSA PRODUCT_GREEN with 11 atomic entries and 2 example packages; DARWIN APOLLO causal core merged (PID-006B); NEO-R1 undefined beyond its title; no one maps a qualified strategy to a registered, executed, reviewed one | partially proven; `GOLD-AUD-F` |
 | Sizing and DEMO risk | **`GAP-TRON-FIXED-SIZE-DEMO-RISK`**: no item owns a minimum fixed-size DEMO risk and sizing policy. `TRON-T5` pulls in `CER-R1`; `TRON-T5A` is only a deferred candidate (RECON-H2 F-6); and D1's MVP checks contain no exposure, size, loss or drawdown gate (D1 ratification package; GOLD-AUD-D Current state). TRON cannot order without a quantity and without gates that run before submit | missing (named gap; PORTFOLIO section 3b) |
@@ -81,7 +82,7 @@ At closure all of the following are true, each with GitHub evidence:
 5. One full order lifecycle on the DEMO account reconciles to zero difference between the TRON execution journal and
    the broker as system of record, and survives restart of TRON and reconnect of the gateway.
 6. FALCON holds correlated evidence of the strategy state, trigger and execution outcome for the run, and FALCON
-   unavailability demonstrably does not block an entry: with FALCON ingestion stopped, the full execution path completes with an unchanged terminal outcome.
+   unavailability demonstrably does not block an entry: with FALCON ingestion stopped (isolated DEV/test FALCON), the full execution path completes with logically equivalent decisions and reconciliation and the same terminal states.
 7. The run's evidence package is readable by NEO through a read-only interface for review.
 8. A cross-component evidence index, dependency graph and consolidated contract compatibility matrix exist in GOAL.
 9. The state `PAPER` is recorded for this item only after the Vantage DEMO proof is accepted; never on a simulation.
@@ -133,8 +134,9 @@ Hard engineering prerequisites of the acceptance run (canonical ids; the backlog
 | `GOAL-CONTRACT-001`, `GOAL-TRIGGER-001` | frozen strategy and trigger contracts (on GOAL PR #5 for the latter) |
 | `HELIOS-T3` (and transitively `HELIOS-T2`, `HELIOS-T1`, `GOAL-CORE-001`, `HERMES-FACT-001`) | signed durable trigger; the HELIOS-side external HERMES adapter (outside the pure engine; its PID owner and repository are open, D-8; whether it is carried by `HELIOS-T2` or by a new adapter item is part of that decision) |
 | `TRON-T2`, `TRON-T3`, `TRON-T4` (and transitively `TRON-T1`, `TRON-D1-RATIFY`, `MT5-GW-001` to `-004`) | Vantage DEMO adapter, hard risk and kill, trigger inbox |
+| `TRON-T3A` (`GAP-TRON-FIXED-SIZE-DEMO-RISK`) | approved as proposed by CA/PO adjudication 2026-10-15 subject to `GOLD-AUD-D` scope validation; reuses or extends the `TRON-T3` hard-risk / kill-switch design; one kill switch, no competing one |
 | `FALCON-T1` plus a minimum FALCON event-publication increment for `strategy_trigger` and `tron.*` | evidence; the increment has no item yet (D-4) |
-| `GAP-TRON-FIXED-SIZE-DEMO-RISK`: a minimum fixed-size DEMO risk and sizing policy owned by TRON, credential-free | no item owns it yet (D-3); a proposed candidate item is listed for PO decision in PORTFOLIO section 11.4 and is not in the backlog patch as applied; `GOLD-MVP-001` acceptance requires it (AC-8, AC-16) |
+| `GAP-TRON-FIXED-SIZE-DEMO-RISK`: a minimum fixed-size DEMO risk and sizing policy owned by TRON, credential-free | `TRON-T3A` is approved as proposed (D-3, DR-36) subject to Lane D scope validation, and its backlog entry (PORTFOLIO section 11.4) is a later serial governed change, not applied here; `GOLD-MVP-001` acceptance requires it (AC-8, AC-16) |
 | PO strategy selection record | taken after audits A and B are reconciled (D-5); no acceptance planning before it |
 
 Interfaces (each owned by exactly one contract owner; this PID verifies them, it does not define them):
@@ -162,13 +164,13 @@ on the critical path.
 6. The legacy executors and any other MT5 instance are untouched; the acceptance run uses the one designated DEMO
    instance only.
 7. Fault injection (restart, disconnect, FALCON outage) is performed on the DEMO acceptance stack only, never on
-   production services, and never against a LIVE instance.
+   production services, and never against a LIVE instance. FALCON-outage rehearsals run only against an isolated DEV/test FALCON, never the running Graylog or production FALCON.
 8. Position size on the DEMO account is the fixed base quantity of the TRON-owned `GAP-TRON-FIXED-SIZE-DEMO-RISK` policy; an order that exceeds it, or that would breach its one-position, open-position, daily-loss or trade-count guard, is a stop.
 9. No deployment, merge, or state change occurs without the PO gate; the PAPER transition additionally needs the Matt gate.
 
 ## Deliverables
 
-1. `audits/2026-10-15/gold-mvp/INTEGRATION-ARCHITECTURE.md`: the sequence, interfaces, owners and failure behaviour of the critical path.
+1. `audits/2026-10-15/gold-mvp/INTEGRATION-ARCHITECTURE.md`: the sequence, interfaces, owners and failure behaviour of the critical path, with the consolidated component dispositions (AC-18).
 2. `audits/2026-10-15/gold-mvp/EVIDENCE-INDEX.md`: cross-component evidence index (owned by this PID; single writer: the `GOLD-MVP-001` PL).
 3. `audits/2026-10-15/gold-mvp/COMPATIBILITY-MATRIX.md`: consolidated contract compatibility matrix with an owner and closing PID per gap (owned by this PID; single writer: the `GOLD-MVP-001` PL; no second matrix).
 4. `audits/2026-10-15/gold-mvp/GAP-REGISTER.md`: capabilities missing for the MVP, each with owner and proposed item (it carries `GAP-TRON-FIXED-SIZE-DEMO-RISK` from the start).
@@ -195,12 +197,14 @@ satisfiable by simulation unless it says so.
 | AC-9 | Broker-confirmed DEMO identity recorded before the first order | gateway identity record precedes the first order timestamp; value masked in GOAL |
 | AC-10 | One full lifecycle on the DEMO account: entry with broker-side protection, fill observed, close; resubmission of the same trigger creates no second position | broker position query before and after; journal; idempotency record |
 | AC-11 | Reconciliation: TRON journal versus broker positions and deals shows zero difference after the lifecycle and after a TRON restart and a gateway reconnect mid-position | reconciliation report; restart and reconnect logs |
-| AC-12 | FALCON holds events for strategy state, trigger and TRON outcome of the run, correlated by the trigger id; publication is asynchronous, non-blocking and bounded; with FALCON ingestion stopped in the rehearsal, a full entry (trigger, claim, risk, order, reconcile) completes with the same terminal outcome and within the stated time bound | FALCON query by trigger id; outage rehearsal log; byte-identical journal outcome with and without FALCON |
+| AC-12 | FALCON holds events for strategy state, trigger and TRON outcome of the run, correlated by the trigger id; publication is asynchronous, non-blocking and bounded; with FALCON ingestion stopped in the rehearsal (isolated DEV/test FALCON), a full entry (trigger, claim, risk, order, reconcile) completes within the stated time bound with deterministic LOGICAL decision and reconciliation equivalence: same trigger dispositions, same orders / fills / positions reconciliation outcome and same terminal states (FALCON-side counters and timestamps excluded; not byte identity) | FALCON query by trigger id; outage rehearsal log on the isolated FALCON; logical comparison of the journal outcome with and without FALCON |
 | AC-13 | Evidence package is readable through a read-only interface and the NEO review handoff manifest validates; no write path exists | manifest check; permission check; NEO review itself is a later separate item |
 | AC-14 | `./tools/secret-scan` clean (tree and history) on every repository PR in the evidence set; no internal address, account or key in GOAL | scan output attached; grep log |
 | AC-15 | GitHub evidence: PR with the ten items, required checks green, independent auditor review, CA acceptance; state `PAPER` is set only after AC-9 to AC-11 are accepted by the PO and the Matt gate | PR URL; recorded decisions |
 | AC-16 | `GAP-TRON-FIXED-SIZE-DEMO-RISK` is closed by an accepted TRON item before the acceptance run, and the PO strategy-selection record exists, dated after the accepted verdicts of audits A and B and their reconciliation | backlog edge and item verdict; selection record cites the A and B evidence index entries |
 | AC-17 | No new third-party engine or SaaS dependency is introduced by any component of the acceptance stack (CA guidance 2026-10-15, item 4) | dependency manifests of the stack diffed against the pre-MVP baseline; no new external service in the run configuration |
+
+| AC-18 | Every reusable component on the critical path has a disposition (REUSE / REFACTOR / REPLACE / RETIRE) from its audit's disposition table, consolidated in the integration architecture, and no component is retired, stopped or mutated by this PID (CA/PO legacy application doctrine 2026-10-15) | the integration architecture cites each audit's `DISPOSITION.md` rows; no service change in the diff |
 
 ## Stop conditions
 
@@ -210,24 +214,24 @@ satisfiable by simulation unless it says so.
 - S-4: any evidence contains a secret, an internal address or an account identifier destined for GOAL: stop, sanitise, re-scan.
 - S-5: the acceptance run would need a second HERMES feed, a new third-party engine or service or a component code change from this PID: stop and raise a component item.
 - S-9: `GAP-TRON-FIXED-SIZE-DEMO-RISK` is not closed, or no PO strategy-selection record exists, when the acceptance run is due: stop, no order.
-- S-10: FALCON ingestion is stopped and the execution path blocks, delays beyond the stated bound or changes its terminal outcome: stop, FALCON has become a dependency of execution.
+- S-10: FALCON ingestion is stopped (isolated DEV/test FALCON) and the execution path blocks, delays beyond the stated bound, or its decisions, reconciliation outcome or terminal states differ logically from the run with FALCON: stop, FALCON has become a dependency of execution.
 - S-6: a simulated result is offered as proof of AC-9 to AC-11: reject.
 - S-7: reconciliation shows a non-zero difference or an unexplained position: stop trading on the DEMO account, report, do not retry blindly.
 - S-8: a prerequisite PID changes a frozen contract after the matrix is accepted: stop, re-baseline the matrix.
 
 ## Open decisions
 
-D-1 (blocks PID approval). **Relationship to `PAPER-E2E-001`.** Both are end-to-end DEMO proofs with the same
+D-1 (RESOLVED by CA/PO adjudication 2026-10-15: option (b); `PAPER-E2E-001` is kept as a subsequent BROADER qualification depending on `GOLD-MVP-001`; PD-1 resolved). Original text: **Relationship to `PAPER-E2E-001`.** Both are end-to-end DEMO proofs with the same
 dependencies. Options: (a) supersede `PAPER-E2E-001` by this PID and re-point `LIVE-GATE-001` (clean, but edits a
 Matt-gated item and breaks an edge); (b) keep both, with `PAPER-E2E-001` re-scoped as the later general paper-lane
 proof depending on `GOLD-MVP-001` (no deletion; two items may reach `PAPER`); (c) keep both independent (duplicate
 scope; rejected). Recommendation: (b). Owner PO. The edge change is part 2 of the backlog patch.
 
-D-2 (blocks PID approval). **Header gates.** Risk `capital` plus Matt gate true (matches `PAPER-E2E-001` and the PAPER
+D-2 (RESOLVED by CA/PO adjudication 2026-10-15: risk `capital`; Matt-gated for the FINAL DEMO acceptance, NOT for the six audit investigations). Original text: **Header gates.** Risk `capital` plus Matt gate true (matches `PAPER-E2E-001` and the PAPER
 rule), or risk `high` with Matt gate only at the PAPER transition. Recommendation: `capital` and Matt gate true,
 because the run places real orders on a broker account (DEMO) and ends in a protected state. Owner PO, informs Matt.
 
-D-3 (blocks acceptance, not approval). **`GAP-TRON-FIXED-SIZE-DEMO-RISK`: approval of the item that closes it.** TRON cannot order without a
+D-3 (RESOLVED with a condition by CA/PO adjudication 2026-10-15, DR-36: `TRON-T3A` approved as a proposed P0 / high-risk, credential-free minimum DEMO sizing and risk item, subject to Lane D scope validation; a single kill switch exists, `TRON-T3A` reuses or extends the `TRON-T3` design and creates no second). Original text: **`GAP-TRON-FIXED-SIZE-DEMO-RISK`: approval of the item that closes it.** TRON cannot order without a
 quantity or without gates that run before submit, and no item owns a minimum fixed-size DEMO risk policy (`TRON-T5` pulls in `CER-R1`; `TRON-T5A` is only a
 deferred candidate; D1's MVP checks contain no exposure, size, loss or drawdown gate). Required content: fixed DEMO base quantity from configuration;
 per-instrument one-position rule; maximum open positions; maximum daily loss and trade-count guard; kill switch (with a setter); hard gates before submit,
@@ -254,11 +258,11 @@ D-7 (blocks acceptance). **Composition vehicle.** Whether `GOLD-STRATEGY-RUNTIME
 acceptance stack or the stack is composed per component. The reconciliation (`PLATFORM-RT-001`) is a deferred
 candidate. Recommendation: decide after `GOLD-AUD-B`; do not rebuild a delivered runtime. Owner PO.
 
-D-8 (blocks the adapter PID, not this PID's approval). **External adapter ownership.** Where the HELIOS-side external adapter lives (the HELIOS
+D-8 (RESOLVED by CA/PO adjudication 2026-10-15: the HERMES Redis reader and adapter live in the HELIOS repository outside the pure engine; `HELIOS-T2` owns the implementation; the HELIOS architect authors the bounded work orders; DR-34, DR-35). Original text: **External adapter ownership.** Where the HELIOS-side external adapter lives (the HELIOS
 repository outside the pure engine, or a separate repository), who authors its PID, and whether `HELIOS-T2` carries it or a new item does. Owner CA/PO
 (DR-34, DR-35).
 
-D-9 (blocks CP-1 freeze, not approval). **CP-1 freeze mechanics.** GOAL approves the interface; HERMES owns publication; the external adapter owns
+D-9 (blocks CP-1 freeze, not approval; the PID-carrier question RESOLVED by CA/PO adjudication 2026-10-15: `HERMES-FACT-001` owns HERMES publication semantics and GOAL approves the CP-1 interface using the A/B/C reconciliation; DR-7). **CP-1 freeze mechanics.** GOAL approves the interface; HERMES owns publication; the external adapter owns
 translation. Still open: which PID carries the freeze and the `HERMES-FACT-001`-style publication contract, and the fix of HELIOS's two market-fact version
 strings (advertised `helios.market_fact/1.0.0`; fixtures, config and tests also accept `hermes.market_fact/1.0.0`). Owner CA/PO (DR-7, DR-27).
 
@@ -266,7 +270,7 @@ strings (advertised `helios.market_fact/1.0.0`; fixtures, config and tests also 
 
 Sources read 2026-10-15 (read-only): GOAL `README.md`, `architecture/DELIVERY-CONTROL-PLANE.md`,
 `governance/DELIVERY-STATE-MACHINE.md`, `decisions/ADR-*`, `backlog/backlog.yaml`, `backlog/SCHEMA.md`,
-`pids/GOAL-DCP-001.md` at `1739e74`; `wo/GOAL-RECON-PR` @ `e2671ff` (`RECONCILIATION-SUMMARY.md`);
+`pids/GOAL-DCP-001.md` at `1739e74`; `wo/GOAL-RECON-PR` @ `e2671ff` (`RECONCILIATION-SUMMARY.md`; head current at time of writing, reconcile at merge);
 `wo/GOAL-CONTRACT-TRIGGER` @ `64c843b`; `wo/GOAL-TRON-D1-RATIFY` @ `d5f6d32`; `wo/GOAL-MT5-READINESS` @ `fe43db3`;
 `wo/GOAL-MT5-DEMO-VERIFY` @ `da2e4ea`; `wo/GOAL-PID-WAVE1-E-helios` (`GROUP-E-REPORT.md`);
 `wo/GOAL-RECON-H1-datachain` and `-H2-tradechain` reports; `gh pr list` for GOAL; local `git log` of the HELIOS and

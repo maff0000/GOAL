@@ -13,7 +13,7 @@
 
 Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
 `audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
-six audits (CA frame). The PO sets final values.
+six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is not yet recorded and is entered by CA/PO only.
 This item is a read-only audit; the contract packages it produces are specifications marked PROPOSED.
 
 ## Status
@@ -61,7 +61,7 @@ Option (ii), a thin new item, because:
    reconciliation package over `goal.strategy-trigger/v1`; its normative text is `GOAL-TRIGGER-001`'s. CP-1 freezes only through the owner chosen in
    D-C1.
 
-An amendment (option i) is preferable only if CA wants one approval gate; D-C2 records that choice.
+An amendment (option i) is preferable only if CA wants one approval gate; D-C2 records that choice. (RESOLVED by CA/PO adjudication 2026-10-15: option ii; a separate audit work item, not an amendment.)
 
 ## Current state
 
@@ -101,14 +101,14 @@ HELIOS (`maff0000/HELIOS` main `7f7193d`):
    `schema_version`, `observed_at_utc`, `ingested_at_utc`). Closed world: any unknown field is refused; binary floats are refused
    (`helios/contracts/_fields.py`); ordering strictly ascending; freshness from bar close; incomplete bar refused unless policy allows
    (`helios/integration/hermes_boundary.py`, `INPUT_REJECTION_RULES`).
-6. **There is no Redis client and cannot be one in the pure engine:** `tests/test_execution_blind.py` bans importing `redis` and networking modules
+6. **No Redis client was found in HELIOS `main` `7f7193d` (search: `git grep` and the import-ban test below), and none can be added to the pure engine:** `tests/test_execution_blind.py` bans importing `redis` and networking modules
    under `helios/`; `docs/INTEGRATION.md` section 2 says "data contract, not a client". Facts come from `fixtures/hermes/` (15 malformed fixtures, 2
    stale, valid XAU_USD set).
 7. **Version-string inconsistency inside HELIOS:** `MARKET_FACT_SCHEMA_VERSION = "helios.market_fact/1.0.0"` is what `describe_input_contract()`
    advertises, while fixtures, config and tests use and accept `hermes.market_fact/1.0.0` (`helios/integration/exemplars.py`, `tests/test_config.py`).
 8. **Prior integration attempt.** Branch `wo/WO-HELIOS-HERMES-PROD-INTEGRATION-PROOF-0001` (`84d3772`): verdict `WAITING_FOR_HERMES_BACKFILL`; records
    the live schema_version `v1` versus `hermes.market_fact/1.0.0` mismatch and leaves open whether mapping is transport or semantic reinterpretation.
-   Group E report item 7 lists "HELIOS to HERMES contract version reconciliation and Redis reader" as blocking HELIOS-T2. Under CA guidance
+   Group E report item 7 lists "HELIOS to HERMES contract version reconciliation and Redis reader" as blocking HELIOS-T2. Bounded conclusion (CA/PO adjudication 2026-10-15): lane B's search (HELIOS, GOLD-STRATEGY-RUNTIME, falcon and TRADER trees, branches, `gh repo list`, units and timers, container labels, fabric key names, HERMES consumer docs, legacy archive manifests) found no completed integration in the searched locations; absence elsewhere is UNVERIFIED, and lane B re-runs and extends the search. Under CA guidance
    2026-10-15 (item 1) that reader and reconciliation sit in the HELIOS-side external adapter, outside the pure engine.
 
 **Reconciliation findings for CP-1 (all to be turned into mapping rows with a fixture each):** HERMES `v1` versus HELIOS `<namespace>/<x.y.z>`; ms
@@ -271,7 +271,7 @@ A-2. Each fixture set validates under two independent implementations (JSON Sche
 A-3. Rejection matrix completeness: every `INPUT_REJECTION_RULES` entry of HELIOS and every CP-2 outcome has at least one invalid fixture, and no
      fixture has an undeclared code (script check).
 A-4. Failure scenarios: every scenario in Scope item 6 has a fixture sequence and an expected outcome table; a reference model run (tests only)
-     reproduces it, including crash-between-outbox-and-receipt without double execution, and identical dispositions with the FALCON sink disabled.
+     reproduces it, including crash-between-outbox-and-receipt without double execution, and logically equivalent dispositions (same trigger dispositions and terminal states; FALCON-side counters and timestamps excluded) with the FALCON sink disabled.
 A-5. Mapping tables contain no empty cell and no `TBD`; each `UNSUPPORTED` row names fail-closed behaviour and error name; every cited source file and
      commit is re-read at the recorded SHA (script lists them).
 A-6. Forbidden-content test: none of stop-loss, take-profit, quantity, order, account, broker symbol, `confidence`, host or address in packages and
@@ -280,6 +280,10 @@ A-7. Compatibility matrix rows (prepared in the packages, contributed to `COMPAT
      FROZEN.
 A-8. Reconciliation covers every C and T row and offers each NEW finding to its owning PID; `./tools/goal-validate` prints OK; `./tools/secret-scan` CLEAN (tree and history); no existing test fails.
 A-9. Independent FORGE Auditor GREEN with exact SHAs; PO acceptance recorded per the state machine.
+
+### Disposition table
+
+**Disposition table (REQUIRED; CA/PO legacy application doctrine 2026-10-15).** The evidence PR contains `DISPOSITION.md` (format: `PORTFOLIO.md` section 7.4): one row per reusable component in scope — existing contract and fixture assets (the 15 HELIOS malformed cases, FALCON's registered trigger payload and signing doctrine, TRON D1's intake schemas, the HERMES candle and indicator contract modules), each with its generation — each with generation (legacy / newer canonical / currently deployed), the criteria assessed (architecture fit, code quality, determinism, test evidence, maintainability, contracts, operational dependencies, integration cost), a verdict REUSE | REFACTOR | REPLACE | RETIRE, evidence, and the approximate comparative engineering cost of reuse versus refactor versus a clean build. A verdict is a recommendation only: nothing is retired, shut down or mutated, and the lane cannot be accepted without this table (it is part of CA evidence items 7 and 8).
 
 ## Stop conditions
 
@@ -295,7 +299,7 @@ Stop and return to the PO if:
 
 Owner PO unless stated; none needs Matt from this item. D-xx and C/S/O/T decisions are by reference to the two PIDs and are NOT restated here.
 
-- **D-C1 (PO/CA; blocks approval): who owns the CP-1 freeze mechanics.** Narrowed by CA guidance 2026-10-15 (item 1): GOAL approves the CP-1 interface,
+- **D-C1 (RESOLVED by CA/PO adjudication 2026-10-15): who owns the CP-1 freeze mechanics.** `HERMES-FACT-001` owns HERMES publication semantics; GOAL approves the CP-1 interface using the A/B/C reconciliation. Earlier text, kept: **who owns the CP-1 freeze mechanics.** Narrowed by CA guidance 2026-10-15 (item 1): GOAL approves the CP-1 interface,
   HERMES owns publication, the HELIOS-side external adapter owns consumption and translation. Still open: which PID carries the freeze and the
   `HERMES-FACT-001`-style publication contract. Options: a `HERMES-FACT-001` PID; a small GOAL item for the interface; or a section of
   `GOAL-CONTRACT-001` (rejected here: its Non-goals exclude fact payloads). Recommendation: `HERMES-FACT-001` PID for the publication contract, with this
@@ -307,7 +311,7 @@ Owner PO unless stated; none needs Matt from this item. D-xx and C/S/O/T decisio
   which is a HELIOS-side change (DR-27). Related: GOAL-CONTRACT-001 C-12/O-4; Group E item 7.
 - **D-C4 (RESOLVED by CA guidance 2026-10-15, item 1): reader placement.** The reader is a HELIOS-side external adapter outside the pure engine (which keeps its
   `redis` and network import ban). Still open and new: whether that adapter lives in the HELIOS repository or a separate one, and who authors its PID
-  (DR-34, DR-35).
+  (DR-34, DR-35: both RESOLVED by CA/PO adjudication 2026-10-15: the adapter lives in the HELIOS repository outside the pure engine; `HELIOS-T2` owns the implementation; the HELIOS architect authors the bounded work orders).
 - **D-C5 (PO; later): numeric form on the Redis wire** (HERMES number versus decimal text); recommendation: the external adapter converts via the contract's
   exact-decimal rule with a stated quantisation.
 - **Dependencies on existing decisions (by reference):** D-12, D-1, D-2, D-3 (Matt), D-4, D-5, D-6, D-8 of `GOAL-TRIGGER-001`; S-1, S-2, O-2, O-4 of

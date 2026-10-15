@@ -8,11 +8,11 @@
 **Matt gate:** No  
 **PO gate:** Yes  
 **Delivery:** ROGUE → FORGE (read-only audit increment)  
-**Complements:** `HELIOS-T2` (this audit is a pre-increment of it), `HELIOS-T1`, `HERMES-FACT-001`, `GOLD-STRATEGY-RUNTIME`
+**Complements:** `HELIOS-T2` (a separate audit item that is an input to it; `HELIOS-T2` owns the adapter implementation; not an increment or amendment of it), `HELIOS-T1`, `HERMES-FACT-001`, `GOLD-STRATEGY-RUNTIME`
 
 Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
 `audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
-six audits (CA frame). The PO sets final values.
+six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is not yet recorded and is entered by CA/PO only.
 
 
 ## Status
@@ -60,15 +60,19 @@ Read on 2026-10-15 on two estate hosts (the trading host and the delivery host),
 **UNVERIFIED** (inferred or not opened). Internal addresses, accounts and
 credentials are deliberately omitted because `maff0000/GOAL` is public.
 
-**Headline finding (PARTIAL, strongly indicated).** No completed HERMES Redis
-to new-HELIOS integration was found. Every candidate located is one of: a
-legacy path that read MariaDB rather than HERMES Redis candles; a deployment
-that feeds HELIOS from a fact directory; an unmerged work-order branch that
-stopped before writing code; or an untracked read-only probe. The belief that
-an integration was "previously completed" is not supported by any artefact
-read. "Not found" is itself a claim (see Stop conditions): the search
-inventory below is what the audit must re-run and extend before the claim is
-accepted.
+**Headline finding (PARTIAL; bounded conclusion, corrected by CA/PO adjudication 2026-10-15).**
+*Searched:* the HELIOS, GOLD-STRATEGY-RUNTIME, falcon and TRADER trees; worktrees and branches;
+`gh repo list` for the owner; systemd units and timers; container names and labels (never
+environment); fabric key names (labelled fabric-only); HERMES consumer docs; legacy archive
+manifests (the methods of Scope 1, with the candidates of the inventory below).
+*Found:* every candidate located is one of: a legacy path that read MariaDB rather than HERMES Redis
+candles; a deployment that feeds HELIOS from a fact directory; an unmerged work-order branch that
+stopped before writing code; or an untracked read-only probe.
+*Conclusion:* **no completed HERMES Redis to new-HELIOS integration was found in the searched
+locations; absence elsewhere is UNVERIFIED.** The belief that an integration was "previously
+completed" is not supported by any artefact read in those locations. "Not found" is itself a claim
+(see Stop conditions): the search inventory below is what the audit must re-run and extend before
+the claim is accepted, and that re-run and extension remain an acceptance item.
 
 ### Candidate inventory
 
@@ -145,7 +149,9 @@ Lane B without further discovery:
 
 1. A signed-off inventory of every HERMES to HELIOS reader candidate, each
    marked PROVEN, PARTIAL or UNVERIFIED, with a recorded negative-search
-   method for the "no integration exists" claim.
+   method (locations and commands) for the bounded "no completed integration
+   was found in the searched locations" conclusion; absence elsewhere stays
+   UNVERIFIED.
 2. For each reader candidate: reuse, adapt or rewrite, with justification
    against `MarketFactFrame`.
 3. A field-by-field mapping from live HERMES surfaces to `MarketFactFrame`
@@ -160,6 +166,7 @@ Lane B without further discovery:
 6. An explicit input for the adapter PID: which existing artefact, if any, the
    HELIOS-side external adapter extends, and what it must translate (CA
    guidance 2026-10-15, item 1).
+7. A disposition table (Deliverables, below) covering each HELIOS generation.
 
 ## Scope
 
@@ -273,7 +280,19 @@ In scope, all read-only:
    | 9 | Safety and deployment constraints | Sanitisation attestation; recorded command log (no write, no `docker exec`, no unit-state change); no second reader | Sanitisation grep empty; auditor repeats it |
    | 10 | Independent audit verdict and unresolved findings | Independent auditor (AUD-2) verdict file with unresolved findings | Fresh auditor GREEN / AMBER / RED with exact SHAs |
 
-2. **Reuse inventory** (table, item 2 and 6).
+2. **Reuse inventory** (table, item 2 and 6) and **disposition table** (`DISPOSITION.md`, REQUIRED;
+   CA/PO legacy application doctrine 2026-10-15, format `PORTFOLIO.md` section 7.4). The table keeps the
+   HELIOS generations apart: (a) legacy HELIOS V2 and V3; (b) the trading-host `helios_bridge`
+   and the XAU watcher / gate compositor (legacy); (c) the newer deterministic engine
+   `maff0000/HELIOS`, evaluated INDEPENDENTLY of every legacy generation on its own merits;
+   (d) `GOLD-STRATEGY-RUNTIME` and the currently deployed GOLD stack; (e) the untracked probe and the
+   proof branch. Each row: generation, criteria (architecture fit, code quality, determinism,
+   test evidence, maintainability, contracts, operational dependencies, integration cost), a verdict
+   REUSE | REFACTOR | REPLACE | RETIRE, evidence, and the approximate comparative engineering
+   cost of reuse versus refactor versus a clean build. Valuable algorithms, tested logic, contracts
+   and research findings are listed as retained value whatever the verdict. A clean implementation is
+   acceptable and preferable where it materially simplifies THE GOAL. A verdict is a recommendation
+   only: nothing is retired, stopped or mutated.
 3. **Gap list** (item 7).
 4. **Minimum adaptation plan** (item 8): ordered, each step with target
    repository, owner persona, dependency and the proof that would close it.
@@ -301,6 +320,7 @@ Mechanical:
 8. No `docker exec`, write, unit-state or fabric write appears in the recorded
    command log.
 9. The checklist in Deliverables is complete or each missing item states why.
+10. `DISPOSITION.md` exists with a row for every component in the inventory, each with generation, criteria, a REUSE / REFACTOR / REPLACE / RETIRE verdict, evidence and a comparative cost; the newer deterministic engine has its own rows distinct from legacy generations; no component was retired, stopped or mutated. The lane cannot be accepted without it.
 
 ## Stop conditions
 
@@ -312,21 +332,23 @@ Return to the PO or Central Architecture if:
 - HERMES Lane A output contradicts the negative-search result and the
   difference cannot be resolved read-only;
 - evidence in a private repo is essential and cannot be sanitised;
-- the "no integration exists" claim cannot be supported by the recorded search
-  method (a negative is a claim, not a finding).
+- the bounded "no completed integration found in the searched locations" conclusion
+  cannot be supported by the recorded search method (a negative is a claim, not a finding).
 
 Do not invent around a stop condition.
 
 ## Open decisions
 
-1. **Amend HELIOS-T1 or new bounded item?** Recommendation: a new bounded
+1. **RESOLVED by CA/PO adjudication 2026-10-15: a separate audit work item, not an
+   amendment (and not a fold-in to `HELIOS-T2`); `HELIOS-T2` owns the adapter implementation.**
+   Reasoning recorded earlier: a new bounded
    item. HELIOS-T1 is a refactor to a contract that is not yet frozen
    (`depends_on` `GOAL-CORE-001`); this audit concerns the live transport,
    which belongs to `HELIOS-T2` or to the adapter PID that CA guidance
    2026-10-15 (item 1) calls for (DR-34, DR-35). Amending T1 would couple a read-only audit
    to an unfrozen contract and would blur T1's single purpose. The audit is
-   therefore framed as a **pre-increment of `HELIOS-T2`** (and a hard input
-   to its PID), not an amendment of T1. Owner PO. Blocks approval of this PID.
+   therefore framed as a separate audit item that is a hard input to the `HELIOS-T2` PID, not an
+   amendment of T1 or of T2. Resolved; no longer blocks approval.
 2. **Is `HELIOS-T2` in scope for ARES?** GOAL-RECON-H2 finds the T2 title
    contradicts HELIOS PID on ARES risk. This audit maps to the HERMES half
    only. Owner PO. Does not block this PID; blocks T2 PID.

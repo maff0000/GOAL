@@ -12,7 +12,7 @@
 
 Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
 `audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
-six audits (CA frame). The PO sets final values.
+six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is not yet recorded and is entered by CA/PO only.
 
 **Audit id:** GOLD-AUD-D (child audit of GOLD-MVP-001)  
 **Depends on:** `GOAL-DCP-001` only  
@@ -58,8 +58,8 @@ All facts below were read read-only on 2026-10-15 against GOAL `main` @ `1739e74
 
 ### MT5 gateway
 
-- `maff0000/mt5-gateway` `main` = `46308bad7b896f1e4f816d9e264d88dd23a9bd57`. MT5-GW-001 reconciliation is merged; PRs #1..#8 are MERGED; PR #9 (`MT5GW-TEMPLATE-001`: instance config contract, validation suite, documentation) is OPEN (verified read-only via the GitHub API on 2026-10-15).
-- The typed gateway does **not** exist. The only control surface is a raw RPyC `SlaveService` bridge: unauthenticated, arbitrary code execution inside the container, order-capable; protection is network isolation only (MT5 readiness assessment, headline 5 and section B; DEMO verification finding 14).
+- Canonical `maff0000/mt5-gateway` `main` = `6263d61f4cb0d4d5b16337e67c30f409bc9c5051` (CA/PO adjudication 2026-10-15; this replaces the earlier head `46308bad…` and the earlier 'PR #9 open' state, which are stale). MT5-GW-001 reconciliation is merged; PR #9 (`MT5GW-TEMPLATE-001`: instance config contract, validation suite, documentation) is MERGED and Gate A is CLOSED GREEN WITH NOTICES. Follow-up issue #10 tracks the template-hardening notices, including secrets ownership and symlink handling, to be resolved before the template is used. No TRON connection to the unrestricted RPyC bridge. The functional Vantage DEMO proof remains a separate gated workstream. The GitHub PRIVATE visibility change is eligible for Matt's authorisation (DR-32); the audit's recorded SHA is whatever `main` is at audit start.
+- The typed gateway does **not** exist. The only control surface is a raw RPyC `SlaveService` bridge: unauthenticated, arbitrary code execution inside the container, order-capable; protection is network isolation only (MT5 readiness assessment, headline 5 and section B; DEMO verification finding 14). Those documents pre-date Gate A closure, so their statements of the repository topology (open stacked PRs, no CI) are superseded by the paragraph above; the audit re-confirms the current capability against the merged `main`.
 - No automated tests, no DEMO environment guard in code, health check tests process presence only, restart policy is `no` (same sources).
 - Template contract (design only, branch `wo/GOAL-MT5-TEMPLATE`): broker-neutral operation set `describe`, `health`, quotes/bars/symbol spec/account/positions/orders/deals, `place_order`, `modify`, `cancel_order`, `close_position`, `reconcile`; mandatory `client_order_id` idempotency; error taxonomy including `TIMEOUT_UNKNOWN_OUTCOME`; mandatory-now safeguards M1..M12; increments 0..6.
 - DEMO verification (branch `wo/GOAL-MT5-DEMO-VERIFY`, PROPOSED not approved): the existing paper instance is PROVEN DEMO by local records; trading-password nature is INFERRED; ownership/authorisation of the account is UNPROVEN (owner decision); one read-only broker session and one bounded lifecycle test are proposed and unapproved.
@@ -98,17 +98,17 @@ All work is read-only analysis of existing branches, documents and repositories,
 ### Audit areas
 
 1. **TRON D1 and candidates.** Verify the D1 baseline facts that the matrix depends on (tip, branch ancestry, file inventory, absence of runtime code, absence of PR). Inventory every TRON asset beyond documents (code, schemas, test fixtures) and every `wi-*` branch via git only. Confirm nothing exists on any TRON ref that executes, signs, or calls a broker.
-2. **Risk rules and hard gates.** Map HR-01..HR-16 and the D1 check catalogue to the DEMO path. Identify the minimum set of gates that must exist and run before one DEMO order (building on TRON-D1-RATIFY N-5; do not re-derive the list, test it against the path). State which gates are deterministic and credential-free. Confirm or correct the required content of `GAP-TRON-FIXED-SIZE-DEMO-RISK` (fixed DEMO base quantity from configuration; one-position-per-instrument rule; maximum open positions; maximum daily loss and trade-count guard; kill switch with a setter; hard gates before submit, fail-closed) and state the smallest credential-free proof for each element.
+2. **Risk rules and hard gates.** Map HR-01..HR-16 and the D1 check catalogue to the DEMO path. Identify the minimum set of gates that must exist and run before one DEMO order (building on TRON-D1-RATIFY N-5; do not re-derive the list, test it against the path). State which gates are deterministic and credential-free. Confirm or correct the required content of `GAP-TRON-FIXED-SIZE-DEMO-RISK` (fixed DEMO base quantity from configuration; one-position-per-instrument rule; maximum open positions; maximum daily loss and trade-count guard; kill switch with a setter; hard gates before submit, fail-closed) and state the smallest credential-free proof for each element. **Validate the scope of the approved `TRON-T3A`** (CA/PO adjudication 2026-10-15: approved as a proposed P0 / high-risk, credential-free minimum DEMO sizing and risk item, subject to this validation): confirm that its content matches the six elements, that it needs no broker credential, and that it reuses or extends the `TRON-T3` hard-risk / kill-switch design. A single kill switch exists: there are no competing TRON kill switches, and `TRON-T3A` must not create a second one; report any scope that would.
 3. **Execution journal.** State the minimum journal behaviour the path needs for journal-before-submit (HR-08), idempotency (HR-13) and reconcile (HR-06, HR-14), against the CA rulings R1..R5 as recorded in TRON-D1-RATIFY. Identify the smallest viable store for the first path (in-memory port versus Postgres), without deciding R-4.
 4. **Trigger-intake assumptions versus GOAL-TRIGGER-001.** List every assumption TRON D1, TRON-T1/T4 and HELIOS-T3 make about the trigger (envelope, identity, signing, validity, level vocabulary, claim/disposition, SL/TP derivation). Mark each as covered, contradicted, or unspecified relative to the GOAL-TRIGGER-001 contract once it exists. If that contract does not yet exist, record the assumption list as the input it needs and do not invent a contract.
-5. **MT5 gateway.** Using MT5-GW-001 outcomes (merged main, PR #9 state), state the current capability against the template contract operations and ADR-MT5-001. Separate what is in the merged repository, in PR #9, and in design documents only.
-6. **Other execution candidates.** Assess NEO's practice bridge and legacy executors strictly from source as reuse candidates (what to learn, what must not be reused, authority and gate differences). No execution, no import, no call.
+5. **MT5 gateway.** Using MT5-GW-001 outcomes (merged `main`, merged PR #9, issue #10), state the current capability against the template contract operations and ADR-MT5-001. Separate what is in the merged repository (including PR #9) and what is in design documents only.
+6. **Other execution candidates.** Assess NEO's practice bridge and legacy trading executors strictly from source as reuse candidates (what to learn, what must not be reused, authority and gate differences). Source inspection is permitted (CA/PO adjudication 2026-10-15); running or modifying them is not. No execution, no import, no call.
 7. **One-path composition.** Build the capability gap matrix per hop and the minimal increment list (see Deliverables). Classify every increment as credential-free, DEMO read-only session, or write-test approval.
 8. **Ordering.** State the dependency order and the point at which each of these gates applies: typed gateway mandatory before any accepted TRON integration or PAPER proof; diagnostic bridge use permitted only for isolated proof that is not TRON integration.
 
 ### Coordination with MT5-GW-001
 
-The audit reads the merged `mt5-gateway` main and PR #9 as the current truth and records the SHA read. It proposes no change to either. Where the gap list overlaps template increments 1..6 or backlog items MT5-GW-002..004, the matrix references those ids and adds nothing new.
+The audit reads the merged `mt5-gateway` main (including PR #9) as the current truth, records the SHA read, and notes issue #10's open hardening notices. It proposes no change to either. Where the gap list overlaps template increments 1..6 or backlog items MT5-GW-002..004, the matrix references those ids and adds nothing new.
 
 ## Non-goals
 
@@ -117,7 +117,7 @@ The audit reads the merged `mt5-gateway` main and PR #9 as the current truth and
 - No contact with, inspection of, or change to the legacy MT5 containers or live-flagged executors.
 - No ratification of D1 and no decision on R-1..R-10; no acceptance of any "Proposed" value.
 - No authoring of GOAL-TRIGGER-001, no HELIOS or FALCON repository change, and no competing trigger, outbox or inbox contract (CA guidance 2026-10-15, item 2): the trigger-assumption register records TRON's assumptions against `GOAL-TRIGGER-001`, it does not define an alternative.
-- No backlog edit for `GAP-TRON-FIXED-SIZE-DEMO-RISK`: the candidate item is a proposal for PO decision (DR-36), listed in `PORTFOLIO.md` section 11.4 and not applied.
+- No backlog edit for `GAP-TRON-FIXED-SIZE-DEMO-RISK`: `TRON-T3A` is APPROVED as proposed subject to this audit's scope validation (DR-36 resolved), listed in `PORTFOLIO.md` section 11.4; its backlog entry is a later serial governed change and is not applied.
 - No backlog edit, no `pid_path`, no `DELIVERY_READY`, no approval, no running of `goal-docs --write`.
 - No merge, no force push, no PR merge on any repository.
 - No claim that a simulated lane satisfies ADR-MT5-001 or the state `PAPER` (R-9 is Matt's).
@@ -128,7 +128,7 @@ The audit reads the merged `mt5-gateway` main and PR #9 as the current truth and
 |------|----------|-----------|
 | `GOAL-DCP-001` | Hard dependency (CLOSED) | Control plane the PID and its evidence live in. |
 | TRON-D1-RATIFY | Input, not duplicated | Baseline facts, amendment schedule A1..A12, decisions R-1..R-10. This audit is complementary and must not alter them. |
-| MT5-GW-001 and PR #9 | Input | Merged main and the template contract are the MT5 truth; coordination only. |
+| MT5-GW-001, merged PR #9 and issue #10 | Input | Merged main and the template contract are the MT5 truth; coordination only. |
 | MT5-GW-002..004, TRON-T1..T5, HELIOS-T3, PAPER-E2E-001 | Referenced | Backlog items the increment list maps to; none is edited. |
 | GOAL-TRIGGER-001 | Soft input (candidate on `wo/GOAL-CONTRACT-TRIGGER` @ `64c843b`; backlog item pending in PR #5; neither on `main`) | Supplies the trigger contract; audit area 4 uses an assumption register and compares against the candidate where it exists. |
 | RECON-H2 | Input | Intake-model and ownership findings; cite by finding id. |
@@ -139,7 +139,7 @@ The audit reads the merged `mt5-gateway` main and PR #9 as the current truth and
 
 - **Read-only.** Only git reads, document reads and local test runs from scratch copies outside every repository.
 - **No broker session of any kind**, no network call to a broker, no RPyC connection to any instance.
-- **No legacy executor interaction.** Source of NEO and legacy executors may be read as text. They are never executed, imported, or pointed at.
+- **No legacy executor interaction.** Source of NEO and legacy trading executors may be inspected as text (permitted). They are never executed, modified, imported, or pointed at.
 - **Public repository hygiene.** `maff0000/GOAL`, `maff0000/tron` and `maff0000/mt5-gateway` are public. Evidence contains no IP addresses, hostnames of operating systems beyond role names, account or login identifiers, server strings, credentials or tokens; `./tools/secret-scan` must pass on every evidence commit.
 - **No disturbance of operating instances.** Container state is read from existing recorded evidence, not from new probes, unless the PO separately authorises a probe.
 - Findings that would require any of the above are recorded as "needs approval X" and left unperformed.
@@ -177,7 +177,7 @@ CA's ten mandatory evidence items, in CA's numbering (the numbering is CA's and 
 | CA # | CA evidence item | This audit puts it in | Proof method |
 |---|---|---|---|
 | 1 | PID/WO identifier and exact audited scope | Evidence PR header (quote of the single question and the CA directive); deliverable 1 | Quote equals approved PID |
-| 2 | Source repositories, revisions and documentation references | `BASELINE.md` (deliverable 1): refs and SHAs of GOAL, TRON (main and the D1 branch) and mt5-gateway (main and PR #9), documents read | Baseline commands re-run to the recorded SHAs and counts |
+| 2 | Source repositories, revisions and documentation references | `BASELINE.md` (deliverable 1): refs and SHAs of GOAL, TRON (main and the D1 branch) and mt5-gateway (main, with PR #9 merged), documents read | Baseline commands re-run to the recorded SHAs and counts |
 | 3 | Existing implementation: proven, partially proven, unverified or missing | `GAP-MATRIX.md` (deliverable 2, at least 24 rows over hops H1..H6) and `CANDIDATES.md` (deliverable 3): each capability exists / partial / missing, mapped to proven / partially proven / unverified / missing, with citation | Every exists / partial cell cites a path with SHA or a PR number |
 | 4 | Actual versus expected contract comparison | `TRIGGER-ASSUMPTIONS.md` (deliverable 4): intake assumptions of TRON D1, TRON-T1/T4 and HELIOS-T3 versus `GOAL-TRIGGER-001`; MT5 gateway state versus the template contract (GAP-MATRIX H4, H5) | Each assumption classed covered / contradicted / unspecified |
 | 5 | Tests, fixtures and evidence references | `EVIDENCE-HASHES.txt` (deliverable 9) and the recorded re-confirmation command transcripts; reference to the D1 gate (148 tests) | Hash list verifies; commands reproduce |
@@ -204,6 +204,10 @@ Mechanical, checkable by a fresh auditor:
 11. Public-repo scan over all evidence for IPv4 patterns, account-id-like numerics next to the words login/account/server, and token-like strings returns nothing.
 12. Fresh independent FORGE Auditor GREEN recorded against the exact evidence SHA.
 
+### Disposition table
+
+**Disposition table (REQUIRED; CA/PO legacy application doctrine 2026-10-15).** The evidence PR contains `DISPOSITION.md` (format: `PORTFOLIO.md` section 7.4): one row per reusable component in scope — TRON D1 and its `wi-*` branches, TRON-T1 candidate, the MT5 gateway as merged (including the template), the diagnostic RPyC bridge, NEO's practice executor and the legacy trading executors (the last two by source inspection only) — each with generation (legacy / newer canonical / currently deployed), the criteria assessed (architecture fit, code quality, determinism, test evidence, maintainability, contracts, operational dependencies, integration cost), a verdict REUSE | REFACTOR | REPLACE | RETIRE, evidence, and the approximate comparative engineering cost of reuse versus refactor versus a clean build. A verdict is a recommendation only: nothing is retired, shut down or mutated, and the lane cannot be accepted without this table (it is part of CA evidence items 7 and 8).
+
 ## Stop conditions
 
 Return to PO if:
@@ -211,7 +215,7 @@ Return to PO if:
 - any contradiction against TRON-D1-RATIFY or the MT5 documents changes a binding ruling, an ADR or an HR;
 - reading would require a broker session, bridge connection, container probe or legacy executor interaction;
 - GOAL-TRIGGER-001 is authored in parallel with content that contradicts the assumption register;
-- MT5-GW-001 or PR #9 changes state during the audit so that the recorded SHA no longer represents main;
+- `maff0000/mt5-gateway` `main` moves during the audit so that the recorded SHA no longer represents main;
 - a secret, account identifier or address is found in any source being read (stop, report location only, do not copy);
 - the increment list would need a decision that is Matt's by the PID or the ratification package.
 
@@ -224,11 +228,11 @@ Do not invent around a stop condition.
 | 1 | Amend TRON-D1-RATIFY (option i) or accept this thin new item (option ii) | PO | Recommended: option ii (see Purpose). |
 | 2 | Is the first path allowed to use an in-memory journal port for the credential-free proof ahead of the Postgres decision | PO | Depends on R-4; this audit may not decide R-4. |
 | 3 | Treatment of the simulated-adapter lane in relation to the state `PAPER` | Matt | Reference R-9. |
-| 4 | Whether the audit may read-only inspect NEO and legacy executor source | PO | Source read only; no execution. Recommended: yes, text only. |
+| 4 | RESOLVED by CA/PO adjudication 2026-10-15: source inspection of NEO and the legacy trading executors is permitted (text only); running or modifying them is not. | PO | none |
 | 5 | Retired by programme-controller ruling 5: audit area 4 proceeds with the assumption register until `GOAL-TRIGGER-001` exists and is refreshed when it does | none | none |
 | 6 | Which of the DEMO owner decisions (account entitlement, existing versus fresh instance, one read-only session) are answered before this audit closes | Matt | Reference DEMO verification section 5; needed only to classify, not to execute. |
 | 7 | The TRON-side decisions the path depends on: R-1, R-2, R-4, R-5, R-6, R-7, R-8 | Matt | Referenced by id from TRON-D1-RATIFY; not restated. |
-| 8 | Approval of the proposed backlog item for `GAP-TRON-FIXED-SIZE-DEMO-RISK` (id, risk, gates, dependencies) | PO | Not blocking this audit; blocks `PAPER-E2E-001` and `GOLD-MVP-001` acceptance. DR-36. |
+| 8 | RESOLVED with a condition by CA/PO adjudication 2026-10-15 (DR-36): `TRON-T3A` approved as proposed (P0, high risk, credential-free); condition: this audit validates its scope and the single-kill-switch rule. Backlog application is a later governed change. | PO | blocks `PAPER-E2E-001` and `GOLD-MVP-001` acceptance until closed |
 
 ## Evidence
 

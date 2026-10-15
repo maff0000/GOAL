@@ -12,7 +12,7 @@
 
 Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
 `audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
-six audits (CA frame). The PO sets final values.
+six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is not yet recorded and is entered by CA/PO only.
 
 
 ## Status
@@ -117,7 +117,7 @@ At closure the component repositories and GOAL hold a dated, reproducible audit 
 ## Safety boundaries
 
 - Read-only on all systems except the audit's own worktree and clones. No production mutation, no database write, no container action.
-- NEO never makes a discretionary live trade, sizing or risk action (RECON-G prohibitions 1-6). The NEO practice executor is **assessed from source, never run, imported or scheduled**.
+- NEO never makes a discretionary live trade, sizing or risk action (RECON-G prohibitions 1-6). The NEO practice executor and the legacy trading executors are **assessed from source (inspection permitted, CA/PO adjudication 2026-10-15), never run, modified, imported or scheduled**.
 - No broker calls. No credentials printed, read or recorded; report credential-bearing paths as path and mode only.
 - GOAL is public: no addresses, hostnames of internal services, ports, accounts or credentials in any committed file; say "the dell host" and "the Trinity host". Component evidence for private repositories stays in those repositories.
 - Run `./tools/secret-scan` and a manual grep for address and key-like strings before every commit.
@@ -145,6 +145,7 @@ At closure the component repositories and GOAL hold a dated, reproducible audit 
 4. **External evaluation register** (the table above, re-verified, with service-dependency flags), **information only**. It carries no reuse recommendation and no licence ruling: under CA guidance 2026-10-15 (item 4) the MVP takes no new third-party engine or SaaS dependency, so no external engine is adopted and none is offered as an MVP option.
 5. **No-rebuild register:** delivered functions the MVP must reuse (HSA versioning and validation, DARWIN StrategyVersion and APOLLO core, CER registry and promotion records, HELIOS HSA boundary, GOLD-STRATEGY-RUNTIME, NEO strategy-health consumer).
 6. **Gap list** with owner, mapped to existing backlog ids or marked "no home".
+6a. **Disposition table** (`DISPOSITION.md`, REQUIRED; CA/PO legacy application doctrine 2026-10-15; format `PORTFOLIO.md` section 7.4). It keeps NEO's parts apart, one set of rows each: (a) NEO's legacy runtime; (b) the practice-execution bridge and executors (source inspection only); (c) the observer, scorer, auditor and coach; (d) the deployed Trinity cron service. For each: generation (legacy / newer canonical / currently deployed), criteria (architecture fit, code quality, determinism, test evidence, maintainability, contracts, operational dependencies, integration cost), a verdict REUSE | REFACTOR | REPLACE | RETIRE, evidence, and the approximate comparative engineering cost of reuse versus refactor versus a clean build. **Explicit assessment required:** is a clean, read-only intelligence service (consuming CER evidence, no order path) preferable to rehabilitating the previous NEO runtime? State the answer with the cost comparison, evidence from the observer failure class and the tests actually proven, and the algorithms, tested logic, contracts and research findings worth retaining either way. The same table covers the CER, HSA and DARWIN components in the path (HSA package and versioning, DARWIN StrategyVersion and APOLLO core, CER registry and promotion records, GOLD-STRATEGY-RUNTIME). Obsolete application architecture is not preserved merely because time was invested. Verdicts are recommendations only: nothing is retired, stopped, migrated or mutated, and any physical retirement needs a separate authorised work order.
 7. **Index entry** listing the primary PR and the four mirror-note PRs and their merge SHAs, contributed to `EVIDENCE-INDEX.md` by one GOAL PR after acceptance (single writer of the file: the `GOLD-MVP-001` PL).
 8. **Amendment text proposals** (not applied) for CER-R1, NEO-R1, HSA-C1 and DARWIN-R2, plus candidate rows only where a gap has no home. Informed by RECON-G S1-S8 and RECON-H1 P-14.
 
@@ -176,7 +177,8 @@ GREEN requires, mechanically:
 5. No external code was installed or executed; no outbound call to any evaluated service is in the record.
 6. No backlog, `pid_path` or state change in the diff; `./tools/goal-docs` reports no write.
 7. Each missing mark names an owner or "no home"; the external register is marked information only and contains no recommendation to adopt an external engine or SaaS for the MVP (grep check); no strategy is ranked, recommended or marked as selected.
-8. Fresh independent FORGE Auditor GREEN; evidence PR list with exact SHAs; PO acceptance recorded in GitHub.
+8. `DISPOSITION.md` is present and complete: every NEO part and every CER / HSA / DARWIN component in the path has generation, criteria, a REUSE / REFACTOR / REPLACE / RETIRE verdict, evidence and a comparative cost, and the clean-read-only-service-versus-rehabilitation question is answered with a cost comparison. The lane cannot be accepted without it.
+9. Fresh independent FORGE Auditor GREEN; evidence PR list with exact SHAs; PO acceptance recorded in GitHub.
 
 ## Stop conditions
 
@@ -201,7 +203,7 @@ Do not invent around a stop condition.
 
 **D4 — `EdgeProfileVersion` (RECON-G D2; blocks CER-R1 and TRON-T5).** Defined nowhere. The audit reports whether the MVP needs it. Owner PO.
 
-**D5 — NEO legacy practice executor and boundary wording (RECON-G D1; blocks the `neo` evidence PR scope).** Assessed only; disposition is not decided here. Owner PO.
+**D5 — NEO legacy practice executor and boundary wording (RECON-G D1; blocks the `neo` evidence PR scope).** Source inspection is permitted and running or modifying is not (CA/PO adjudication 2026-10-15). The disposition table carries a recommendation only; who adjudicates verdicts is DR-37. Owner PO.
 
 **D6 — Strategy-health authority (RECON-G D4; blocks hop 9 design, not audit).** Owner PO.
 

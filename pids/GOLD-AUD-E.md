@@ -3,7 +3,7 @@
 **Lane:** research  
 **Target repository:** `maff0000/falcon` (primary evidence PR; GOAL carries the index entry only)  
 **Evidence:** primary PR in `maff0000/falcon`, branch `wo/GOLD-AUD-E-evidence`, path `docs/evidence/GOLD-AUD-E/` (programme-controller rulings 1 to 3; `PORTFOLIO.md` appendix)  
-**Priority:** P1  
+**Priority:** P0 (raised from P1 by CA/PO adjudication 2026-10-15)  
 **Risk:** Low  
 **Matt gate:** No  
 **PO gate:** Yes  
@@ -13,7 +13,7 @@
 
 Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
 `audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
-six audits (CA frame). The PO sets final values.
+six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is not yet recorded and is entered by CA/PO only.
 
 ## Status
 
@@ -175,6 +175,7 @@ authority (falcon Decision 15, `TRON-FALCON-CONTRACT.md` "Idempotency").
 
 ## Safety boundaries
 
+- The running Graylog and the production FALCON are never mutated or interrupted by this audit (CA/PO adjudication 2026-10-15). If authenticated read-only inspection is unavailable, that part is recorded UNVERIFIED with the reason. Any FALCON-outage rehearsal (EP-9 test, acceptance 6) is run only against an isolated DEV/test FALCON, never against the running Graylog or production FALCON.
 - READ-ONLY on all systems except the audit worktree and its PR. Allowed runtime reads: `docker ps` and
   `docker inspect` of state, restart policy, health and labels; `systemctl list-units`; file reads of
   non-secret repository content.
@@ -245,6 +246,10 @@ side by Rogue):**
 | P-F1 | Retire the discovery model in falcon documents (Current state 9); one supersession decision (new Decision, not an edit of Decision 16) | FALCON (falcon amendment route) | none | link-check and manifest pass | docs-only, may run first |
 | P-F2 | Authorise and expose HELIOS and TRON inputs one at a time, with PID-06-style acceptance each | HELM + Rogue | none | mTLS accept and spoof-reject records | after P-H1 or P-T1 per input |
 
+### Disposition table
+
+**Disposition table (REQUIRED; CA/PO legacy application doctrine 2026-10-15).** The evidence PR contains `DISPOSITION.md` (format: `PORTFOLIO.md` section 7.4): one row per reusable component in scope — the FALCON registry and schemas, the running ingestion stack (separate from the legacy Falcon Ranger and older Graylog stack, which are assessed by source and labels only), the PID-06 non-blocking publisher pattern, and the HELIOS and TRON publication surfaces — each with generation (legacy / newer canonical / currently deployed), the criteria assessed (architecture fit, code quality, determinism, test evidence, maintainability, contracts, operational dependencies, integration cost), a verdict REUSE | REFACTOR | REPLACE | RETIRE, evidence, and the approximate comparative engineering cost of reuse versus refactor versus a clean build. FALCON stays evidence-only and non-blocking whatever the verdict. A verdict is a recommendation only: nothing is retired, shut down or mutated, and the lane cannot be accepted without this table (it is part of CA evidence items 7 and 8).
+
 ## Acceptance
 
 Mechanical; every row passes or the audit is not accepted.
@@ -260,9 +265,12 @@ Mechanical; every row passes or the audit is not accepted.
    makes FALCON a precondition of a HELIOS or TRON decision.
 6. EP-9 states these requirements and a test for each (CA guidance 2026-10-15, item 3): publication is asynchronous and non-blocking; the
    queue is bounded and drop-on-full is counted; **with FALCON ingestion stopped, a full execution path (evaluation, trigger, claim, risk,
-   order, reconcile) completes and its terminal outcome is unchanged** (outage rehearsal, the same rehearsal as `GOLD-MVP-001` AC-12);
+   order, reconcile) completes and its terminal outcome is unchanged** (outage rehearsal on an isolated DEV/test FALCON, the same rehearsal as `GOLD-MVP-001` AC-12);
    FALCON unreachable, slow, rejecting or full leaves
-   evaluation, claim, risk, order and reconcile outcomes byte-identical and timing within a stated bound;
+   the evaluation, claim, risk, order and reconcile outcomes **logically equivalent** (deterministic logical
+   decision and reconciliation equivalence: same trigger dispositions, same orders / fills / positions
+   reconciliation outcome and same terminal states; FALCON-side counters and timestamps excluded; not byte
+   identity) with timing within a stated bound, rehearsed against an isolated DEV/test FALCON only;
    no publisher or TRON reads FALCON to decide, validate, dedupe or authorise; the durable record of a
    trigger is the publisher outbox and TRON inbox and journal, with FALCON a best-effort copy and a gap
    after outage backfilled from those journals, never the reverse; emission happens after the local
@@ -272,6 +280,7 @@ Mechanical; every row passes or the audit is not accepted.
 8. A negative check: `git diff --stat` of the evidence PR shows docs only; zero lines in `registry/`,
    `schemas/`, `deploy/`, `tests/`.
 9. Audit log lists every runtime command run; none is outside the allowed list in Safety boundaries.
+10. `DISPOSITION.md` is present and complete (see Disposition table); the lane cannot be accepted without it.
 
 ## Stop conditions
 
@@ -291,7 +300,7 @@ Mechanical; every row passes or the audit is not accepted.
 | D-1 | Amend FALCON-T1 or new item (this PID recommends new) | PO | approval |
 | D-2 | RESOLVED by CA guidance 2026-10-15, item 3: FALCON is evidence-only and must not block execution (reverses Decision 16 coupling; RECON-F B2). Residual routing of the falcon-side supersession is P-F1, not a decision here | CA | none |
 | D-3 | Retired: CA's numbered evidence list has been supplied and applied (see Deliverables); no decision remains | none | none |
-| D-4 | Authenticated Graylog read access for the audit (read-only account, or HELM-run read-only export) to close the UNVERIFIED rows | Matt (credentials) / HELM | later (audit may close with UNVERIFIED) |
+| D-4 | Authenticated Graylog read access for the audit (read-only account, or HELM-run read-only export) to close the UNVERIFIED rows. Boundary (CA/PO adjudication 2026-10-15): the audit may not mutate or interrupt the running Graylog; where authenticated read-only inspection is unavailable the part is recorded UNVERIFIED. Open: whether access or an export is granted (DR-20) | Matt (credentials) / HELM | later (audit may close with UNVERIFIED) |
 | D-5 | Durable backfill after FALCON outage: accepted loss (PID-06 precedent) or gap-fill from publisher and TRON journals | PO | later (FALCON-T2/T3) |
 | D-6 | Where trigger evidence emission lives (publisher component versus HELIOS) | PO | later (HELIOS-T3 PID; GOAL-TRIGGER-001 D-10) |
 | D-7 | Add FALCON-T2 and FALCON-T3 to the backlog (RECON-F proposals), with this audit's work list as their input | PO | later |
@@ -301,7 +310,7 @@ Mechanical; every row passes or the audit is not accepted.
 ## Evidence
 
 - GOAL base `1739e74`: `backlog/backlog.yaml` (FALCON-T1), `backlog/SCHEMA.md`, `pids/GOAL-DCP-001.md`.
-- GOAL reconciliation branch `wo/GOAL-RECON-PR` `e2671ff` (FALCON-T1 re-pointed; trigger and `tron.*` excluded).
+- GOAL reconciliation branch `wo/GOAL-RECON-PR` `e2671ff` (current at time of writing, reconcile at merge; FALCON-T1 re-pointed; trigger and `tron.*` excluded).
 - `wo/GOAL-CONTRACT-TRIGGER` `64c843b`: `pids/GOAL-TRIGGER-001.md`.
 - RECON-F (`GOAL-RECON-F-falcon`, `audits/2026-10-14/reconciliation/RECON-F.md`) and RECON-H2.
 - falcon main `8f218ec`: registry, schemas, `deploy/docker-compose.yml`, `deploy/content-packs/`, PID-04 runbook,
