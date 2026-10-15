@@ -31,12 +31,27 @@ Redis to HELIOS GOLD integration, including any external adapter, deployment
 wiring or legacy implementation; reconcile its actual source with the new
 HELIOS runtime and the documented `MarketFactFrame` contract; determine the
 minimum reuse or adaptation; and review HSA's existing strategy packages for a
-compatible first GOLD strategy. No second market-data reader may be introduced
+compatible first GOLD strategy (as originally directed; restated below by
+CA guidance 2026-10-15, item 6: candidate requirements are compared with PROD
+facts and no strategy is selected here). No second market-data reader may be introduced
 until the existing integration has been located and assessed.
 
 This PID turns that directive into a mechanically checkable, read-only
 increment whose output is a reuse inventory, a gap list and a minimum
 adaptation plan. It decides nothing about building the reader.
+
+**CA guidance 2026-10-15 (items 1 and 6) applied.** (1) HERMES owns Redis
+publication. A HELIOS-side EXTERNAL ADAPTER, outside the pure HELIOS engine
+(which stays execution-blind and deterministic, with no Redis or network
+imports), owns consumption and translation; GOAL approves the interface
+(CP-1, `GOLD-AUD-C`). This audit inventories what exists for that adapter to
+reuse and what it must translate; it neither builds nor specifies the adapter
+itself (the adapter PID is a later item, decisions DR-34 and DR-35 in
+`DECISION-REGISTER.md`). (6) This audit selects no strategy. Its candidate
+output is a requirements-versus-facts comparison: the data each HSA candidate
+needs, set against what the PROD publication actually carries (audit A). The
+sequence is audits A and B, then reconciliation, then strategy selection by
+the PO, then `GOLD-MVP-001` acceptance planning.
 
 ## Current state
 
@@ -86,20 +101,22 @@ accepted.
   lowercase token, so DEV and PROD HERMES cannot be told apart in the frame.
   The runtime requires `HERMES_EXPECTED_ENVIRONMENT` with no silent fallback.
 - **Completeness gap (PROVEN as of 2026-09-05, UNVERIFIED now).** The proof
-  branch found H4 and D1 incomplete on HERMES PROD. HELIOS needs H4 for the
-  `CONTEXT` role of the first GOLD template.
+  branch found H4 and D1 incomplete on HERMES PROD. `gold_context_breakout`
+  needs H4 for its `CONTEXT` role (a requirement of that candidate, not a selection).
 - **Indicator gap (UNVERIFIED).** HELIOS carries EMA 9/21/50/200 and ATR 14;
   whether HERMES publishes the same names, and any SMA, was not read.
 
-### HSA first-strategy read so far
+### HSA candidate read so far (candidates under review; none selected or implied)
 
 `maff0000/HSA` (public) `main` `279ec18` holds two governed packages, both
-`CANDIDATE`, both `XAUUSD`, neither with passing CER evidence:
+`CANDIDATE`, both `XAUUSD`, neither with passing CER evidence. They are listed
+as candidates under review only (CA guidance 2026-10-15, item 6); no
+preference is expressed:
 
 | Package | Shape | Roles / timeframes | Observations |
 |---|---|---|---|
-| `gold_context_breakout` 1.0.0 | `CONTEXT_TRIGGER`: `golden_cross` (context) then `range_breakout` (trigger) | CONTEXT 4H, TRIGGER 5M | Needs H4 and M5 only. Requires `ma.fast` / `ma.slow` as simple averages of close, plus `range.high` and `range.low` over a lookback; HELIOS facts carry EMAs, not SMAs. HELIOS has a same-named fixture chain (`gold_context_trigger`, H4/M5) that suggests the shape is already runnable. |
-| `wick_rejection_sequence` 0.1.0 | `SEQUENCE`: `rejection_wick`, `no_wick_candle`, optional `range_breakout` | LOCATION and CONFIRMATION 15M, TRIGGER 5M | Needs M15 and M5 only. Needs only raw candle fields, so fewer indicator dependencies, but intraday freshness load is higher and evidence is "still owed before promotion". |
+| `gold_context_breakout` 1.0.0 | `CONTEXT_TRIGGER`: `golden_cross` (context) then `range_breakout` (trigger) | CONTEXT 4H, TRIGGER 5M | Needs H4 and M5 only. Requires `ma.fast` / `ma.slow` as simple averages of close, plus `range.high` and `range.low` over a lookback; HELIOS facts carry EMAs, not SMAs. HELIOS has a same-named fixture chain (`gold_context_trigger`, H4/M5). |
+| `wick_rejection_sequence` 0.1.0 | `SEQUENCE`: `rejection_wick`, `no_wick_candle`, optional `range_breakout` | LOCATION and CONFIRMATION 15M, TRIGGER 5M | Needs M15 and M5 only. Needs only raw candle fields (no indicator facts); evidence is "still owed before promotion". |
 
 Mismatches seen by inspection (PROVEN): HSA uses `XAUUSD`, `4H`, `5M`, `15M` and
 HERMES/HELIOS use `XAU_USD`, `H4`, `M5`, `M15` (the HELIOS enum parses both
@@ -135,10 +152,14 @@ Lane B without further discovery:
    with every gap named.
 4. A minimum adaptation plan mapped to `HELIOS-T2` (and to `HERMES-FACT-001`
    where the gap belongs to HERMES).
-5. A ranked review of HSA packages for the first GOLD strategy, naming what
-   must change in each.
-6. An explicit ruling input on whether a new reader is justified, or exactly
-   which existing artefact it extends.
+5. A candidate-requirements matrix: for every HSA package (and the HELIOS and
+   GOLD runtime packages for GOLD), the facts, timeframes and indicator names it
+   needs against the PROD facts recorded by audit A, naming what would have to
+   change for each. It ranks nothing and recommends no strategy; it is an input
+   to the later PO selection (CA guidance 2026-10-15, item 6).
+6. An explicit input for the adapter PID: which existing artefact, if any, the
+   HELIOS-side external adapter extends, and what it must translate (CA
+   guidance 2026-10-15, item 1).
 
 ## Scope
 
@@ -162,12 +183,14 @@ In scope, all read-only:
 5. **Map to `HELIOS-T2`.** Show which T2 requirements the findings satisfy,
    which they contradict (ARES scope, transport seam, Redis sink), and what
    is missing.
-6. **HSA review.** Rank every package in HSA `strategies/` (and the HELIOS and
-   GOLD runtime packages for GOLD) for first-GOLD-strategy fitness: data
-   needs against what HERMES publishes, timeframe completeness, indicator
-   names, determinism, execution-blindness, evidence state, fit with the
-   HELIOS package schema and with the `goal.strategy/v1` draft. Name what
-   must change for each.
+6. **HSA candidate-requirements review.** For every package in HSA `strategies/`
+   (and the HELIOS and GOLD runtime packages for GOLD), tabulate: data needs
+   against what the PROD publication carries (audit A output), timeframe
+   completeness, indicator names, determinism, execution-blindness, evidence
+   state, fit with the HELIOS package schema and with the `goal.strategy/v1`
+   draft. Name what would have to change for each. Do not rank, do not
+   recommend, do not select (CA guidance 2026-10-15, item 6): selection is a
+   PO decision taken after audits A and B have reported and been reconciled.
 
 ## Non-goals
 
@@ -176,6 +199,9 @@ In scope, all read-only:
   scripted or prototyped.
 - No change to HERMES, ARES, FALCON, TRON, HSA, CER, the GOLD runtime, or any
   running unit, container, timer or fabric key.
+- No strategy selection, ranking-to-selection or recommendation (CA guidance 2026-10-15, item 6).
+- No change to the pure HELIOS engine and no Redis or network import into it; the
+  external adapter is a later item (CA guidance 2026-10-15, item 1).
 - No strategy promotion or evidence claim; no decision on `goal.market-fact/v1`,
   `goal.strategy/v1` or HELIOS-T3 trigger semantics.
 - No backlog edit, `pid_path`, `DELIVERY_READY` state or approval record.
@@ -211,7 +237,7 @@ In scope, all read-only:
   account, sizing, order or TRON vocabulary into HELIOS; the existing
   forbidden-vocabulary test must still pass unchanged.
 - **No second reader.** The audit must not stand up, run or script a new
-  HERMES reader against live Redis. Captured samples are read through the
+  HERMES reader (or the HELIOS-side external adapter) against live Redis. Captured samples are read through the
   existing Redis gateway read endpoints or existing evidence directories only.
 - `maff0000/GOAL` and `maff0000/HELIOS` are public: no internal IPs, hostnames
   beyond generic role names, accounts, credentials, tokens, environment
@@ -242,7 +268,7 @@ In scope, all read-only:
    | 4 | Actual versus expected contract comparison | HERMES-to-`MarketFactFrame` field mapping, schema version and provenance reconciliation, HSA package field needs versus the mapping | Field-level, no narrative cells; every gap named |
    | 5 | Tests, fixtures and evidence references | Unchanged-HELIOS test result (baseline 1005 at `7f7193d`); throwaway no-network container reproduction of the probe's accept and refuse results using captured sanitised samples | Same pass count; no test or source file modified |
    | 6 | Specific defects and compatibility gaps | Gap list, each gap with an owner repository and a closing proof | Every gap has owner and closing proof |
-   | 7 | Reusable code and documentation | Reuse inventory and HSA package ranking with what must change in each | Each GOLD-capable package has a ranked row |
+   | 7 | Reusable code and documentation | Reuse inventory and HSA candidate-requirements matrix (no ranking, no selection) with what would have to change in each | Each GOLD-capable package has a requirements row |
    | 8 | Minimum recommended implementation changes | Minimum adaptation plan mapped to `HELIOS-T2` and `HERMES-FACT-001`: ordered, with target repository, owner persona, dependency and closing proof | Each step maps to an existing item |
    | 9 | Safety and deployment constraints | Sanitisation attestation; recorded command log (no write, no `docker exec`, no unit-state change); no second reader | Sanitisation grep empty; auditor repeats it |
    | 10 | Independent audit verdict and unresolved findings | Independent auditor (AUD-2) verdict file with unresolved findings | Fresh auditor GREEN / AMBER / RED with exact SHAs |
@@ -269,8 +295,8 @@ Mechanical:
    version strings with a `v` or `/` prefix), for the words `password`,
    `secret`, `token` followed by a value, and for private hostnames returns no
    hit.
-6. Each GOLD-capable package found (HSA, HELIOS fixture and runtime strategies) has a ranked row with
-   its required timeframes and fields checked against the field mapping.
+6. Each GOLD-capable package found (HSA, HELIOS fixture and runtime strategies) has a requirements row with
+   its required timeframes and fields checked against the field mapping and the audit A facts; no row is ranked or marked as the selected strategy.
 7. Every gap in the gap list has an owner repository and a closing proof.
 8. No `docker exec`, write, unit-state or fabric write appears in the recorded
    command log.
@@ -296,7 +322,8 @@ Do not invent around a stop condition.
 1. **Amend HELIOS-T1 or new bounded item?** Recommendation: a new bounded
    item. HELIOS-T1 is a refactor to a contract that is not yet frozen
    (`depends_on` `GOAL-CORE-001`); this audit concerns the live transport,
-   which belongs to `HELIOS-T2`. Amending T1 would couple a read-only audit
+   which belongs to `HELIOS-T2` or to the adapter PID that CA guidance
+   2026-10-15 (item 1) calls for (DR-34, DR-35). Amending T1 would couple a read-only audit
    to an unfrozen contract and would blur T1's single purpose. The audit is
    therefore framed as a **pre-increment of `HELIOS-T2`** (and a hard input
    to its PID), not an amendment of T1. Owner PO. Blocks approval of this PID.
@@ -309,8 +336,10 @@ Do not invent around a stop condition.
 4. **Spelling canon at the HERMES boundary** (`XAU_USD`/`H4` versus
    `XAUUSD`/`4H`): the audit reports the mapping; the ruling belongs to
    `HERMES-FACT-001` / `GOAL-CONTRACT-001`. Owner PO. Does not block approval.
-5. **First GOLD strategy selection** follows the audit's ranking. Owner PO.
-   Does not block approval. Probe provenance (who authored the untracked
+5. **First GOLD strategy selection** is not made here and follows the
+   reconciliation of audits A and B (CA guidance 2026-10-15, item 6). The audit
+   supplies the requirements-versus-facts matrix as an input to that PO decision
+   (DR-23). Owner PO. Does not block approval. Probe provenance (who authored the untracked
    probe, may its output be cited) is confirmed in the same step. Owner PO or
    ROGUE. Does not block approval.
 

@@ -51,6 +51,11 @@ GOLD MVP a trustworthy, public-safe description and golden samples of the existi
 publication. This is the evidence base for the HELIOS `MarketFactFrame` consumer mapping and for
 `HERMES-FACT-001`. The existing production implementation is preserved; nothing is changed.
 
+**CA guidance 2026-10-15 applied (items 1 and 6).** HERMES owns Redis publication; a HELIOS-side external adapter, outside the pure HELIOS engine, owns
+consumption and translation. This audit's output is therefore the first repository record of what HERMES publishes (the input to a
+`HERMES-FACT-001`-style publication contract) and the PROD facts against which audit B compares candidate strategy requirements. It is the
+first step of the sequence audits A and B, reconciliation, strategy selection (PO), `GOLD-MVP-001` acceptance planning; this audit selects no strategy.
+
 CA directive (verbatim): *"Audit the existing PROD XAUUSD Redis publication, not the expanded
 development feature programme. Record actual keys, schemas, indicator coverage, timeframes,
 freshness, timestamps, historical warm-up, validation and status. Compare PROD reality with the
@@ -123,7 +128,7 @@ Not fixed here (OPS-SAFE-002/003); any perimeter observation is escalated only.
 
 At closure `maff0000/hermes` holds a dated audit record, a machine-readable inventory, sanitised
 golden samples and a documented-vs-actual comparison for the PROD `XAU_USD` Redis publication, such
-that HERMES-FACT-001 and the HELIOS consumer mapping can be written against observed facts, every
+that HERMES-FACT-001 and the HELIOS-side external adapter's mapping can be written against observed facts, every
 PROD statement is either proved by the evidence bundle or labelled UNVERIFIED, and production is
 provably unchanged.
 

@@ -32,7 +32,9 @@ Frame (from the GOLD MVP master PID `GOLD-MVP-001`, drafted separately): audit i
 
 ## Purpose
 
-Establish, from evidence, how **one** GOLD (XAUUSD) strategy can be qualified, registered, executed and reviewed using functions that are already delivered, and exactly which hops are missing, so the MVP builds only the gaps and rebuilds nothing. Record the earlier external repository and SaaS evaluations and make a reuse recommendation only where it materially reduces MVP engineering. Define the minimum the first strategy needs, given that the learning loop closes only after the trigger path works.
+Establish, from evidence, how **one** GOLD (XAUUSD) strategy can be qualified, registered, executed and reviewed using functions that are already delivered, and exactly which hops are missing, so the MVP builds only the gaps and rebuilds nothing. Record the earlier external repository and SaaS evaluations as **information only**. Define the minimum the one governed strategy needs, given that the learning loop closes only after the trigger path works.
+
+**CA guidance 2026-10-15 applied (items 4 and 6).** (4) Binding constraint: the MVP takes no new third-party engine or SaaS dependency. The external evaluations in this PID are information only; none is an MVP option, none is recommended for adoption, and the licence-posture question (former D9) is moot for the MVP. (6) This audit selects no strategy and does not assume one. The path matrix is strategy-neutral: it is evaluated for each HSA candidate under review (currently `gold_context_breakout` 1.0.0 and `wick_rejection_sequence` 0.1.0, as listed by lane B; neither is selected, preferred or implied). Strategy selection is a PO decision taken only after audit A (PROD facts) and audit B (candidate requirements versus PROD facts) have reported and been reconciled.
 
 ## Current state
 
@@ -40,11 +42,11 @@ Read-only discovery 2026-10-15. Base: GOAL `main` at `1739e742154c77e9e2a96927dc
 
 **Reconciliation inputs (cited, not restated).** RECON-G (NEO, CER, SKEPTIC; analysis only, 2026-10-14) and RECON-H1 (data chain; analysis only, 2026-10-14), both on GOAL branches over base `1739e74`. Their findings F1-F12 (G) and the three-representation finding (H1) are inputs; their decisions D1-D7 (G) and D-1..D-5 (H1) are referenced by id below and not re-argued.
 
-**Strategy versioning.** Three live representations with no shared contract (RECON-H1): HSA `strategy_package` (authoring), HELIOS `helios.strategy_package/1.0.0` (runtime), DARWIN A-007 canonical JSON to immutable `StrategyVersion` with semantic fingerprint (research). HSA enforces immutable-once-promoted in code and has `derive_candidate` and lineage [HSA@279ec18 `hsa/versioning.py`, `docs/VERSIONING.md`]. DARWIN holds `strategy_versions` and compiled plan tables [DARWIN@bf1142b migrations 0001, 0006, 0012]. CER has `Strategy` and `StrategyVersion` records, write-only through the API [CER@60eae45]. The only GOLD candidate found is HSA `gold_context_breakout` 1.0.0 (XAUUSD; 4H moving-average cross context, 5M breakout trigger), `lifecycle.status = CANDIDATE`, with `evidence.json` beside it.
+**Strategy versioning.** Three live representations with no shared contract (RECON-H1): HSA `strategy_package` (authoring), HELIOS `helios.strategy_package/1.0.0` (runtime), DARWIN A-007 canonical JSON to immutable `StrategyVersion` with semantic fingerprint (research). HSA enforces immutable-once-promoted in code and has `derive_candidate` and lineage [HSA@279ec18 `hsa/versioning.py`, `docs/VERSIONING.md`]. DARWIN holds `strategy_versions` and compiled plan tables [DARWIN@bf1142b migrations 0001, 0006, 0012]. CER has `Strategy` and `StrategyVersion` records, write-only through the API [CER@60eae45]. HSA holds two XAUUSD candidates under review, both `lifecycle.status = CANDIDATE` and neither selected: `gold_context_breakout` 1.0.0 (4H moving-average cross context, 5M breakout trigger, with `evidence.json` beside it) and `wick_rejection_sequence` 0.1.0 (15M location and confirmation, 5M trigger; lane B).
 
 **Evidence storage.** CER v1.0.0 is merged (PR #1), independently audited PRODUCT_GREEN, and deployed as two instances (dev, prod), prod empty (RECON-G). It has 20 controlled evidence classes (research, historical BACKTEST / OUT_OF_SAMPLE / WALK_FORWARD / MONTE_CARLO / PARAMETER_SWEEP / ABLATION, forward SHADOW / PAPER / MT5_DEMO / PLUTUS, live, and NEO_OBSERVATION / NEO_HYPOTHESIS / REGIME_ANALYSIS / DRIFT_ALERT / STRATEGY_HEALTH), hash-addressed artifacts, idempotent writes, provenance-completeness marking, 10 promotion states, 5 health states, and endpoints for evidence, artifacts, promotions and health records. Known limits [CER `docs/KNOWN-LIMITATIONS.md`]: runs, experiments and strategies are write-only; evidence citations are not resolved (ADR-001: unresolved is not verified support). DARWIN keeps its own `evidence_records` and `research_runs` tables.
 
-**Causal-testing capability.** DARWIN APOLLO core (PID-006B, PR #24, merged 2026-10-02, `GREEN_DARWIN_PID006B_XAUUSD_CAUSAL_CORE_ACCEPTED`): deterministic next-bar-open replay, stop-first same-bar, wick touches, MAE/MFE, mark-to-market equity, preflight identity checks, persistence [DARWIN `darwin/apollo/*`, about 2,700 lines]. Bounded scope: one XAUUSD timeframe, one dataset, ATOMIC entry composition, LONG only, single position, fixed research quantity [WO-PID006B-001]. Every 006B run is `APOLLO_RESULT`, never `APOLLO_PROOF`. PID-006C (execution completeness) onward is not delivered. `darwin/athena` and `darwin/qualification` are 4-line placeholders. The gold candidate above is multi-timeframe and chained, so it appears **outside** the 006B scope (to be confirmed by the audit, not assumed).
+**Causal-testing capability.** DARWIN APOLLO core (PID-006B, PR #24, merged 2026-10-02, `GREEN_DARWIN_PID006B_XAUUSD_CAUSAL_CORE_ACCEPTED`): deterministic next-bar-open replay, stop-first same-bar, wick touches, MAE/MFE, mark-to-market equity, preflight identity checks, persistence [DARWIN `darwin/apollo/*`, about 2,700 lines]. Bounded scope: one XAUUSD timeframe, one dataset, ATOMIC entry composition, LONG only, single position, fixed research quantity [WO-PID006B-001]. Every 006B run is `APOLLO_RESULT`, never `APOLLO_PROOF`. PID-006C (execution completeness) onward is not delivered. `darwin/athena` and `darwin/qualification` are 4-line placeholders. Both HSA candidates under review use two timeframes and a composed entry, so each appears **outside** the 006B scope (to be confirmed by the audit per candidate, not assumed).
 
 **Deployment gap.** The running DARWIN image is the 2026-09 hotfix build, byte-identical to `8def7a1`, which is not an ancestor of `main`; it lacks the workshop, research-contract and APOLLO packages and migrations 0006-0013 (DARWIN-R1 PID draft, evidence read 2026-10-14). Applied live migrations UNVERIFIED by this item.
 
@@ -54,9 +56,9 @@ Read-only discovery 2026-10-15. Base: GOAL `main` at `1739e742154c77e9e2a96927dc
 
 **NEO (private repository `maff0000/neo`, checkout on the Trinity host).** Last commit 2026-05-26 `3d92152`; working tree has two modified tracked scripts and one untracked script (RECON-G). Components: observer, scorers, auditor, coach, librarian, competition, session close, regime audit, strategy-health consumer (reads only R2D2 health envelopes, advisory, no execution authority). **Observer failing:** re-observed 2026-10-15 15:39 UTC, the per-minute cycle logs `FATAL: neo:config:observer not found in Memory Fabric`; the key is absent from Fabric (`neo:config:*` holds only mode, coach, errors, structural_events); first failure 2026-07-17 (RECON-G, FABRIC-ONLY). Why the key vanished is UNVERIFIED. **Execution:** a Practice-account order bridge and dispatcher exist in the scripts; the practice account was auto-paused 2026-09-22 (FABRIC-ONLY). **Not present:** any CER client, MCP server, or GOAL contract usage. The practice executor is not to be run by this item.
 
-**External repository and SaaS evaluations found (read-only).** Search covered `/srv` component repositories (DARWIN, CER, HSA, HELIOS, GOLD-STRATEGY-RUNTIME, tron, GOAL) and Fabric key names on both hosts. Findings:
+**External repository and SaaS evaluations found (read-only; information only, CA guidance 2026-10-15 item 4: none is an MVP option and none is recommended).** The verdict columns below record what the 2026-09-19 reviews said at the time; they are not recommendations of this item. Search covered `/srv` component repositories (DARWIN, CER, HSA, HELIOS, GOLD-STRATEGY-RUNTIME, tron, GOAL) and Fabric key names on both hosts. Findings:
 
-| Evaluated | Kind | Source | Date | Verdict recorded | Reuse recommendation recorded | New third-party service? |
+| Evaluated | Kind | Source | Date | Verdict recorded | Reuse note recorded (historical, 2026-09) | New third-party service? |
 |---|---|---|---|---|---|---|
 | cloudQuant fork of backtrader (GPL-3.0) | library | Fabric `trinity:repo_review:backtrader:v1` (FABRIC-ONLY) | 2026-09-19 | ADOPT as backtest and live engine under R2D2 | Verify its test claims before gating capital | No (library); live-capable, so execution use is out of scope here |
 | kernc/backtesting.py (AGPL-3.0) | library | `trinity:repo_review:backtesting_py:v1` | 2026-09-19 | ADOPT as fast-iteration front end | Sketch only; passing is never validation | No |
@@ -69,7 +71,7 @@ Read-only discovery 2026-10-15. Base: GOAL `main` at `1739e742154c77e9e2a96927dc
 | Risk and position-sizing open source | gap search | `trinity:repo_review:risk_management_position_sizing_gap:v1` | 2026-09-19 | No credible candidate; build in-house | Build as governed WO | n/a |
 | Internal legacy reuse assessments (HSA, HELIOS, ATHENA, DIKE) | internal code | DARWIN `docs/archaeology/*` | 2026-09 | Per-function REUSE / ADAPT / DO_NOT_REUSE | HSA identity, immutability, versioning, validation reuse; atomic conditions do not | No |
 
-Not found: any evaluation of QuantConnect or LEAN, vectorbt, zipline, freqtrade, nautilus, qlib, MLflow or any experiment-tracking SaaS. `LEAN-P1` is defined nowhere and whether it means an external engine is UNVERIFIED (RECON-H1 P-10). The backtrader and backtesting.py reviews predate APOLLO core (merged 2026-10-02), so their "engine under APOLLO" premise is stale. Detail was read for seven of the twelve reviews; the other five are taken from the index and synthesis only.
+Not found: any evaluation of QuantConnect or LEAN, vectorbt, zipline, freqtrade, nautilus, qlib, MLflow or any experiment-tracking SaaS. `LEAN-P1` is defined nowhere and whether it means an external engine is UNVERIFIED (RECON-H1 P-10). The backtrader and backtesting.py reviews predate APOLLO core (merged 2026-10-02), so their "engine under APOLLO" premise is stale. Licence posture of the GPL and AGPL entries is not assessed: it is moot for the MVP (CA guidance 2026-10-15, item 4). Detail was read for seven of the twelve reviews; the other five are taken from the index and synthesis only.
 
 ## Target outcome
 
@@ -77,26 +79,27 @@ At closure the component repositories and GOAL hold a dated, reproducible audit 
 
 1. Names the existing function for every hop of the one-GOLD-strategy path and marks it **exists / partial / missing**, with citations and a re-runnable command or file reference per mark.
 2. States which delivered functions the MVP must reuse unchanged, and lists "do not rebuild" items.
-3. States the MVP minimum for the first strategy and its sequence relative to the trigger path.
-4. Records every external evaluation with source, date, verdict and reuse recommendation, and flags any third-party service.
+3. States the MVP minimum for the one governed strategy (strategy-neutral) and its sequence relative to the trigger path.
+4. Records every external evaluation with source, date and recorded verdict as information only, and flags any third-party service; recommends none for the MVP.
 5. Gives CA ready-to-apply amendment text for CER-R1, NEO-R1, HSA-C1 and DARWIN-R2, and a list of undefined terms needing a ruling.
 6. Changes no runtime, no backlog, and no repository other than by evidence documents.
 
 ## Scope
 
-1. Versioning audit: map HSA, HELIOS, DARWIN and CER strategy identity for `gold_context_breakout` 1.0.0; test whether the same identity and fingerprint survive each hop; list representation gaps (RECON-H1 D-1).
-2. Evidence audit: for one GOLD strategy, which CER evidence classes are required at each promotion state, which already have a writer, and which have none.
-3. Causal-testing audit: whether APOLLO 006B scope can test the gold candidate; what `APOLLO_RESULT` can and cannot claim; deployment gap to the running DARWIN.
+1. Versioning audit: map HSA, HELIOS, DARWIN and CER strategy identity for each HSA candidate under review (no selection implied); test whether the same identity and fingerprint survive each hop; list representation gaps (RECON-H1 D-1).
+2. Evidence audit: for one governed GOLD strategy (whichever the PO later selects), which CER evidence classes are required at each promotion state, which already have a writer, and which have none.
+3. Causal-testing audit: whether APOLLO 006B scope can test each candidate under review; what `APOLLO_RESULT` can and cannot claim; deployment gap to the running DARWIN.
 4. Promotion audit: transition authority, evidence citation rule (ADR-001), HSA immutability versus CER state, and whether HELIOS refuses an unpromoted version.
 5. NEO review audit: observer failure cause class (read-only), read path to CER, the strategy-health authority split (RECON-G D4), and the practice executor assessed by reading only.
 6. Path matrix and MVP minimum (Deliverables 2 and 3).
-7. External evaluation register and reuse recommendations (Deliverable 4).
+7. External evaluation register, information only (Deliverable 4).
 8. Index entry: after acceptance, one GOAL PR contributes a pointer record to the primary and mirror PRs into `audits/2026-10-15/gold-mvp/EVIDENCE-INDEX.md` (owned by `GOLD-MVP-001`).
 
 ## Non-goals
 
 - No research platform expansion: no new backtest engine, no ATHENA, no experiment-tracking platform, no UI.
-- No new third-party service, repository dependency or SaaS as a prerequisite for the MVP (CA).
+- No new third-party engine, service, repository dependency or SaaS for the MVP (binding constraint, CA guidance 2026-10-15, item 4); no recommendation to adopt any evaluated item, and no licence-posture ruling.
+- No strategy selection, ranking or recommendation (CA guidance 2026-10-15, item 6).
 - No strategy design, tuning, or claim about edge or performance.
 - No backlog edit, `pid_path`, `DELIVERY_READY`, approval, or state change; no `goal-docs --write`.
 - No deployment, migration, restart or repair, including the NEO observer and the DARWIN runtime.
@@ -127,9 +130,9 @@ At closure the component repositories and GOAL hold a dated, reproducible audit 
 
 | # | Hop | Existing function | Preliminary mark (to be proven) |
 |---|---|---|---|
-| 1 | Author candidate | HSA `gold_context_breakout` 1.0.0, CANDIDATE | exists |
+| 1 | Author candidate | HSA candidates under review (none selected), CANDIDATE | exists |
 | 2 | Canonical identity (`StrategyVersion` fingerprint) | DARWIN A-007 doctrine, finalise; no HSA-to-DARWIN importer | partial |
-| 3 | Causal test | APOLLO 006B (single timeframe, ATOMIC, LONG); gold candidate is chained, two timeframes | partial |
+| 3 | Causal test | APOLLO 006B (single timeframe, ATOMIC, LONG); each candidate under review is chained, two timeframes | partial |
 | 4 | Qualification verdict (proof-grade) | `APOLLO_PROOF` gate, `darwin/qualification`, ATHENA placeholders | missing |
 | 5 | Deployed qualification runtime | live image lacks APOLLO and migrations 0006-0013 | missing |
 | 6 | Register in CER (strategy, version, evidence) | CER write endpoints; no DARWIN or HSA writer; read-back absent | partial |
@@ -138,8 +141,8 @@ At closure the component repositories and GOAL hold a dated, reproducible audit 
 | 9 | Review (NEO) | NEO scripts exist; observer failing; no CER read path | partial |
 | 10 | Feedback to research (hypothesis intake) | `NEO_HYPOTHESIS` class exists; DARWIN intake absent | missing |
 
-3. **MVP minimum for the first GOLD strategy** (proposal for CA, sequenced after the trigger path works): one frozen identity (`strategy_id@version` plus package hash) recorded in CER; one clearly non-proof backtest evidence record with artifact hash from an engine that already exists; one PO-recorded promotion transition citing that evidence; HELIOS running exactly that version; and a **read-only NEO review report** (human-readable, one strategy, CER plus fires) rather than the full evidence gateway. Deferred beyond MVP: ATHENA, DARWIN-to-CER automation, hypothesis intake, `EdgeProfileVersion`, SKEPTIC. The audit states, with evidence, which of these items are truly needed before the first live-like trigger and which only after.
-4. **External evaluation register** (the table above, re-verified, with licence-compatibility and service-dependency flags) and **reuse recommendations**, each stating the engineering saved or "none", the licence constraint, and whether it adds a third-party service. Default recommendation: no external engine is adopted for the MVP; an optional independent cross-check against APOLLO is recorded only if it saves work, using a library with no service dependency.
+3. **MVP minimum for the one governed strategy** (strategy-neutral proposal for CA, sequenced after the trigger path works; it applies to whichever strategy the PO later selects): one frozen identity (`strategy_id@version` plus package hash) recorded in CER; one clearly non-proof backtest evidence record with artifact hash from an engine that already exists; one PO-recorded promotion transition citing that evidence; HELIOS running exactly that version; and a **read-only NEO review report** (human-readable, one strategy, CER plus fires) rather than the full evidence gateway. Deferred beyond MVP: ATHENA, DARWIN-to-CER automation, hypothesis intake, `EdgeProfileVersion`, SKEPTIC. The audit states, with evidence, which of these items are truly needed before the first live-like trigger and which only after.
+4. **External evaluation register** (the table above, re-verified, with service-dependency flags), **information only**. It carries no reuse recommendation and no licence ruling: under CA guidance 2026-10-15 (item 4) the MVP takes no new third-party engine or SaaS dependency, so no external engine is adopted and none is offered as an MVP option.
 5. **No-rebuild register:** delivered functions the MVP must reuse (HSA versioning and validation, DARWIN StrategyVersion and APOLLO core, CER registry and promotion records, HELIOS HSA boundary, GOLD-STRATEGY-RUNTIME, NEO strategy-health consumer).
 6. **Gap list** with owner, mapped to existing backlog ids or marked "no home".
 7. **Index entry** listing the primary PR and the four mirror-note PRs and their merge SHAs, contributed to `EVIDENCE-INDEX.md` by one GOAL PR after acceptance (single writer of the file: the `GOLD-MVP-001` PL).
@@ -154,12 +157,12 @@ CA's ten mandatory evidence items, in CA's numbering (the numbering is CA's and 
 | 1 | PID/WO identifier and exact audited scope | AUDIT-F section 0: quoted scope (qualify, register, execute, review one GOLD strategy) | Quote equals approved PID |
 | 2 | Source repositories, revisions and documentation references | Base SHAs for GOAL, DARWIN, CER, HSA, HELIOS, GOLD-STRATEGY-RUNTIME and neo; documentation references; the external evaluation sources (Deliverable 1 and 4) | Auditor re-reads each at the SHA |
 | 3 | Existing implementation: proven, partially proven, unverified or missing | Path matrix of 10 hops, each exists / partial / missing with a re-runnable citation (Deliverable 2): strategy versioning, evidence storage, causal testing, promotion, NEO review | Every hop has a mark and a citation |
-| 4 | Actual versus expected contract comparison | Representation comparison HSA / HELIOS / DARWIN / CER for `gold_context_breakout` 1.0.0 (identity and fingerprint across hops), evidence-class sufficiency per promotion state, APOLLO 006B scope versus the candidate | Same identity and fingerprint tested hop to hop |
+| 4 | Actual versus expected contract comparison | Representation comparison HSA / HELIOS / DARWIN / CER for each HSA candidate under review (identity and fingerprint across hops), evidence-class sufficiency per promotion state, APOLLO 006B scope versus the candidate | Same identity and fingerprint tested hop to hop |
 | 5 | Tests, fixtures and evidence references | Re-runnable commands, count checks (10 hops; every `trinity:repo_review:*` key and archaeology document in the register), before and after identity snapshots | Snapshots equal; counts match |
 | 6 | Specific defects and compatibility gaps | Gap list with owner or 'no home' (Deliverable 6): deployment gap, undefined `EdgeProfileVersion`, NEO observer failure, no APOLLO_PROOF runs | Each missing mark names an owner or 'no home' |
-| 7 | Reusable code and documentation | No-rebuild register (Deliverable 5) and external evaluation register with reuse recommendations, licence and service flags (Deliverable 4) | Each reuse recommendation names the engineering saved and any new service |
-| 8 | Minimum recommended implementation changes | MVP minimum for the first GOLD strategy and sequencing against the trigger path (Deliverable 3); amendment text proposals for CER-R1, NEO-R1, HSA-C1, DARWIN-R2 (Deliverable 8), not applied | Each change maps to an existing item or 'no home' |
-| 9 | Safety and deployment constraints | Safety and deployment constraints: NEO practice executor assessed from source only, no broker call, no installation of evaluated code, licence posture (D9), no third-party service as a prerequisite | No outbound call to any evaluated service in the record; secret-scan clean |
+| 7 | Reusable code and documentation | No-rebuild register (Deliverable 5) and external evaluation register, information only, with service flags (Deliverable 4) | The register states that no external item is an MVP option |
+| 8 | Minimum recommended implementation changes | MVP minimum for the one governed strategy and sequencing against the trigger path (Deliverable 3); amendment text proposals for CER-R1, NEO-R1, HSA-C1, DARWIN-R2 (Deliverable 8), not applied | Each change maps to an existing item or 'no home' |
+| 9 | Safety and deployment constraints | Safety and deployment constraints: NEO practice executor assessed from source only, no broker call, no installation of evaluated code, no new third-party service or engine for the MVP (CA guidance 2026-10-15, item 4) | No outbound call to any evaluated service in the record; secret-scan clean |
 | 10 | Independent audit verdict and unresolved findings | Independent auditor (AUD-3) verdict file with unresolved findings; evidence PR list with SHAs | Fresh auditor GREEN with exact SHAs; PO acceptance recorded |
 
 ## Acceptance
@@ -172,7 +175,7 @@ GREEN requires, mechanically:
 4. Before and after each inspected system, identity is unchanged: git HEAD of each inspected checkout, container ids and start times, and `git status` are recorded and equal. No file under `/srv/NEO`, `/srv/DARWIN`, `/srv/CER` or `/srv/HSA` changed.
 5. No external code was installed or executed; no outbound call to any evaluated service is in the record.
 6. No backlog, `pid_path` or state change in the diff; `./tools/goal-docs` reports no write.
-7. Each missing mark names an owner or "no home"; each "reuse" recommendation names the engineering saved and any new service.
+7. Each missing mark names an owner or "no home"; the external register is marked information only and contains no recommendation to adopt an external engine or SaaS for the MVP (grep check); no strategy is ranked, recommended or marked as selected.
 8. Fresh independent FORGE Auditor GREEN; evidence PR list with exact SHAs; PO acceptance recorded in GitHub.
 
 ## Stop conditions
@@ -192,7 +195,7 @@ Do not invent around a stop condition.
 
 **D1 — Amend or new item (blocks approval).** Recommended: new thin item (section above). Alternative: apply Deliverable 8 as amendments and cancel this item. Owner PO.
 
-**D2 — Which strategy is "the first GOLD strategy" (blocks approval).** `gold_context_breakout` 1.0.0 is the only candidate found and may sit outside APOLLO 006B scope; a simpler single-timeframe candidate may be the MVP choice. Owner PO; Matt if it is a capital-risk choice.
+**D2 — Strategy selection (restated by CA guidance 2026-10-15, item 6; does not block approval).** No strategy is selected, recommended or implied here. Selection is a PO decision taken after audits A and B have reported and been reconciled (DR-23); this audit supplies the per-candidate path facts as an input. Owner PO; Matt if it is a capital-risk choice.
 
 **D3 — Strategy representation authority (RECON-H1 D-1; blocks hop 2 conclusions, not this audit).** Owner PO.
 
@@ -206,7 +209,7 @@ Do not invent around a stop condition.
 
 **D8 — Retired.** CA's numbered evidence list has been supplied and applied (see Deliverables); no decision remains.
 
-**D9 — Licence posture for GPL / AGPL libraries (blocks any reuse recommendation being acted on).** backtrader fork is GPL-3.0 and backtesting.py is AGPL-3.0; compatibility with the repository visibility and licence of DARWIN and GOAL is UNVERIFIED. Owner PO.
+**D9 — RETIRED (moot for the MVP) by CA guidance 2026-10-15, item 4.** The MVP takes no new third-party engine or SaaS dependency, so the GPL / AGPL licence posture of the evaluated libraries is not decided here.
 
 **D10 — Evidence PR into private `maff0000/neo` (blocks that PR).** Owner PO.
 

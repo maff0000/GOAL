@@ -31,6 +31,11 @@ The audit proves what runs, states what is registered versus what HELIOS and TRO
 specifies, mechanically, what "FALCON outside the executable path" requires of each publisher, so the
 follow-on items (FALCON-T2, FALCON-T3, HELIOS and TRON publisher work) are authored once, against facts.
 
+**CA guidance 2026-10-15 (item 3) applied.** FALCON is evidence-only and must not block execution: publication is asynchronous, non-blocking and
+through a bounded queue, and execution (evaluation, claim, risk, order, reconcile) must complete with FALCON ingestion stopped. Acceptance item 6
+and EP-9 test exactly that. Under CA guidance 2026-10-15 (item 2) this audit also defines no trigger contract: the evidence-event shapes it
+maps (EP-8) conform to `GOAL-TRIGGER-001`, which alone owns signed-trigger, outbox and inbox semantics.
+
 ## Current state
 
 Read 2026-10-15, read-only, unless marked UNVERIFIED. Fabric is memory, not authority.
@@ -130,7 +135,9 @@ list. The only write is the evidence document set in the audit worktree and its 
 - No registry or schema edit (FALCON-T1 owns the HELIOS/HERMES/ARES reconciliation; FALCON-T3 the trigger
   and `tron.*` freeze). No amendment of stale documents (listed, routed, not edited).
 - No change to HELIOS, TRON, HERMES, ARES, GOAL backlog, `MANIFEST.md`, tools or workflows.
-- No trigger contract design (GOAL-TRIGGER-001), no signing design (PID-08), no inbox design (TRON-T4).
+- No trigger contract design (GOAL-TRIGGER-001), no signing design (PID-08), no inbox design (TRON-T4). The registered `helios.strategy_trigger` and
+  `tron.*` payloads are evidence shapes that must conform to `GOAL-TRIGGER-001`; FALCON, HELIOS and TRON hold no competing trigger contract
+  (CA guidance 2026-10-15, item 2).
 - No event injection into the running Graylog or FALCON, no test events, no replay, no new input, no
   port publication, no stream, pipeline, retention or index change, no credential rotation.
 - No claim that FALCON is production-ready; PIDs 10 to 15 are not in scope.
@@ -251,8 +258,10 @@ Mechanical; every row passes or the audit is not accepted.
    SHA, line numbers matching.
 5. The minimum work table has, per row: owner, delta, fixture, acceptance test and sequencing, and no row
    makes FALCON a precondition of a HELIOS or TRON decision.
-6. EP-9 states these requirements and a test for each: publication is asynchronous and non-blocking; the
-   queue is bounded and drop-on-full is counted; FALCON unreachable, slow, rejecting or full leaves
+6. EP-9 states these requirements and a test for each (CA guidance 2026-10-15, item 3): publication is asynchronous and non-blocking; the
+   queue is bounded and drop-on-full is counted; **with FALCON ingestion stopped, a full execution path (evaluation, trigger, claim, risk,
+   order, reconcile) completes and its terminal outcome is unchanged** (outage rehearsal, the same rehearsal as `GOLD-MVP-001` AC-12);
+   FALCON unreachable, slow, rejecting or full leaves
    evaluation, claim, risk, order and reconcile outcomes byte-identical and timing within a stated bound;
    no publisher or TRON reads FALCON to decide, validate, dedupe or authorise; the durable record of a
    trigger is the publisher outbox and TRON inbox and journal, with FALCON a best-effort copy and a gap
@@ -280,7 +289,7 @@ Mechanical; every row passes or the audit is not accepted.
 | ID | Decision | Owner | Blocks |
 |----|----------|-------|--------|
 | D-1 | Amend FALCON-T1 or new item (this PID recommends new) | PO | approval |
-| D-2 | Confirm FALCON is evidence-only and never gates entries (reverses Decision 16 coupling; RECON-F B2) | PO (CA) | approval |
+| D-2 | RESOLVED by CA guidance 2026-10-15, item 3: FALCON is evidence-only and must not block execution (reverses Decision 16 coupling; RECON-F B2). Residual routing of the falcon-side supersession is P-F1, not a decision here | CA | none |
 | D-3 | Retired: CA's numbered evidence list has been supplied and applied (see Deliverables); no decision remains | none | none |
 | D-4 | Authenticated Graylog read access for the audit (read-only account, or HELM-run read-only export) to close the UNVERIFIED rows | Matt (credentials) / HELM | later (audit may close with UNVERIFIED) |
 | D-5 | Durable backfill after FALCON outage: accepted loss (PID-06 precedent) or gap-fill from publisher and TRON journals | PO | later (FALCON-T2/T3) |

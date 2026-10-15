@@ -33,6 +33,13 @@ for (CP-1) HERMES Redis -> HELIOS input and (CP-2) HELIOS signed trigger -> dura
 rejection behaviour and failure-recovery semantics. GOAL owns cross-system contract approval; component architects may propose changes but cannot
 independently freeze incompatible versions.
 
+**CA guidance 2026-10-15 applied (items 1 and 2).** (1) HERMES owns Redis publication. A HELIOS-side EXTERNAL ADAPTER, outside the pure
+HELIOS engine (execution-blind, deterministic, no Redis or network imports), owns consumption and translation. GOAL approves the interface:
+CP-1 is that interface. The `v1` to HELIOS fact-schema mapping belongs to the adapter; HERMES supplies a `HERMES-FACT-001`-style contract of
+what it publishes. (2) `GOAL-TRIGGER-001` alone owns signed-trigger, outbox and inbox semantics; HELIOS, TRON and FALCON hold no competing
+trigger contract, so CP-2 is a conformance and reconciliation package over that contract and every competing intake or evidence shape found
+(FALCON `strategy_trigger`, TRON `falcon.trade_action.v1`) is recorded as a conflict to be reconciled to it, never as a second authority.
+
 The two PIDs already specify the strategy envelope and the trigger envelope. What they do not contain, and what this item adds, is (a) a field-level
 reconciliation against what HERMES, HELIOS, FALCON and TRON actually emit or assume today, (b) a consumer/provider conformance package per boundary,
 and (c) golden fixtures with expected rejection codes that both sides can run. CP-1 is not covered by either PID at all.
@@ -101,7 +108,8 @@ HELIOS (`maff0000/HELIOS` main `7f7193d`):
    advertises, while fixtures, config and tests use and accept `hermes.market_fact/1.0.0` (`helios/integration/exemplars.py`, `tests/test_config.py`).
 8. **Prior integration attempt.** Branch `wo/WO-HELIOS-HERMES-PROD-INTEGRATION-PROOF-0001` (`84d3772`): verdict `WAITING_FOR_HERMES_BACKFILL`; records
    the live schema_version `v1` versus `hermes.market_fact/1.0.0` mismatch and leaves open whether mapping is transport or semantic reinterpretation.
-   Group E report item 7 lists "HELIOS to HERMES contract version reconciliation and Redis reader" as blocking HELIOS-T2.
+   Group E report item 7 lists "HELIOS to HERMES contract version reconciliation and Redis reader" as blocking HELIOS-T2. Under CA guidance
+   2026-10-15 (item 1) that reader and reconciliation sit in the HELIOS-side external adapter, outside the pure engine.
 
 **Reconciliation findings for CP-1 (all to be turned into mapping rows with a fixture each):** HERMES `v1` versus HELIOS `<namespace>/<x.y.z>`; ms
 versus microsecond instants; JSON number versus exact decimal text; `is_closed` versus `complete`; two Redis keys (candles, indicators) joined on
@@ -114,12 +122,12 @@ versus `D1`); FALCON `hermes/market_fact.v1` is a third, evidence-side fact shap
 1. **HELIOS has no trigger, signing or outbox code.** `grep -ril "outbox|ed25519|hmac|strategy_trigger"` over HELIOS main finds no source; its sinks
    are file, stream and memory only (`helios/publish/sink.py`: "no network sink, no state service"); it publishes `strategy_state` (JSON Lines, schema
    negotiation in `helios/publish/negotiation.py`), never a trigger.
-2. **FALCON** (`8f218ec`): registered payload `schemas/payloads/helios/strategy_trigger.v1.schema.json` (required: `trigger_id`,
+2. **FALCON** (`8f218ec`; its registered trigger payload is an evidence shape, not a trigger contract, CA guidance 2026-10-15 item 2): registered payload `schemas/payloads/helios/strategy_trigger.v1.schema.json` (required: `trigger_id`,
    `semantic_fingerprint`, `parameter_set_id`, `direction` incl. `FLAT`, `action_type` incl. `EXIT/ADJUST`, `reference_price_decimal`,
    `signing_key_id`, `signature`; `additionalProperties:false`); signing doctrine `docs/security/FALCON-HELIOS-TRIGGER-SIGNING.md` ("Ed25519, subject
    to implementation proof", canonical form unspecified); event registry `registry/event_family_registry.v1.json`. No outbox code in FALCON (matches
    only mention failure replay and observability docs).
-3. **TRON** (`wo/WO-TRON-D1`): intake is `falcon.trade_action.v1` keyed by `action_id` (required `contract_version, action_id, action, instrument,
+3. **TRON** (`wo/WO-TRON-D1`; a competing intake model under CA guidance 2026-10-15 item 2, to be reconciled to `GOAL-TRIGGER-001`, not a contract): intake is `falcon.trade_action.v1` keyed by `action_id` (required `contract_version, action_id, action, instrument,
    valid_until_ms, strategy_ref`); ingestion steps RECEIVED, VALIDATE, EXPIRE, DEDUPLICATE; terminals `REJECTED, EXPIRED, DUPLICATE, NEGOTIATED`;
    HR-08 (journal before submit) and HR-13 (idempotent on action identity) in `PID.md` and `docs/04-TRADE-LIFECYCLE.md`; time is epoch milliseconds;
    identifiers `^[A-Za-z0-9_.:-]+$`, 1-128 chars (`docs/05-CONTRACTS.md`). No inbox.
@@ -146,8 +154,8 @@ Exactly CP-1 and CP-2. For each package:
    INCOMPATIBLE).
 2. **Field-level schema and mapping table:** every field on both sides, each row `MAPPED`, `DERIVED` (with rule) or `UNSUPPORTED` (with the
    fail-closed behaviour and error name); no empty cell, no `TBD`.
-3. **Canonical form:** CP-2 uses `goal-canon/1` (GOAL-CONTRACT-001, S-2) for ids, digest and signature; CP-1 states the canonical decimal and instant
-   forms the reader must emit to HELIOS (exact decimal text; fixed-width UTC microsecond `Z`), and the reader's duty to derive `ingested_at_utc`.
+3. **Canonical form (CP-1: adapter duties):** CP-2 uses `goal-canon/1` (GOAL-CONTRACT-001, S-2) for ids, digest and signature; CP-1 states the canonical decimal and instant
+   forms the external adapter must emit to HELIOS (exact decimal text; fixed-width UTC microsecond `Z`), and the adapter's duty to derive `ingested_at_utc`.
 4. **Golden fixtures:** valid and invalid, each invalid naming its expected rejection code; CP-1 reuses the 15 HELIOS malformed cases and adds
    HERMES-shaped cases (float number, `v1` schema string, millisecond instant, unknown indicator, regime present, `is_closed` false, stale latest, gap
    in history, missing indicator key, duplicate frame); CP-2 includes valid trigger and invalidation, tampered, unsigned, unknown key, expired, future
@@ -168,8 +176,11 @@ Exactly CP-1 and CP-2. For each package:
 
 - No change to HERMES, HELIOS, FALCON, TRON, HSA, DARWIN or CER. No Redis client, signer, outbox, inbox or reader is written, including in test
   tooling beyond in-repo reference models used only by tests.
-- No new transport: `TradingTriggerInbox` is the authoritative trigger transport (CA); FALCON is an asynchronous evidence consumer and never on a
-  decision path; Graylog is never a transport.
+- No new transport: `TradingTriggerInbox` is the authoritative trigger transport (CA); FALCON is an asynchronous, non-blocking evidence consumer and
+  never on a decision path (CA guidance 2026-10-15, item 3); Graylog is never a transport.
+- No competing trigger contract (CA guidance 2026-10-15, item 2): CP-2 introduces no envelope, id, signing, outbox or inbox rule of its own;
+  `GOAL-TRIGGER-001` owns them, and HELIOS, TRON and FALCON hold none.
+- No specification or build of the external adapter (CA guidance 2026-10-15, item 1): CP-1 is the interface the adapter conforms to.
 - No freeze of `goal.strategy/v1` or `goal.strategy-trigger/v1` (their PIDs own that); no restatement of D-xx decisions; no key material; no fact
   names (HERMES-FACT-001 owns names and payloads).
 - No edit to `backlog/backlog.yaml`, `MANIFEST.md`, tools or workflows; no `pid_path`; no approvals.
@@ -182,8 +193,8 @@ Exactly CP-1 and CP-2. For each package:
   on C (D uses its own assumption register until `GOAL-TRIGGER-001` exists). No lane waits on C except `GOLD-MVP-001`, which consumes C's matrix rows.
 - **Lane A** (HERMES surface reality): the live key inventory and PROD readiness are inputs to CP-1; this item cites Lane A evidence when merged and
   flags UNVERIFIED where it is not.
-- **Lane B** (existing HELIOS adapter and the legacy integration): input to CP-1 adapter placement (reader outside the pure engine) and whether a
-  prior reader exists. No dependency on Lane B timing; a missing Lane B result leaves the CP-1 adapter row UNVERIFIED.
+- **Lane B** (existing HELIOS adapter and the legacy integration): input to the CP-1 external-adapter rows (the adapter sits outside the pure engine, CA guidance
+  2026-10-15 item 1) and whether a prior reader exists. No dependency on Lane B timing; a missing Lane B result leaves the CP-1 adapter row UNVERIFIED.
 - **Lane D** (TRON inbox facts, SOFT): input to CP-2 inbox rows and terminal-state mapping; TRON-T4 owns final names. Read after D's facts are committed;
   otherwise record the assumption.
 - **Lane E** (FALCON registry facts, SOFT): input to the CP-2 evidence-event rows (registered `helios.strategy_trigger` and `tron.*` shapes); read after E's
@@ -192,7 +203,9 @@ Exactly CP-1 and CP-2. For each package:
   proceed against its DRAFT.
 - **GOAL-TRIGGER-001:** CP-2 draft-freeze requires its DRAFT-FREEZE; D-12 (authority of the trigger contract) must be decided first, otherwise CP-2 is
   a proposal against no authority.
-- **HERMES-FACT-001:** no PID exists; CP-1 supplies a reconciliation input and a proposed grammar-compatible mapping, never fact names.
+- **HERMES-FACT-001:** no PID exists; CP-1 supplies a reconciliation input and a proposed grammar-compatible mapping, never fact names. Under CA guidance
+  2026-10-15 (item 1) HERMES publishes against a `HERMES-FACT-001`-style contract of what it publishes; CP-1 is the interface GOAL approves between that
+  publication and the HELIOS-side external adapter.
 - **Rule:** component architects (HERMES, HELIOS, TRON, FALCON) may propose changes to a package through a PR or comment; only GOAL (CA/PO) freezes. A
   package version is frozen only when every provider and consumer row is COMPATIBLE or ADAPTER with a named owner; no incompatible pair may be frozen
   by either side.
@@ -202,7 +215,8 @@ Exactly CP-1 and CP-2. For each package:
 1. This item freezes nothing. Packages carry status PROPOSED; their normative text is by reference.
 2. CP-2 normative authority is `GOAL-TRIGGER-001` (and, through it, `GOAL-CONTRACT-001`). CP-2 freezes with, never before, the trigger contract's
    freeze, and any disagreement is raised as a change request to that PID, not resolved in CP-2.
-3. CP-1 has no PID owner today; its freeze authority is whichever of D-C1 CA chooses. Until then CP-1 is a DRAFT with no frozen field.
+3. CP-1 is the interface that GOAL approves (CA guidance 2026-10-15, item 1). HERMES owns what is published and the external adapter owns consumption and
+   translation, so neither side freezes it alone. The mechanics of the freeze (which PID carries it) remain D-C1. Until then CP-1 is a DRAFT with no frozen field.
 4. New contradictions are offered to the owning PID as register-row proposals; this item keeps its own ids `AC-n` and never edits those PIDs. If a PID
    changes, affected rows are re-based.
 5. A matrix row cannot read COMPATIBLE unless both sides' fixtures pass.
@@ -281,15 +295,20 @@ Stop and return to the PO if:
 
 Owner PO unless stated; none needs Matt from this item. D-xx and C/S/O/T decisions are by reference to the two PIDs and are NOT restated here.
 
-- **D-C1 (PO/CA; blocks approval): freeze owner of CP-1.** Options: a new HERMES-FACT-001 PID; a small GOAL item for the HERMES -> HELIOS input; or a
-  section of `GOAL-CONTRACT-001` (rejected here: its Non-goals exclude fact payloads). Recommendation: HERMES-FACT-001 PID with this package as its
-  input.
+- **D-C1 (PO/CA; blocks approval): who owns the CP-1 freeze mechanics.** Narrowed by CA guidance 2026-10-15 (item 1): GOAL approves the CP-1 interface,
+  HERMES owns publication, the HELIOS-side external adapter owns consumption and translation. Still open: which PID carries the freeze and the
+  `HERMES-FACT-001`-style publication contract. Options: a `HERMES-FACT-001` PID; a small GOAL item for the interface; or a section of
+  `GOAL-CONTRACT-001` (rejected here: its Non-goals exclude fact payloads). Recommendation: `HERMES-FACT-001` PID for the publication contract, with this
+  package as its input and GOAL approval of the CP-1 interface.
 - **D-C2 (PO; blocks approval): form.** (ii) thin item (recommended) versus (i) amendment of both PIDs.
-- **D-C3 (CA; blocks CP-1 freeze, not approval): who maps `v1` to the HELIOS fact schema string** (advertised `helios.market_fact/1.0.0`; fixtures, config and tests also accept `hermes.market_fact/1.0.0`) and fixes the HELIOS version-string inconsistency:
-  HERMES re-publishes, a reader adapter maps (transport only), or HELIOS accepts `v1`. Related: GOAL-CONTRACT-001 C-12/O-4; Group E item 7.
-- **D-C4 (PO; blocks CP-1 freeze): reader placement** outside the HELIOS pure engine (a HELIOS-owned or separate adapter), given the `redis` import
-  ban; Lane B input.
-- **D-C5 (PO; later): numeric form on the Redis wire** (HERMES number versus decimal text); recommendation: adapter converts via the contract's
+- **D-C3 (re-assigned by CA guidance 2026-10-15, item 1; blocks CP-1 freeze, not approval): the `v1` to HELIOS fact-schema mapping belongs to the
+  HELIOS-side external adapter**, with GOAL approving the interface and a `HERMES-FACT-001`-style contract of what HERMES publishes. What stays open is the
+  fix of the HELIOS version-string inconsistency (advertised `helios.market_fact/1.0.0`; fixtures, config and tests also accept `hermes.market_fact/1.0.0`),
+  which is a HELIOS-side change (DR-27). Related: GOAL-CONTRACT-001 C-12/O-4; Group E item 7.
+- **D-C4 (RESOLVED by CA guidance 2026-10-15, item 1): reader placement.** The reader is a HELIOS-side external adapter outside the pure engine (which keeps its
+  `redis` and network import ban). Still open and new: whether that adapter lives in the HELIOS repository or a separate one, and who authors its PID
+  (DR-34, DR-35).
+- **D-C5 (PO; later): numeric form on the Redis wire** (HERMES number versus decimal text); recommendation: the external adapter converts via the contract's
   exact-decimal rule with a stated quantisation.
 - **Dependencies on existing decisions (by reference):** D-12, D-1, D-2, D-3 (Matt), D-4, D-5, D-6, D-8 of `GOAL-TRIGGER-001`; S-1, S-2, O-2, O-4 of
   `GOAL-CONTRACT-001`. CP-2 cannot freeze while any blocker among them is open; CP-1 cannot freeze while C-12 is open.
