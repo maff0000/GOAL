@@ -69,7 +69,7 @@ PID_AUTHORING_WAVE = (
     "OPS-SAFE-001",
     "OPS-SAFE-002",
     "OPS-SAFE-003",
-    "TRON-T1",
+    "TRON-D1-RATIFY",
 )
 
 #: Items that must stay out under the projection because a dependency of
