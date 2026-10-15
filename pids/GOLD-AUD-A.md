@@ -1,0 +1,331 @@
+# GOLD-AUD-A — HERMES PROD XAUUSD Redis publication audit (GOLD MVP Lane A)
+
+**Lane:** Research (read-only audit)  
+**Target repository:** `maff0000/hermes`  
+**Priority:** P0  
+**Risk:** Medium  
+**Matt gate:** Yes, for production read access only (Open decision D1); no other Matt gate  
+**PO gate:** Yes  
+**Delivery:** ROGUE → HELM-lane operator (evidence run) → FORGE (docs/fixtures PR only)
+
+## Status
+
+DRAFT CANDIDATE for Central Architecture review. Not approved. Not DELIVERY_READY.
+
+`depends_on: GOAL-DCP-001` (CLOSED). Parent programme item: GOLD-MVP-001 (Lane A).
+
+## Relationship to existing PIDs (amend vs new: decision and reason)
+
+**Decision: GOLD-AUD-A is a new bounded item, defined as a strict subset ("Increment A") of
+`HERMES-CUR-001` scope item 1 (Redis contract key inventory), not a duplicate of it.**
+
+Why not an amendment of HERMES-CUR-001:
+
+1. CUR-001 is DEV+PROD, SQL+Redis, git-graph, image identity, HMT-2 location, defect list. Its
+   critical open decisions (D1 snapshot timing around the pending recreate, D2 who probes,
+   D7 HMT-2) are unresolved and would hold this audit hostage.
+2. CA's directive for Lane A is narrower and deeper on one surface: the PROD **XAUUSD Redis
+   publication** only (keys, schemas, indicators, timeframes, freshness, warm-up, validation,
+   status, documented-vs-actual). CUR-001 only asks for key inventory and counts.
+3. CUR-001 is a Shared-lane P0 that blocks HERMES-FACT-001 and through it GR-001, HELIOS-T2/T3.
+   Adding a fixture and contract-comparison payload to it changes its risk and delivery shape.
+4. Lane A needs sanitised golden fixtures; CUR-001 produces none.
+
+Non-duplication (proposed CUR-001 amendment text for CA to apply; this PID does not edit it):
+*"Scope item 1 key inventory is satisfied for XAU_USD by the GOLD-AUD-A evidence PR; CUR-001 keeps
+all other Scope items and other instruments, and cites rather than re-runs that inventory."*
+Fallback if CA prefers one item: fold this PID in as CUR-001 "Increment A" unchanged.
+
+## Purpose
+
+Record, from observation rather than memory, what the production HERMES instance actually
+publishes in Redis for gold today, compare it with the documented Redis contracts, and give the
+GOLD MVP a trustworthy, public-safe description and golden samples of the existing production
+publication. This is the evidence base for the HELIOS `MarketFactFrame` consumer mapping and for
+`HERMES-FACT-001`. The existing production implementation is preserved; nothing is changed.
+
+CA directive (verbatim): *"Audit the existing PROD XAUUSD Redis publication, not the expanded
+development feature programme. Record actual keys, schemas, indicator coverage, timeframes,
+freshness, timestamps, historical warm-up, validation and status. Compare PROD reality with the
+documented Redis contracts. Preserve the existing production implementation. No production
+mutations."*
+
+Naming: the key token is `XAU_USD` (canonical; `XAUUSD` is never a key form).
+
+## Current state
+
+Labels: **[repo]** committed GitHub content; **[fabric]** Memory Fabric only (memory, not
+authority, ADR-DELIVERY-001); **UNVERIFIED** not proved by this PID's author. This PID was drafted
+without touching production Redis; every PROD statement below is [fabric] or UNVERIFIED.
+
+**Documented contracts [repo, `maff0000/hermes` `main` at `ca19017`, read 2026-10-15].**
+- `docs/contracts/hermes_redis_contract_manifest.md` registers only two contracts:
+  `hermes:ticks:{instrument}:latest:v1` and `hermes:ticks:latest:v1` (envelope with
+  `generated_at_utc`, `valid_until_utc`, `ttl_seconds` 5 / Redis EX 10, `freshness_state`
+  FRESH/DEGRADED/STALE/UNAVAILABLE, `status`, `provenance`, `seq` null). Their status text reads
+  "DESIGNED (publisher not built)". It states `hermes:candle_features:*`, `hermes:candle_context:*`
+  and `hermes:indicators:*` are "separately designed ... (different WOs)" and not in the manifest.
+- `docs/contracts/hermes_redis_tick_contract_v1.md` (design only), builder/validator
+  `utils/tick_contract_v1.py`, fixtures `tests/fixtures/tick_contract/`.
+- `docs/architecture/environment-model.md` section 4a: Redis is the published consumer interface,
+  open by design with an external source-IP allowlist as the stated perimeter; canonical gold token
+  `XAU_USD`; core contract = price, signal/indicator snapshot, M1/M5/M15/H1 latest+history; XAU_USD
+  may add H4/D1, features, levels, sessions, gaps, quote/tick. It points to a "live key/catalog
+  contract" held in fabric (`helm:hermes:redis:consumer_contract:inventory`), i.e. **no repo
+  document registers the candle, indicator, feed-health, catalog or manifest key families.** That
+  gap is itself a primary finding to be confirmed.
+- Consumer side [repo, HELIOS]: `helios/contracts/market_fact.py` fixes `FACT_FIELDS` = candle
+  (open, high, low, close, volume, complete, source) + indicators (rsi_14, ema_9, ema_21, ema_50,
+  ema_200, atr_14, regime, session), schema `helios.market_fact/1.0.0`.
+
+**PROD observations [fabric only, none re-proved].**
+- 2026-08-12 consumer inventory (`helm:hermes:redis:consumer_contract:inventory`): ~1107 keys; key
+  families `hermes:candles:XAU_USD:<TF>:latest:v1` (M1,M5,M15,M30,H1,H4,D1),
+  `...:history:v1:<epoch>` and `...:history:v1:index`, `hermes:indicators:XAU_USD:<TF>:v1`,
+  `hermes:candle_features:...`, `hermes:levels:...`, `hermes:gaps|sessions|ticks|quote:...`,
+  `hermes:feed_health:XAU_USD:v1`, `hermes:backfill:status:...`, `hermes:instrument_catalog:...`,
+  `hermes:health:v1`, `hermes:catalog:candles:v1`, `hermes:contract:manifest:v1`,
+  `hermes:publisher:heartbeat:v1`, `hermes:instruments:enabled`, plus `hermes:signals:*` hashes
+  for all 14 instruments. Candles/features/levels/ticks were XAU_USD only (candle pilot).
+- 2026-10-07 HELM read-only probe (`helm:handover:hermes:prod_helios_contract_verification:20261007T1130Z`):
+  key count had grown to ~284k (history objects); contracts `hermes.candles.latest v1`, indicators v1
+  (`indicator_set_version v1`), manifest v1; M5 index 3922 / 14d TTL, M15 1314, H1 335, H4 index
+  250 but 145 of last 210 objects present, D1 52 members, M1 13749 present; H4 anchors 22/02/06/10/14/18
+  UTC (`H4_FROM_H1_NY1700_V1`) contradicting older docs (00/04); governed indicators latest-only,
+  computed from the Redis candle history window (210) and overwritten; H4 and D1 `ema_200` NULL;
+  envelopes carry bar open time, `generated_at_utc`, `valid_until_utc`, `freshness_state`,
+  provenance, but no event id or content hash; legacy SQL `signals` per-bar values differ from the
+  governed Redis values. Persistence AOF, `noeviction`, `maxmemory` 1.5G.
+- Running image: `hermes-signal:prod-1c359067b0e0` (non-promoted engineering candidate, built
+  2026-09-16); a staged move to a newer image was blocked 2026-10-09/10 so config on disk is ahead
+  of the running container. Whether this has since changed: **UNVERIFIED**.
+
+**UNVERIFIED (must be established by the audit).** Which Redis instance and logical DB is "PROD" for
+Lane A (memory notes record PROD location and status as unverified; two sources disagree on key
+counts by ~250x); the live key list; any key whose registered contract differs from reality; actual
+TTLs; actual indicator coverage per timeframe; real publish cadence; whether the tick key is live
+though documented as unbuilt; whether there is an in-band validation or status field beyond
+`freshness_state`/`status`; whether stale or missing data degrades status or is silently served.
+
+**Safety fact (no address, public repo).** Fabric records PROD Redis as host-published, no
+`requirepass`, default user `nopass`, perimeter = provider source-IP allowlist HELM could not verify.
+Not fixed here (OPS-SAFE-002/003); any perimeter observation is escalated only.
+
+## Target outcome
+
+At closure `maff0000/hermes` holds a dated audit record, a machine-readable inventory, sanitised
+golden samples and a documented-vs-actual comparison for the PROD `XAU_USD` Redis publication, such
+that HERMES-FACT-001 and the HELIOS consumer mapping can be written against observed facts, every
+PROD statement is either proved by the evidence bundle or labelled UNVERIFIED, and production is
+provably unchanged.
+
+## Scope
+
+Read-only audit of the PROD `XAU_USD` publication only. One recorded observation window plus one
+bounded sampling period (see Safety, S7). Each item names its method.
+
+1. **Key inventory.** `SCAN MATCH hermes:*XAU_USD* COUNT 500` and the global-key patterns
+   (`hermes:health:v1`, `hermes:catalog:*`, `hermes:contract:*`, `hermes:publisher:*`,
+   `hermes:instruments:enabled`). Per family: count, `TYPE`, `TTL`/`PTTL` distribution (min, median,
+   max, persistent), key-name pattern, owning contract. Cross-check against `DBSIZE` only (via INFO
+   keyspace). Record keys of other instruments only as a count, not content.
+2. **Schema per key.** One `GET`/`HGETALL` sample per family per timeframe; derive field list,
+   types, nullability, nesting, `schema_version`, `contract`, `contract_version`.
+3. **Indicator and timeframe coverage.** Matrix of timeframe (M1, M5, M15, M30, H1, H4, D1) by
+   {latest candle, history objects, indicator key, candle_features} and per indicator
+   (rsi_14, ema_9, ema_21, ema_50, ema_200, atr_14, plus every other published) present, NULL, or absent.
+4. **Freshness and timestamps.** For each sampled key, record the four times separately and never
+   merge them: bar open time (`timestamp_utc` / `value_open_time_utc`), publish time
+   (`generated_at_utc` / `updated_at`), `valid_until_utc`, and the observer's receive time. Report
+   publish lag, validity window, and per-timeframe publish cadence from repeated bounded samples.
+5. **Warm-up and historical depth.** Per timeframe: history index length, first and last bar open
+   time, expected vs present bar count over the trailing window, gaps (H4 explicitly), TTL horizon,
+   and whether depth satisfies the indicator lookback (ema_200) per timeframe.
+6. **Validation and status.** All validation/status fields and keys: `freshness_state`, `status`,
+   `reason_codes`, `feed_health`, `health:v1`, publisher `heartbeat`, `backfill:status`, manifest
+   `active_families`. Record allowed values observed and values never observed.
+7. **TTL behaviour.** TTL of latest vs history vs index keys; compare to documented `ttl_seconds`
+   and `EX` rules; observe TTL decrement and renewal between two samples.
+8. **Failure and staleness semantics.** Observe only what occurs naturally during the window
+   (e.g. weekend close, session gap): does a key expire, turn `STALE`/`UNAVAILABLE`, or keep serving
+   an old value with a fresh-looking envelope. No fault injection of any kind.
+9. **Documented-vs-actual table** for every documented contract and every observed key family,
+   classifying each row MATCH, DIVERGENT, UNDOCUMENTED (live, no repo doc) or DOCUMENTED-NOT-LIVE.
+10. **Fixtures and defects.** Sanitised golden samples and a defect list with proposed owner.
+
+## Non-goals
+
+- The expanded HERMES development feature programme (HMT-3, event/microstructure facts, GC data,
+  indicator-history activation, new indicators, new timeframes).
+- New feeds, new keys, new contracts, new publishers, any change to OANDA ingestion.
+- Any write to any system other than the evidence worktree; any Redis write of any kind.
+- Other instruments' content (only their existence as a count).
+- Defining `goal.market-fact/v1` (HERMES-FACT-001), the pending production recreate, perimeter
+  hardening, credential rotation, branch protection, or repair of any defect found.
+- DEV Redis and SQL audit (HERMES-CUR-001 owns it); the HMT-2 corpus.
+
+## Dependencies and interfaces
+
+- Hard: GOAL-DCP-001 (CLOSED). Soft: GOAL-CONTRACT-001 fact grammar (the audit reports against its
+  field vocabulary; it does not wait for it).
+- Consumer: HELIOS `MarketFactFrame` / `helios.market_fact/1.0.0` (candle + indicator fields
+  above). The audit's mapping table states, per `FACT_FIELDS` entry, the PROD key and field that
+  carries it, or "absent".
+- Contract owners: HERMES owns the `hermes:*` contracts; GOAL-CONTRACT-001 owns the cross-component
+  fact grammar; HELM owns PROD access and infrastructure.
+- Feeds: HERMES-FACT-001, HERMES-GR-001 (fixtures as candidate replay inputs), HERMES-CUR-001.
+- Evidence PR lands in `maff0000/hermes`; a GOAL cross-component index entry references it by
+  path and SHA.
+
+## Safety boundaries
+
+**S1 Allow-list (exhaustive).** `SCAN` with `MATCH` and `COUNT` <= 500; `TYPE`; `TTL`, `PTTL`;
+`GET`; `STRLEN`; `HGETALL`/`HGET` on hashes of <= 200 fields (check `HLEN` first); `ZRANGE` /
+`ZCARD` / `SCARD` / `SMEMBERS` only on sets of <= 500 members (check cardinality first), `LRANGE`
+bounded to 100; `EXISTS`; `INFO` sections `server`, `keyspace`, `memory`, `persistence`, `clients`
+only; `DBSIZE`; `PING`.
+
+**S2 Forbidden.** `KEYS`, unbounded `SCAN` (no `COUNT`) or `SCAN` over the whole keyspace without
+`MATCH`; `SET`, `DEL`, `UNLINK`, `EXPIRE`/`PEXPIRE`/`PERSIST`, `RENAME`, `FLUSHDB`/`FLUSHALL`,
+`CONFIG` (any form, including `CONFIG GET`), `ACL`, `SUBSCRIBE`/`PSUBSCRIBE` (no consuming
+streams), `XREAD`/`XREADGROUP`/`XACK`/`XDEL`, `BLPOP`-family, `MONITOR`, `DEBUG`, `SLOWLOG RESET`,
+`CLIENT KILL`, `SAVE`/`BGSAVE`, `SHUTDOWN`, `EVAL`/`FUNCTION`, `MIGRATE`, `OBJECT FREQ`, and any
+`docker exec`/restart/compose on the PROD host.
+
+**S3 Rate and size.** One connection, sequential commands, at most 10 commands/s, a pause of >= 1 s
+between `SCAN` pages, total payload read <= 50 MB, no single reply > 2 MB (skip and record
+`STRLEN`). Abort on any latency or memory warning. Run only outside the HERMES publish-critical
+minutes if the operator advises; never during a deploy window.
+
+**S4 Auth and exposure.** Fabric records PROD Redis as open (no password). The operator uses the
+approved read path only; no credential is created, copied, rotated or tested. If auth turns out to
+be required, stop (do not look for a password). No `CONFIG GET requirepass`, no `INFO` sections
+exposing config or `docker inspect` environment. The perimeter is not probed or scanned by this
+audit; any observation that it is open to unexpected sources is reported to OPS-SAFE-002 only.
+
+**S5 No secrets; sanitisation.** Raw output stays private, referenced by SHA-256 in the PR. Before
+anything reaches the public repo: remove host names and addresses (use "the production host"), ports
+other than the standard Redis port, redis target strings, container ids, account identifiers, user
+names, tokens; replace `provenance.runtime_instance`, `redis_target`, `service_identity` host parts
+with `<REDACTED>`; keep market values (public OANDA-sourced prices) but round sample sets so that
+no more than a bounded window is published. Then `./tools/secret-scan` and `gitleaks` on the PR, and
+a grep for IPv4 patterns, `redis://`, `host`, `token`, `password` must return nothing.
+
+**S6 Who runs it.** A HELM-lane operator with approved production read access. FORGE engineers
+receive the sanitised bundle only, never production credentials or addresses. ROGUE supervises;
+ROGUE does not itself connect to production.
+
+**S7 Time-box.** Preflight (state the command list, recorded before use): 0.5 day. Observation
+window: single run of <= 30 minutes for inventory and schema, plus a sampling period of <= 2 hours
+covering at least one full M15 and one H1 boundary, plus (if D3 agrees) one H4 boundary: total
+wall-clock <= 6 hours. Analysis and PR: <= 2 days. Overrun is a stop condition, not an extension.
+
+**S8 Before/after proof.** Record `INFO server` (`uptime_in_seconds`, `run_id`) and `DBSIZE` before
+and after. Unchanged `run_id` and no restart is the no-mutation proof; key count may change only by
+normal HERMES publishing and must be explained.
+
+**S9 Gate.** Production read access is not assumed. It requires the Matt/PO approval in D1, recorded
+in the PR description before the run.
+
+## Deliverables
+
+Paths in `maff0000/hermes` (names proposed, final names by PL):
+
+1. `docs/audits/gold-prod-redis/AUDIT-<date>.md`: findings, sections matching Scope 1-9.
+2. `docs/audits/gold-prod-redis/inventory.json`: machine-readable key families, TYPE, TTL stats,
+   field lists, coverage matrix, with `source` (command), `observed_utc`, `evidence_hash` per entry.
+3. `docs/audits/gold-prod-redis/contract-comparison.md`: documented-vs-actual table (Scope 9).
+4. `tests/fixtures/prod_audit/xau_usd/*.json`: sanitised golden samples, one per key family and
+   timeframe, plus `MANIFEST.json` (SHA-256 per file, capture UTC, sanitisation record). Final
+   location per D4.
+5. `docs/audits/gold-prod-redis/protocol.md`: the exact command allow-list run, with counts.
+6. `docs/audits/gold-prod-redis/defects.md`: defect list (id, evidence, severity, proposed owner,
+   closing work item). Defects are listed, not fixed.
+7. Private evidence bundle reference (hash and storage identifier only).
+8. GOAL cross-component index entry (pointer to hermes PR and SHA; written by the PL).
+
+## Evidence PR checklist (CA's 10 mandatory items)
+
+| # | Item | PR location | Proof method |
+|---|---|---|---|
+| 1 | Actual Redis keys | inventory.json `families[]`; AUDIT section 1 | count per pattern reproduces from the protocol SCAN log; auditor re-runs SCAN |
+| 2 | Schemas | inventory.json `schema`; fixtures | every fixture validates against its recorded field list; script check in PR |
+| 3 | Indicator coverage | AUDIT section 3 matrix | matrix cell for each of 8 `FACT_FIELDS` indicators x 7 timeframes is PRESENT/NULL/ABSENT, no blanks |
+| 4 | Timeframes | AUDIT section 3; inventory.json | M1, M5, M15, M30, H1, H4, D1 each have an explicit row |
+| 5 | Freshness | AUDIT section 4 | lag figures recomputed from fixture timestamps by a test |
+| 6 | Timestamps | AUDIT section 4 | four times recorded separately per key; none merged or inferred |
+| 7 | Historical warm-up | AUDIT section 5 | first/last/expected/present per timeframe; recomputed from index fixtures |
+| 8 | Validation | AUDIT section 6 | each validation field listed with observed values; "never observed" explicit |
+| 9 | Status | AUDIT section 6 | each status key/field with observed enumeration and a stale/failure observation or "not observed" |
+| 10 | Documented-vs-actual comparison | contract-comparison.md | every documented key and every observed family has exactly one classification row |
+
+## Acceptance
+
+GREEN requires all of the following; each has a proof method:
+
+1. **Authorisation recorded.** D1 approval is quoted in the PR before the run. Proof: PR text and
+   timestamp precede the bundle capture time.
+2. **Allow-list compliance.** The protocol log contains only S1 commands. Proof: script in the PR
+   asserts every logged command is in the allow-list and none in S2; independent auditor check.
+3. **No mutation.** S8 before/after shows unchanged `run_id`, no restart, no unexpected keyspace
+   change. Proof: bundle excerpts.
+4. **Checklist complete.** All 10 rows present and each proof method succeeds; coverage matrix has
+   no empty cell.
+5. **Independent re-derivation.** A second operator or auditor repeats the inventory SCAN and a
+   sample of 10 keys in the same window; differences are explained by timestamps and TTL only.
+6. **Fixtures are public-safe and faithful.** `MANIFEST.json` SHA-256 verifies; `./tools/secret-scan`,
+   `gitleaks` and the S5 grep return nothing; sampled fixtures byte-match the sanitised raw excerpt
+   after a documented transformation.
+7. **Labels.** Every PROD statement is proved by the bundle or marked UNVERIFIED; no statement
+   relies on fabric alone.
+8. **Hermes tests untouched and green.** Existing hermes CI passes; no source file outside
+   `docs/audits/` and `tests/fixtures/prod_audit/` changes (diff check).
+9. **Defects.** Every DIVERGENT or UNDOCUMENTED row has a defect entry with owner and closing item.
+10. Fresh independent auditor GREEN; exact SHAs in the PR; PO acceptance recorded.
+
+## Stop conditions
+
+Stop and return to PO/CA (do not improvise) if:
+
+- D1 production read access is not approved, or requires a credential to be created or handed to a
+  FORGE engineer;
+- any step would need a non-allow-listed command, a restart, or a code or config change;
+- a command raises latency or memory warnings, or the time-box S7 is exceeded;
+- the PROD instance cannot be identified unambiguously (D2) or two candidate instances disagree;
+- the perimeter, an exposed secret or an active safety defect is observed: stop documentation of
+  that item and escalate to OPS-SAFE-002/003 owners;
+- sanitisation cannot be proved (secret-scan or grep non-empty);
+- the observed publication differs so much from the record that the pending production recreate
+  occurs mid-window (decide: re-run).
+
+## Open decisions
+
+| # | Decision | Owner | Blocks |
+|---|---|---|---|
+| D1 | Is read-only production Redis access approved, via which HELM-lane operator and read path? Recommendation: yes, under S1-S9, recorded by PO; Matt confirms because production access is involved. | PO + Matt | approval |
+| D2 | Which Redis instance is "PROD" for Lane A: the cloud HERMES cache, or another instance? Memory notes record PROD location/status as unverified and sources disagree. Recommendation: operator identifies it by `/buildinfo` `ENVIRONMENT=PROD` match and records the evidence; if ambiguous, stop. | PO | approval |
+| D3 | Sampling duration: minimum is one full M15 and H1 boundary; include an H4 boundary (up to 4 h) and a session close? Recommendation: M15+H1 now, H4 boundary only if it falls in the window, no deliberate wait. | PO | later (before run) |
+| D4 | Where sanitised fixtures live: hermes `tests/fixtures/prod_audit/xau_usd/` (recommended, near the consumer-facing tests) versus a GOAL fixtures path. GOAL stays pointer-only to keep one source of truth. | PO | later |
+| D5 | Run before or after the pending PROD recreate? Recommendation: now, and flag the config-ahead skew; a short delta afterwards is a separate small increment. | PO | approval |
+| D6 | Fold into CUR-001 as Increment A (fallback in Relationship section) or keep as separate item (recommended). | CA/PO | approval |
+| D7 | Authority for undocumented key families (candle, indicator, feed-health, catalog): should the audit's comparison table become the proposed contract registry in hermes docs? Recommendation: audit records only; registry belongs to HERMES-FACT-001. | PO | later |
+
+## Evidence
+
+Sources read for this draft (2026-10-15), all read-only:
+
+- GOAL `main` at `1739e74`: backlog entries HERMES-CUR-001/FACT-001/GR-001, `pids/GOAL-DCP-001.md`.
+- Draft PID `pids/HERMES-CUR-001.md` on `wo/GOAL-PID-WAVE1-B-research` (and its group report).
+- `audits/2026-10-14/reconciliation/RECON-H1.md` on `wo/GOAL-RECON-H1-datachain` (sections 0-2.4).
+- `maff0000/hermes` `main`: `docs/contracts/hermes_redis_contract_manifest.md`,
+  `docs/contracts/hermes_redis_tick_contract_v1.md`, `docs/architecture/environment-model.md`.
+- HELIOS `helios/contracts/market_fact.py` (consumer field vocabulary).
+- Fabric, read-only GET (memory, not authority): `helm:hermes:redis:consumer_contract:inventory`,
+  `helm:handover:hermes:prod_helios_contract_verification:20261007T1130Z`, and facts quoted in the
+  CUR-001 draft.
+- Auto-memory notes recording PROD location/status as unverified.
+- Not accessed: production Redis or host, hermes `docs/config/hermes-configuration-reference.md`, HMT-2 storage.
+
+## Approval
+
+PENDING. No approval has been recorded for this PID candidate. Approval is recorded here by Central Architecture/PO only.
