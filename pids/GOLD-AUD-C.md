@@ -22,8 +22,8 @@ DRAFT CANDIDATE for Central Architecture review. Not approved. Not DELIVERY_READ
 
 **Form decision: option (ii), a thin new item.** It is justified in the section "Form decision" below. It does not amend, supersede or compete with
 `GOAL-CONTRACT-001` or `GOAL-TRIGGER-001` (candidates on branch `wo/GOAL-CONTRACT-TRIGGER`, `64c843b`, with
-`decisions/ADR-CONTRACT-001-STRATEGY-SEMANTICS.md`; the `GOAL-TRIGGER-001` backlog item is added by GOAL PR #5, OPEN; neither the PID candidate nor the
-item is on `main`). Facts below were read on 2026-10-15 unless marked UNVERIFIED. Fabric is memory, not authority
+`decisions/ADR-CONTRACT-001-STRATEGY-SEMANTICS.md`; the `GOAL-TRIGGER-001` backlog item is on `main` since GOAL PR #5 merged (`90323b3`); the PID
+candidate is not on `main`, and no `pid_path` is set). Facts below were read on 2026-10-15 unless marked UNVERIFIED. Fabric is memory, not authority
 (ADR-DELIVERY-001).
 
 ## Purpose

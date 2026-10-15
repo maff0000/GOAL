@@ -54,7 +54,7 @@ All facts below were read read-only on 2026-10-15 against GOAL `main` @ `1739e74
 - TRON-T1 candidate (branch `wo/GOAL-PID-WAVE1-C-execution`) uses the superseded "ledger" wording; TRON-D1-RATIFY section 11 holds the reconciling amendment note.
 - Backlog: TRON-T1 is `PID_DRAFT`; TRON-T2..T5, HELIOS-T3, MT5-GW-002..004 are `ARCHITECTURE_REQUIRED`; PAPER-E2E-001 carries a Matt gate (`backlog/backlog.yaml` at the base SHA).
 - Trigger authority (CA guidance 2026-10-15, item 2): `GOAL-TRIGGER-001` alone owns signed-trigger, outbox and inbox semantics. TRON's intake is a consumer of that contract; D1's `falcon.trade_action.v1` / `action_id` intake and the three inbound models recorded by RECON-H2 are competing assumptions to reconcile to it, not alternatives to specify.
-- `GOAL-TRIGGER-001` status (programme-controller ruling 7): the drafted PID candidate is on branch `wo/GOAL-CONTRACT-TRIGGER` (commit `64c843b`) and a backlog item for it is added by GOAL PR #5 (OPEN); neither is on `main`. (TRON-D1-RATIFY N-3 recorded the branch as empty at an earlier reading; that statement is superseded.) The candidate is a proposal pending its own decisions, not an authority.
+- `GOAL-TRIGGER-001` status (programme-controller ruling 7): the drafted PID candidate is on branch `wo/GOAL-CONTRACT-TRIGGER` (commit `64c843b`) and its backlog item is on `main` since GOAL PR #5 merged (`90323b3`, 2026-10-15); the PID candidate is not on `main` and no `pid_path` is set. (TRON-D1-RATIFY N-3 recorded the branch as empty at an earlier reading; that statement is superseded.) The candidate is a proposal pending its own decisions, not an authority.
 
 ### MT5 gateway
 
@@ -72,7 +72,7 @@ All facts below were read read-only on 2026-10-15 against GOAL `main` @ `1739e74
 
 ### Prior audits this PID must not duplicate
 
-TRON-D1-RATIFY (baseline, 148 tests, risk-gate gap, A1..A12, R-1..R-10); RECON-H2 trade-chain reconciliation (three intake models, TRON-T2/T3 findings); MT5 readiness, template contract and DEMO verification (branches above); TRON-T1 candidate; GOAL-TRIGGER-001 (PID candidate on `wo/GOAL-CONTRACT-TRIGGER`, not on `main`; backlog item pending in GOAL PR #5).
+TRON-D1-RATIFY (baseline, 148 tests, risk-gate gap, A1..A12, R-1..R-10); RECON-H2 trade-chain reconciliation (three intake models, TRON-T2/T3 findings); MT5 readiness, template contract and DEMO verification (branches above); TRON-T1 candidate; GOAL-TRIGGER-001 (PID candidate on `wo/GOAL-CONTRACT-TRIGGER`, not on `main`; its backlog item is on `main` since GOAL PR #5 merged).
 
 ## Target outcome
 
@@ -130,7 +130,7 @@ The audit reads the merged `mt5-gateway` main (including PR #9) as the current t
 | TRON-D1-RATIFY | Input, not duplicated | Baseline facts, amendment schedule A1..A12, decisions R-1..R-10. This audit is complementary and must not alter them. |
 | MT5-GW-001, merged PR #9 and issue #10 | Input | Merged main and the template contract are the MT5 truth; coordination only. |
 | MT5-GW-002..004, TRON-T1..T5, HELIOS-T3, PAPER-E2E-001 | Referenced | Backlog items the increment list maps to; none is edited. |
-| GOAL-TRIGGER-001 | Soft input (candidate on `wo/GOAL-CONTRACT-TRIGGER` @ `64c843b`; backlog item pending in PR #5; neither on `main`) | Supplies the trigger contract; audit area 4 uses an assumption register and compares against the candidate where it exists. |
+| GOAL-TRIGGER-001 | Soft input (candidate on `wo/GOAL-CONTRACT-TRIGGER` @ `64c843b`; backlog item on `main` since PR #5 merged; the PID candidate is not on `main`) | Supplies the trigger contract; audit area 4 uses an assumption register and compares against the candidate where it exists. |
 | RECON-H2 | Input | Intake-model and ownership findings; cite by finding id. |
 | `GOLD-AUD-C` | No dependency (ruling 5) | D does not depend on C. D uses its assumption register for trigger intake until `GOAL-TRIGGER-001` exists; C reads D's intake facts as a soft input. |
 | GOLD-MVP-001 | Parent | Receives the matrix and increment list. After D's evidence PR is accepted, one GOAL PR contributes D's entry to `audits/2026-10-15/gold-mvp/EVIDENCE-INDEX.md` (owned by `GOLD-MVP-001`; one lane per PR). |

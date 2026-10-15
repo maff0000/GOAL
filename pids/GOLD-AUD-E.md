@@ -160,7 +160,7 @@ freeze to FALCON-T3. If CA prefers one item, the fallback is to append Deliverab
 "verification increment"; the cost is the carve-out reversal and a mixed risk posture.
 
 **Interfaces.** FALCON-T1 (registry reconciliation, soft; the audit reads T1's PID and branch if present
-and states which findings T1 absorbs). GOAL-TRIGGER-001 (PID candidate on `wo/GOAL-CONTRACT-TRIGGER` @ `64c843b`; its backlog item is added by GOAL PR #5, OPEN; neither is on `main`): the audit reads its envelope
+and states which findings T1 absorbs). GOAL-TRIGGER-001 (PID candidate on `wo/GOAL-CONTRACT-TRIGGER` @ `64c843b`; its backlog item is on `main` since GOAL PR #5 merged (`90323b3`); the PID candidate is not on `main`): the audit reads its envelope
 and evidence events and records the hook below; it does not depend on its approval. E's registry facts are a SOFT input to `GOLD-AUD-C` (ruling 5): E has no dependency on C. HELIOS-T3, TRON-T4
 (authors of trigger publication and inbox), HELIOS-T2 (live feed; replay evidence must be labelled).
 HELM owns runtime authorisation of any HELIOS or TRON input exposure; that is a later item.
