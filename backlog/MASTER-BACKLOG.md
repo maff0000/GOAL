@@ -37,7 +37,7 @@ region — change `backlog/backlog.yaml` and run `./tools/goal-docs --write`.
 | HSA-C1 | research | HSA | HSA adopts goal.strategy/v1 and the goal.market-fact/v1 fact catalogue | maff0000/HSA | GOAL-CONTRACT-001, HERMES-FACT-001 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
 | CER-R1 | research | CER | EdgeProfileVersion and contract v1.1 on delivered CER v1.0.0 | maff0000/CER | GOAL-DCP-001 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
 | NEO-R1 | research | NEO | Read-only evidence/MCP architecture | maff0000/neo | GOAL-DCP-001 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
-| GOAL-TRIGGER-001 | trading | GOAL | Cross-system trigger contract: trigger envelope, signed canonical form, validity, dedupe key, terminal outcomes and TriggerInbox delivery semantics | maff0000/GOAL | GOAL-DCP-001 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| GOAL-TRIGGER-001 | shared | GOAL | Cross-system trigger contract: trigger envelope, signed canonical form, validity, dedupe key, terminal outcomes and TriggerInbox delivery semantics | maff0000/GOAL | GOAL-DCP-001, GOAL-CONTRACT-001 | P0 | high | ARCHITECTURE_REQUIRED | Yes | **Yes** |
 | HELIOS-T1 | trading | HELIOS | Refactor to GOAL strategy contract/core | maff0000/HELIOS | GOAL-CORE-001 | P0 | medium | PID_DRAFT | Yes | No |
 | HELIOS-T2 | trading | HELIOS | Live HERMES adapter | maff0000/HELIOS | HELIOS-T1, HERMES-FACT-001 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
 | HELIOS-T3 | trading | HELIOS | Signed durable StrategyTrigger | maff0000/HELIOS | HELIOS-T2, GOAL-TRIGGER-001 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |

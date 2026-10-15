@@ -35,7 +35,7 @@ Class: **factual** corrects a statement that was wrong; **prerequisite** changes
 | 5 | CER-R1 | title | Research evidence + EdgeProfileVersion | EdgeProfileVersion and contract v1.1 on delivered CER v1.0.0 | factual | RECON-G F4: research evidence classes already exist in CER v1. |
 | 6 | FALCON-T1 | depends_on | HELIOS-T3 | GOAL-DCP-001 | sequencing | RECON-F X1: inputs are the merged HELIOS v1 and FALCON's own stage-1 discovery. |
 | 7 | FALCON-T1 | title | Reconcile event registry | Reconcile FALCON event registry with delivered HERMES/ARES/HELIOS reality (excludes strategy_trigger and tron.* families) | factual | RECON-F P2: records that FALCON is delivered and what is excluded. |
-| 8 | GOAL-TRIGGER-001 | (new item) | n/a | added, ARCHITECTURE_REQUIRED | new | RECON-F H1 and RECON-H2 F-1; see section 4. |
+| 8 | GOAL-TRIGGER-001 | (new item) | n/a | added, ARCHITECTURE_REQUIRED, lane shared, matt_gate true, depends on GOAL-DCP-001 and GOAL-CONTRACT-001 (amended 2026-10-15 on CA direction) | new | RECON-F H1 and RECON-H2 F-1; see section 4. |
 | 9 | HELIOS-T3 | depends_on | HELIOS-T2 | HELIOS-T2, GOAL-TRIGGER-001 | prerequisite | single owner of the trigger contract. |
 | 10 | TRON-T4 | depends_on | TRON-T1, HELIOS-T3 | TRON-T1, GOAL-TRIGGER-001 | sequencing | RECON-F X2, RECON-H2 P5: the inbox needs the frozen contract and signed fixtures, not a running HELIOS signer. HELIOS-T3 stays required at PAPER-E2E-001. |
 | 11 | HELIOS-T1 | state | ARCHITECTURE_REQUIRED | PID_DRAFT | sequencing | group E report: architecture settled by evidence; the engineering dependency GOAL-CORE-001 is retained. pid_path stays null. |
@@ -68,7 +68,7 @@ An item may be added only if it has a distinct owner, a distinct deliverable, di
 
 | item | owner | deliverable | acceptance | dependencies and why |
 |---|---|---|---|---|
-| GOAL-TRIGGER-001 | PO/CA, repository `maff0000/GOAL` | the contract of record: trigger identity, signed canonical form, validity window, dedupe key, terminal outcomes, delivery semantics | the contract is frozen and conformance fixtures exist for both HELIOS-T3 and TRON-T4 to build against | `GOAL-DCP-001` only, so HELIOS-T3 and TRON-T4 PIDs can be authored in parallel against a declared interface. Identity fields will reuse `goal.strategy/v1` vocabulary by reference; RECON-H2 would add `GOAL-CONTRACT-001`, which is a deferred ordering choice. Owns no implementation. |
+| GOAL-TRIGGER-001 | PO/CA, repository `maff0000/GOAL` | the contract of record: trigger identity, signed canonical form, validity window, dedupe key, terminal outcomes, delivery semantics | the contract is frozen and conformance fixtures exist for both HELIOS-T3 and TRON-T4 to build against | `GOAL-DCP-001` and `GOAL-CONTRACT-001` (amended 2026-10-15 on CA direction: identity and canonicalisation come from the strategy contract). Authoring of the HELIOS-T3 and TRON-T4 PIDs may proceed against a declared draft interface. Owns no implementation. |
 | TRON-D1-RATIFY | TRON repository, Matt-gated | independent audit and merge of the existing D1 design baseline; disposition of open decisions (runtime language, trigger transport, quantity ownership, journal versus Postgres) | audit green, merged to the default branch, decisions closed or explicitly deferred | `GOAL-DCP-001`. It is itself the prerequisite of `TRON-T1`. |
 | HSA-C1 | HSA repository | HSA emits `goal.strategy/v1` and names facts from the `goal.market-fact/v1` catalogue | HSA output passes the contract conformance fixtures | `GOAL-CONTRACT-001` (the schema it adopts) and `HERMES-FACT-001` (the catalogue it names). Does not include the HSA-DARWIN-CER authoring loop. |
 
@@ -96,7 +96,7 @@ The schema has one `depends_on` list. After this change it is used for **genuine
 | HSA-C1 | GOAL-CONTRACT-001, HERMES-FACT-001 | E |
 | CER-R1 | GOAL-DCP-001 | E (changed) |
 | NEO-R1 | GOAL-DCP-001 | E (changed); disposition rulings gate its PID_DRAFT |
-| GOAL-TRIGGER-001 | GOAL-DCP-001 | E |
+| GOAL-TRIGGER-001 | GOAL-DCP-001, GOAL-CONTRACT-001 | E |
 | HELIOS-T1 | GOAL-CORE-001 | E* (PID_DRAFT: architecture prepared against a declared interface) |
 | HELIOS-T2 | HELIOS-T1, HERMES-FACT-001 | E (ARES edge dropped) |
 | HELIOS-T3 | HELIOS-T2, GOAL-TRIGGER-001 | E for the contract; HELIOS-T2 is R (analyst: signing needs only HELIOS output) |

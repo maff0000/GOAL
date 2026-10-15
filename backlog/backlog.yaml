@@ -477,10 +477,11 @@ items:
   # RECON: single owner of the cross-system trigger contract. Today the trigger path exists as three incompatible models (a FALCON/Graylog query, a Redis board action,
   # RECON: and the backlog's durable inbox) and neither HELIOS-T3 nor TRON-T4 owns reconciling them. This item produces the contract of record: trigger identity, canonical
   # RECON: signed form, validity window, dedupe key, terminal outcomes, delivery semantics and key-custody decision. It owns no implementation. FALCON is evidence only.
-  # RECON: decisions required first (PO/CA): transport of record, FALCON evidence-only confirmation, signing and key custody. See the summary record.
+  # RECON: lane shared (cross-system contract, as GOAL-CONTRACT-001); matt_gate true because changing TRON settled items 3 and 7 is a Matt decision; depends on GOAL-CONTRACT-001
+  # RECON: for the shared identity and canonicalisation (goal-canon). Decisions required first (PO/CA): transport of record, FALCON evidence-only confirmation, signing and key custody. See the summary record.
   - id: GOAL-TRIGGER-001
     title: "Cross-system trigger contract: trigger envelope, signed canonical form, validity, dedupe key, terminal outcomes and TriggerInbox delivery semantics"
-    lane: trading
+    lane: shared
     component: GOAL
     target_repository: maff0000/GOAL
     priority: P0
@@ -488,8 +489,9 @@ items:
     state: ARCHITECTURE_REQUIRED
     depends_on:
       - GOAL-DCP-001
+      - GOAL-CONTRACT-001
     po_gate: true
-    matt_gate: false
+    matt_gate: true
     pid_path: null
     architecture_refs:
       - architecture/DELIVERY-CONTROL-PLANE.md
