@@ -30,8 +30,10 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `decisions/ADR-MT5-001-REUSE-CONTAINER-REPLACE-BRIDGE.md`
 - `decisions/ADR-MT5-002-LEGACY-LIVE-FLAGGED-EXECUTOR.md`
 - `governance/DELIVERY-STATE-MACHINE.md`
+- `operations/BACKUP-AND-RESTORE-PLAN.md`
 - `operations/HELM-BOOTSTRAP-INSTRUCTIONS.md`
 - `operations/HELM-NEXT-ACTIONS.md`
+- `operations/RISK-REGISTER-LEGACY-EXPOSURE.md`
 - `operations/ROGUE-DISPATCH-GOAL-DCP-001.md`
 - `operations/ROGUE-READINESS.md`
 - `pids/GOAL-DCP-001.md`
