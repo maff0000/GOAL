@@ -1,7 +1,8 @@
 # GOLD-AUD-B — Locate and reconcile the HERMES to HELIOS GOLD integration (audit)
 
 **Lane:** research  
-**Target repository:** `maff0000/HELIOS` (evidence PR) with a `maff0000/GOAL` cross-component index  
+**Target repository:** `maff0000/HELIOS` (primary evidence PR; GOAL holds an index entry only)  
+**Evidence:** primary PR in `maff0000/HELIOS`, branch `wo/GOLD-AUD-B-evidence`, path `docs/evidence/GOLD-AUD-B/` (programme-controller rulings 1 to 3; `PORTFOLIO.md` appendix)  
 **Priority:** P0  
 **Risk:** low  
 **Matt gate:** No  
@@ -58,7 +59,7 @@ accepted.
 
 | # | Candidate | Where | Nature | Finding | Mark |
 |---|---|---|---|---|---|
-| 1 | New HELIOS v1 | `maff0000/HELIOS` (public), clone on the delivery host, `main` = `origin/main` = `7f7193d` (PR #1, independent PRODUCT_GREEN at `0bb9297`) | product, execution-blind | `helios/hermes/` holds one adapter, a fixture source; `helios/integration/hermes_boundary.py` is a data contract, "not a client"; no Redis or DB client, no network sink. Facts arrive as validated `MarketFactFrame` values. Accepted schema version is `helios.market_fact/1.0.0`. | PROVEN |
+| 1 | New HELIOS v1 | `maff0000/HELIOS` (public), clone on the delivery host, `main` = `origin/main` = `7f7193d` (PR #1, independent PRODUCT_GREEN at `0bb9297`) | product, execution-blind | `helios/hermes/` holds one adapter, a fixture source; `helios/integration/hermes_boundary.py` is a data contract, "not a client"; no Redis or DB client, no network sink. Facts arrive as validated `MarketFactFrame` values. Advertised schema version is `helios.market_fact/1.0.0`; fixtures, config and tests also accept `hermes.market_fact/1.0.0`. | PROVEN |
 | 2 | GOLD Strategy Runtime | `maff0000/GOLD-STRATEGY-RUNTIME` (private), clone on the delivery host, `main` `5891415` (PR #1) | deployment wiring | Runs HSA, HELIOS and CER as containers on pinned digests. Its own `docs/COMPONENT-DELTAS.md` CD-1 states HELIOS "has no live HERMES transport", rejects a runtime-owned bridge, and bounds the delta as "a HERMES transport source behind HELIOS's existing fact-source interface". CD-3 defers a Redis sink. ADR-001 Ruling 1 keeps v1 free of shared Redis. | PROVEN |
 | 3 | Deployed GOLD stack | delivery host, DEV and PROD container sets (healthy, up about five weeks) built from the runtime repo images dated 2026-09-07 | deployed unit | HELIOS container mounts a host fact directory and a strategies directory read-only; the fact directory holds four files with fixture-style names (`xau_usd_aligned_*`). Evidence says it is fixture-fed. Content of the files was not opened. | PARTIAL |
 | 4 | HELIOS to HERMES PROD proof | HELIOS branch `wo/WO-HELIOS-HERMES-PROD-INTEGRATION-PROOF-0001` (one commit `84d3772`, unmerged) | work-order evidence, no code | Terminal verdict `WAITING_FOR_HERMES_BACKFILL` (2026-09-05, a Saturday): D1 had 21 of 26 required bars and no `latest` key; H4 stale by days. Records that HELIOS has no Redis client and validates `hermes.market_fact/1.0.0` while live HERMES publishes `v1` / `hermes.candles.latest`. No harness was built. | PROVEN |
@@ -78,8 +79,8 @@ accepted.
   `schema_version`, `observed_at_utc`, `ingested_at_utc`). Closed world: unknown
   field refused; binary floats refused; windows must be strictly ascending.
   Source: HELIOS `docs/CONTRACTS.md` and `helios/contracts/market_fact.py`.
-- **Version gap (PROVEN).** HELIOS accepts `helios.market_fact/1.0.0` (set by
-  `HELIOS_ACCEPTED_HERMES_SCHEMA_VERSIONS`); live HERMES publishes `v1` with a
+- **Version gap (PROVEN).** HELIOS advertises `helios.market_fact/1.0.0` and its fixtures, config and tests also accept
+  `hermes.market_fact/1.0.0` (accepted set `HELIOS_ACCEPTED_HERMES_SCHEMA_VERSIONS`); live HERMES publishes `v1` with a
   `hermes.candles.latest` envelope. Row 4 records the same gap.
 - **Provenance gap (PROVEN, from GOLD runtime CD-2).** A fact `source` is a
   lowercase token, so DEV and PROD HERMES cannot be told apart in the frame.
@@ -196,10 +197,11 @@ In scope, all read-only:
 - **Downstream:** `HELIOS-T1` (strategy contract refactor), `HELIOS-T2` (live
   adapters), `HERMES-FACT-001`, and the master `GOLD-MVP-001` frame.
 
-**Collision notes:** writes only to a new branch of `maff0000/HELIOS`
-(`docs/evidence/` and an audit note) and `maff0000/GOAL` (an index entry under
-`audits/`). It does not touch product source, `pids/HELIOS-T1.md` or
-`backlog/`.
+**Collision notes:** the audit writes only to a new branch `wo/GOLD-AUD-B-evidence` of `maff0000/HELIOS`
+(`docs/evidence/GOLD-AUD-B/`). After that PR is accepted, one separate GOAL PR contributes B's entry to
+`audits/2026-10-15/gold-mvp/EVIDENCE-INDEX.md` (owned by `GOLD-MVP-001`; one lane per PR; B's matrix rows go to
+`COMPATIBILITY-MATRIX.md` the same way). The branch `wo/GOAL-GOLD-AUD-B` is the PID draft, not evidence. It does not touch product source,
+`pids/HELIOS-T1.md` or `backlog/`.
 
 ## Safety boundaries
 
@@ -226,15 +228,15 @@ In scope, all read-only:
 
 ## Deliverables
 
-1. **Evidence PR** into `maff0000/HELIOS` containing
-   `docs/evidence/GOLD-AUD-B.md` (sanitised) and supporting tables, plus a
-   `maff0000/GOAL` cross-component index entry. The checklist is CA's ten mandatory evidence items in CA's numbering:
+1. **Primary evidence PR** into `maff0000/HELIOS` (branch `wo/GOLD-AUD-B-evidence`) containing
+   `docs/evidence/GOLD-AUD-B/` (sanitised audit record and supporting tables), followed after acceptance by one GOAL index-entry PR
+   (ruling 4). The checklist is CA's ten mandatory evidence items in CA's numbering:
 
    CA's ten mandatory evidence items, in CA's numbering (the numbering is CA's and is not to be changed by a lane): (1) PID/WO identifier and exact audited scope; (2) source repositories, revisions and relevant documentation references; (3) existing implementation: proven, partially proven, unverified or missing; (4) actual versus expected contract comparison; (5) tests, fixtures and evidence references; (6) specific defects and compatibility gaps; (7) reusable code and documentation; (8) minimum recommended implementation changes; (9) safety and deployment constraints; (10) independent audit verdict and any unresolved findings.
 
    | CA # | CA evidence item | This audit puts it in | Proof method |
    |---|---|---|---|
-   | 1 | PID/WO identifier and exact audited scope | `docs/evidence/GOLD-AUD-B.md` header: quoted scope sentence; audit id | Quote equals approved PID |
+   | 1 | PID/WO identifier and exact audited scope | `docs/evidence/GOLD-AUD-B/` record header: quoted scope sentence; audit id | Quote equals approved PID |
    | 2 | Source repositories, revisions and documentation references | Search method and exact commands including the negative-search record; revisions (full SHA) of HELIOS, GOLD-STRATEGY-RUNTIME, HSA, legacy lineage; documentation references | Commands re-run to the recorded SHAs |
    | 3 | Existing implementation: proven, partially proven, unverified or missing | Candidate inventory (path, repo, commit, nature, status, mark) and source-level reading of each candidate touching HERMES data; reuse / adapt / rewrite classification per component; marks PROVEN / PARTIAL / UNVERIFIED map to proven / partially proven / unverified, absent artefacts to missing | Every row has a mark; every PROVEN row names a path or command and a commit or date |
    | 4 | Actual versus expected contract comparison | HERMES-to-`MarketFactFrame` field mapping, schema version and provenance reconciliation, HSA package field needs versus the mapping | Field-level, no narrative cells; every gap named |
@@ -254,10 +256,11 @@ In scope, all read-only:
 
 Mechanical:
 
-1. `./tools/goal-validate` exits 0 on the GOAL branch; `./tools/secret-scan`
-   exits 0 on both branches.
+1. `./tools/secret-scan` exits 0 on the HELIOS evidence branch; on the later GOAL index-entry PR, `./tools/goal-validate`
+   and `./tools/secret-scan` exit 0.
 2. `git diff --name-only origin/main` on the HELIOS branch lists only
-   `docs/evidence/` paths; on the GOAL branch, only `audits/` paths.
+   `docs/evidence/GOLD-AUD-B/` paths; on the GOAL index-entry PR, only `audits/2026-10-15/gold-mvp/EVIDENCE-INDEX.md` and
+   `COMPATIBILITY-MATRIX.md`.
 3. HELIOS `pytest -p no:cacheprovider -q` reports the same pass count as the
    baseline (1005 at `7f7193d`) with no test or source file modified.
 4. Every row of the candidate inventory has a mark in {PROVEN, PARTIAL,

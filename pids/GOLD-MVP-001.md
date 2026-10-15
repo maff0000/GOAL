@@ -47,7 +47,7 @@ fabric-only claims are labelled. Anything not read in a source is UNVERIFIED. Th
 | HERMES data provenance | live facts come from one venue feed, microstructure truth is CME gold futures, execution is a Vantage MT5 gold CFD; the alignment basis is named only in an unauthorised HMT-3H candidate (RECON-H1 section 2.6) | proven as a gap; see D-6 |
 | HELIOS | `maff0000/HELIOS` `main` @ `7f7193d` (PR #1, independent PRODUCT_GREEN, 1005 tests per GROUP-E-REPORT), execution-blind enforced by a vocabulary test, HSA package loader, FALCON publication boundary, Docker runtime | proven for v1; live HERMES client is a file-feed fixture source only (RECON-H2 table); an earlier Redis-to-HELIOS proof branch stops at `WAITING_FOR_HERMES_BACKFILL` |
 | Earlier HERMES-to-HELIOS GOLD integration | `GOLD-STRATEGY-RUNTIME` `main` @ `5891415` composes HSA + HELIOS + CER as one platform (RUNTIME_PRODUCT_GREEN, assurance-tooling residual); its architecture predates TRON and the trigger (RECON-H1 section 1) | located and negative: no completed HERMES Redis to new-HELIOS integration exists (HELIOS has no Redis client; the deployed GOLD stack is fixture-fed; the proof branch ended `WAITING_FOR_HERMES_BACKFILL`), so the HERMES to HELIOS reader is a build item in `HELIOS-T2` scope (GOLD-AUD-B Current state; PORTFOLIO section 3a); to be proven by `GOLD-AUD-B` |
-| Strategy contract | `GOAL-CONTRACT-001` and `GOAL-TRIGGER-001` PID candidates on `wo/GOAL-CONTRACT-TRIGGER` @ `64c843b`, plus `ADR-CONTRACT-001`; none approved; three live strategy representations with no shared contract (HSA package, HELIOS package, DARWIN `StrategyVersion`) | candidates only |
+| Strategy contract | `GOAL-CONTRACT-001` and `GOAL-TRIGGER-001` PID candidates on `wo/GOAL-CONTRACT-TRIGGER` @ `64c843b`, plus `ADR-CONTRACT-001`; the `GOAL-TRIGGER-001` backlog item is added by GOAL PR #5 (OPEN); none on `main`, none approved; three live strategy representations with no shared contract (HSA package, HELIOS package, DARWIN `StrategyVersion`) | candidates only |
 | Trigger transport | the TradingTriggerInbox specification was searched for and NOT found (GOAL-TRIGGER-001 Current state 1); three incompatible inbound models exist (FALCON discovery, TRON D1 Redis board, backlog titles) | missing |
 | TRON | `maff0000/tron` `main` @ `5577039` is `PID.md` + scripts only; the D1 design baseline is on an unmerged branch (20 commits) pending `TRON-D1-RATIFY` (Matt gate); no runtime code | design only |
 | MT5 gateway | 8 stacked open PRs, linear, 27 commits, no CI, no typed service; a DEMO instance exists and is healthy; one earlier record shows a broker-reported DEMO trade mode; raw `SlaveService` is the only control surface (MT5-READINESS headlines 3 to 6) | partially proven; `MT5-GW-001` to `-004` are the engineering chain |
@@ -95,6 +95,8 @@ In scope (integration and acceptance only):
    DEMO guard, with the evidence package committed to GitHub.
 6. **Gap register:** any capability the audits find missing, each assigned to an existing or proposed owning item;
    this PID does not implement any of them.
+
+Contribution rule for items 2 and 3 (programme-controller ruling 4). Each lane PID contributes its index entry and its matrix rows by one GOAL PR per lane, only AFTER that lane's own evidence PR is accepted, so that writes never conflict. The `GOLD-MVP-001` PL is the single writer of the two files and merges those PRs one at a time. Lane evidence lives at `docs/evidence/GOLD-AUD-<L>/` in the primary repository (`audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-<L>/` in GOAL for lanes C, D and F); `GOLD-AUD-C`'s contract packages stay under `contracts/packages/` and its matrix rows are contributed into `COMPATIBILITY-MATRIX.md`.
 
 Integration glue that belongs to no component (for example a cross-repository acceptance driver script that only
 orchestrates public interfaces) lives in `maff0000/GOAL` under a path the approved PID names; it must contain no
@@ -156,8 +158,8 @@ on the critical path.
 ## Deliverables
 
 1. `audits/2026-10-15/gold-mvp/INTEGRATION-ARCHITECTURE.md`: the sequence, interfaces, owners and failure behaviour of the critical path.
-2. `audits/2026-10-15/gold-mvp/EVIDENCE-INDEX.md`: cross-component evidence index (single writer: the delivering PL).
-3. `audits/2026-10-15/gold-mvp/COMPATIBILITY-MATRIX.md`: consolidated contract compatibility matrix with an owner and closing PID per gap.
+2. `audits/2026-10-15/gold-mvp/EVIDENCE-INDEX.md`: cross-component evidence index (owned by this PID; single writer: the `GOLD-MVP-001` PL).
+3. `audits/2026-10-15/gold-mvp/COMPATIBILITY-MATRIX.md`: consolidated contract compatibility matrix with an owner and closing PID per gap (owned by this PID; single writer: the `GOLD-MVP-001` PL; no second matrix).
 4. `audits/2026-10-15/gold-mvp/GAP-REGISTER.md`: capabilities missing for the MVP, each with owner and proposed item.
 5. `audits/2026-10-15/gold-mvp/ACCEPTANCE-RUNBOOK.md` plus fixtures and the orchestration-only driver named in the approved PID.
 6. `audits/2026-10-15/gold-mvp/ACCEPTANCE-EVIDENCE/`: the executed run's evidence package (sanitised), with a manifest of hashes.

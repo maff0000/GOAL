@@ -1,7 +1,8 @@
 # GOLD-AUD-C — Shared contract reconciliation and consumer/provider packages (CP-1, CP-2)
 
 **Lane:** research  
-**Target repository:** `maff0000/GOAL`  
+**Target repository:** `maff0000/GOAL` (primary evidence PR)  
+**Evidence:** primary PR in `maff0000/GOAL`, branch `wo/GOLD-AUD-C-evidence`, path `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-C/`; contract packages under `contracts/packages/`; matrix rows are contributed into `audits/2026-10-15/gold-mvp/COMPATIBILITY-MATRIX.md`, which `GOLD-MVP-001` owns (programme-controller rulings 1 to 4; `PORTFOLIO.md` appendix)  
 **Priority:** P0  
 **Risk:** Medium (specification only; no runtime change)  
 **Matt gate:** No (D-3 of GOAL-TRIGGER-001 keeps its own Matt gate; this item does not decide it)  
@@ -21,7 +22,8 @@ DRAFT CANDIDATE for Central Architecture review. Not approved. Not DELIVERY_READ
 
 **Form decision: option (ii), a thin new item.** It is justified in the section "Form decision" below. It does not amend, supersede or compete with
 `GOAL-CONTRACT-001` or `GOAL-TRIGGER-001` (candidates on branch `wo/GOAL-CONTRACT-TRIGGER`, `64c843b`, with
-`decisions/ADR-CONTRACT-001-STRATEGY-SEMANTICS.md`). Facts below were read on 2026-10-15 unless marked UNVERIFIED. Fabric is memory, not authority
+`decisions/ADR-CONTRACT-001-STRATEGY-SEMANTICS.md`; the `GOAL-TRIGGER-001` backlog item is added by GOAL PR #5, OPEN; neither the PID candidate nor the
+item is on `main`). Facts below were read on 2026-10-15 unless marked UNVERIFIED. Fabric is memory, not authority
 (ADR-DELIVERY-001).
 
 ## Purpose
@@ -175,11 +177,17 @@ Exactly CP-1 and CP-2. For each package:
 ## Dependencies and interfaces
 
 - **Hard backlog dependency:** `GOAL-DCP-001` (CLOSED) only.
+- **Ordering (programme-controller ruling 5; no hard cycle).** C's inputs are A and B (CP-1 reality), D's TRON intake facts (soft) and E's FALCON registry
+  facts (soft). C reads a soft input only after that lane's facts are committed; otherwise C records an assumption and flags UNVERIFIED. D does not depend
+  on C (D uses its own assumption register until `GOAL-TRIGGER-001` exists). No lane waits on C except `GOLD-MVP-001`, which consumes C's matrix rows.
 - **Lane A** (HERMES surface reality): the live key inventory and PROD readiness are inputs to CP-1; this item cites Lane A evidence when merged and
   flags UNVERIFIED where it is not.
 - **Lane B** (existing HELIOS adapter and the legacy integration): input to CP-1 adapter placement (reader outside the pure engine) and whether a
   prior reader exists. No dependency on Lane B timing; a missing Lane B result leaves the CP-1 adapter row UNVERIFIED.
-- **Lane D** (TRON inbox facts): input to CP-2 inbox rows and terminal-state mapping; TRON-T4 owns final names.
+- **Lane D** (TRON inbox facts, SOFT): input to CP-2 inbox rows and terminal-state mapping; TRON-T4 owns final names. Read after D's facts are committed;
+  otherwise record the assumption.
+- **Lane E** (FALCON registry facts, SOFT): input to the CP-2 evidence-event rows (registered `helios.strategy_trigger` and `tron.*` shapes); read after E's
+  facts are committed; otherwise record the assumption.
 - **GOAL-CONTRACT-001 draft-freeze** is required before any CP freeze that uses `goal-canon/1` or the strategy identity triple; CP drafting may
   proceed against its DRAFT.
 - **GOAL-TRIGGER-001:** CP-2 draft-freeze requires its DRAFT-FREEZE; D-12 (authority of the trigger contract) must be decided first, otherwise CP-2 is
@@ -210,17 +218,17 @@ Exactly CP-1 and CP-2. For each package:
 
 ## Deliverables
 
-Paths proposed for the evidence PR (fixed in the first PL step); all inside `maff0000/GOAL`:
+Paths proposed for the evidence PR (fixed in the first PL step); all inside `maff0000/GOAL` (evidence under `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-C/`, packages under `contracts/packages/`):
 
-1. `audits/<date>/gold-aud-c/RECONCILIATION.md`: base SHAs, commands, findings AC-n, status of C-1..C-14 and T-1..T-11, TradingTriggerInbox
+1. `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-C/RECONCILIATION.md`: base SHAs, commands, findings AC-n, status of C-1..C-14 and T-1..T-11, TradingTriggerInbox
    specification status.
 2. `contracts/packages/cp-1-hermes-helios-input/` and `contracts/packages/cp-2-trigger-outbox-inbox/`, each: `PACKAGE.md` (versioning, mapping tables,
    canonical form, rejection matrix, failure/recovery scenarios, conformance obligations), `schema/`, `fixtures/valid/`, `fixtures/invalid/` (each
    file names rule and code), `conformance/PROVIDER-TESTS.md`, `conformance/CONSUMER-TESTS.md`.
-3. `contracts/packages/COMPATIBILITY-MATRIX.md` rows for CP-1 and CP-2 (contribution; GOAL owns the matrix).
+3. Matrix rows for CP-1 and CP-2, prepared in each package and contributed into `audits/2026-10-15/gold-mvp/COMPATIBILITY-MATRIX.md` by a separate GOAL PR after this lane's evidence PR is accepted (one lane per PR; `GOLD-MVP-001` owns the file and its single writer is the `GOLD-MVP-001` PL; there is no second matrix).
 4. Offline deterministic tests under `tests/` validating fixtures against schemas with two independent validators (schema validator and a hand-written
    second checker).
-5. Evidence PR(s) to `maff0000/GOAL` mapped to CA's ten evidence items using the checklist below.
+5. One primary evidence PR to `maff0000/GOAL` (branch `wo/GOLD-AUD-C-evidence`) mapped to CA's ten evidence items using the checklist below.
 
 ### Evidence PR checklist (CA's ten mandatory evidence items, CA numbering)
 
@@ -233,7 +241,7 @@ CA's ten mandatory evidence items, in CA's numbering (the numbering is CA's and 
 | 3 | Existing implementation: proven, partially proven, unverified or missing | `RECONCILIATION.md`: HERMES published-surface inventory, HELIOS input contract and rejection rules, trigger / signing / outbox search results (negative results with scope and commands), TRON intake assumptions and terminal states, FALCON registry and trigger-schema delta, TradingTriggerInbox specification status; each classified proven / partially proven / unverified / missing | Negative results state scope and commands |
 | 4 | Actual versus expected contract comparison | Mapping tables (no empty cell, no `TBD`) and the re-test of C-1..C-14 and T-1..T-11 as CONFIRMED / CHANGED / NEW | Two independent validators agree; every C and T row covered |
 | 5 | Tests, fixtures and evidence references | CP-1 and CP-2 packages: golden valid and invalid fixtures with declared rejection codes, rejection matrices, failure and recovery scenarios, offline tests | `python3 -m pytest tests/ -q` exits 0; no fixture has an undeclared code |
-| 6 | Specific defects and compatibility gaps | Findings AC-n and the compatibility-matrix contribution (rows per provider / consumer version, status COMPATIBLE / ADAPTER / INCOMPATIBLE) | No row reads COMPATIBLE where a fixture fails |
+| 6 | Specific defects and compatibility gaps | Findings AC-n and the compatibility-matrix rows to contribute (rows per provider / consumer version, status COMPATIBLE / ADAPTER / INCOMPATIBLE) | No row reads COMPATIBLE where a fixture fails |
 | 7 | Reusable code and documentation | Reusable fixtures (the 15 HELIOS malformed cases), schemas and the reference-model tooling used only by tests | Each reuse entry cites path and revision |
 | 8 | Minimum recommended implementation changes | Conformance test obligations per side and register-row proposals offered to the owning PIDs (never edited here) | Each NEW finding offered to its owning PID |
 | 9 | Safety and deployment constraints | Safety section: public-repo sanitisation (no credentials, hosts, accounts, broker symbols, real keys), no runtime contact, forbidden-content test, open-decision list | `./tools/secret-scan` CLEAN; forbidden-content test passes |
@@ -254,7 +262,7 @@ A-5. Mapping tables contain no empty cell and no `TBD`; each `UNSUPPORTED` row n
      commit is re-read at the recorded SHA (script lists them).
 A-6. Forbidden-content test: none of stop-loss, take-profit, quantity, order, account, broker symbol, `confidence`, host or address in packages and
      fixtures.
-A-7. Compatibility matrix rows exist for every provider/consumer version pair; none reads COMPATIBLE where a fixture fails; no package is marked
+A-7. Compatibility matrix rows (prepared in the packages, contributed to `COMPATIBILITY-MATRIX.md` after acceptance) exist for every provider/consumer version pair; none reads COMPATIBLE where a fixture fails; no package is marked
      FROZEN.
 A-8. Reconciliation covers every C and T row and offers each NEW finding to its owning PID; `./tools/goal-validate` prints OK; `./tools/secret-scan` CLEAN (tree and history); no existing test fails.
 A-9. Independent FORGE Auditor GREEN with exact SHAs; PO acceptance recorded per the state machine.
@@ -277,7 +285,7 @@ Owner PO unless stated; none needs Matt from this item. D-xx and C/S/O/T decisio
   section of `GOAL-CONTRACT-001` (rejected here: its Non-goals exclude fact payloads). Recommendation: HERMES-FACT-001 PID with this package as its
   input.
 - **D-C2 (PO; blocks approval): form.** (ii) thin item (recommended) versus (i) amendment of both PIDs.
-- **D-C3 (CA; blocks CP-1 freeze, not approval): who maps `v1` to `hermes.market_fact/1.0.0`** and fixes the HELIOS version-string inconsistency:
+- **D-C3 (CA; blocks CP-1 freeze, not approval): who maps `v1` to the HELIOS fact schema string** (advertised `helios.market_fact/1.0.0`; fixtures, config and tests also accept `hermes.market_fact/1.0.0`) and fixes the HELIOS version-string inconsistency:
   HERMES re-publishes, a reader adapter maps (transport only), or HELIOS accepts `v1`. Related: GOAL-CONTRACT-001 C-12/O-4; Group E item 7.
 - **D-C4 (PO; blocks CP-1 freeze): reader placement** outside the HELIOS pure engine (a HELIOS-owned or separate adapter), given the `redis` import
   ban; Lane B input.
@@ -288,7 +296,7 @@ Owner PO unless stated; none needs Matt from this item. D-xx and C/S/O/T decisio
 
 ## Evidence
 
-- GOAL base `1739e742154c77e9e2a96927dc40d4978b9cd798` (main; branch `wo/GOAL-GOLD-AUD-C` created from it).
+- GOAL base `1739e742154c77e9e2a96927dc40d4978b9cd798` (main; PID draft branch `wo/GOAL-GOLD-AUD-C` created from it; the evidence branch is `wo/GOLD-AUD-C-evidence`).
 - `wo/GOAL-CONTRACT-TRIGGER` `64c843b`: `pids/GOAL-CONTRACT-001.md`, `pids/GOAL-TRIGGER-001.md`, `decisions/ADR-CONTRACT-001-STRATEGY-SEMANTICS.md`.
 - HERMES main `ca19017`: `docs/contracts/hermes_redis_contract_manifest.md`, `docs/architecture/redis-consumer-integrity-boundary.md`,
   `docs/governance/PID-HERMES-MVP-001.md`, `utils/candle_contract_v1.py`, `utils/hermes_indicators_v1.py`,

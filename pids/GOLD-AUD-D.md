@@ -1,7 +1,8 @@
 # GOLD-AUD-D — GOLD MVP Lane D: TRON / MT5 minimum DEMO execution path gap analysis
 
 **Lane:** research  
-**Target repository:** `maff0000/GOAL` (evidence PRs also into `maff0000/tron` and, for MT5 facts, `maff0000/mt5-gateway`)  
+**Target repository:** `maff0000/GOAL` (primary evidence PR for the TRON and MT5 facts; mirror notes in `maff0000/tron` and `maff0000/mt5-gateway`)  
+**Evidence:** primary PR in `maff0000/GOAL`, branch `wo/GOLD-AUD-D-evidence`, path `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/`; mirror notes on branch `wo/GOLD-AUD-D-evidence` in each of `tron` and `mt5-gateway`, path `docs/evidence/GOLD-AUD-D/` (programme-controller rulings 1 to 3; `PORTFOLIO.md` appendix)  
 **Priority:** P0  
 **Risk:** Medium (read-only audit; the path it analyses is capital-adjacent)  
 **Matt gate:** No  
@@ -51,7 +52,7 @@ All facts below were read read-only on 2026-10-15 against GOAL `main` @ `1739e74
 - D1 assumes three things the CA rulings of 2026-10-14 changed: a Redis board as intake, "ledger" for TRON's own store, and FALCON as the upstream (TRON-D1-RATIFY section 5, stale-content register).
 - TRON-T1 candidate (branch `wo/GOAL-PID-WAVE1-C-execution`) uses the superseded "ledger" wording; TRON-D1-RATIFY section 11 holds the reconciling amendment note.
 - Backlog: TRON-T1 is `PID_DRAFT`; TRON-T2..T5, HELIOS-T3, MT5-GW-002..004 are `ARCHITECTURE_REQUIRED`; PAPER-E2E-001 carries a Matt gate (`backlog/backlog.yaml` at the base SHA).
-- No `GOAL-TRIGGER-001` item exists in the backlog and branch `wo/GOAL-CONTRACT-TRIGGER` holds no commits beyond `main` at the time of reading (TRON-D1-RATIFY N-3). UNVERIFIED for later changes.
+- `GOAL-TRIGGER-001` status (programme-controller ruling 7): the drafted PID candidate is on branch `wo/GOAL-CONTRACT-TRIGGER` (commit `64c843b`) and a backlog item for it is added by GOAL PR #5 (OPEN); neither is on `main`. (TRON-D1-RATIFY N-3 recorded the branch as empty at an earlier reading; that statement is superseded.) The candidate is a proposal pending its own decisions, not an authority.
 
 ### MT5 gateway
 
@@ -69,7 +70,7 @@ All facts below were read read-only on 2026-10-15 against GOAL `main` @ `1739e74
 
 ### Prior audits this PID must not duplicate
 
-TRON-D1-RATIFY (baseline, 148 tests, risk-gate gap, A1..A12, R-1..R-10); RECON-H2 trade-chain reconciliation (three intake models, TRON-T2/T3 findings); MT5 readiness, template contract and DEMO verification (branches above); TRON-T1 candidate; GOAL-TRIGGER-001 (not yet authored).
+TRON-D1-RATIFY (baseline, 148 tests, risk-gate gap, A1..A12, R-1..R-10); RECON-H2 trade-chain reconciliation (three intake models, TRON-T2/T3 findings); MT5 readiness, template contract and DEMO verification (branches above); TRON-T1 candidate; GOAL-TRIGGER-001 (PID candidate on `wo/GOAL-CONTRACT-TRIGGER`, not on `main`; backlog item pending in GOAL PR #5).
 
 ## Target outcome
 
@@ -126,10 +127,10 @@ The audit reads the merged `mt5-gateway` main and PR #9 as the current truth and
 | TRON-D1-RATIFY | Input, not duplicated | Baseline facts, amendment schedule A1..A12, decisions R-1..R-10. This audit is complementary and must not alter them. |
 | MT5-GW-001 and PR #9 | Input | Merged main and the template contract are the MT5 truth; coordination only. |
 | MT5-GW-002..004, TRON-T1..T5, HELIOS-T3, PAPER-E2E-001 | Referenced | Backlog items the increment list maps to; none is edited. |
-| GOAL-TRIGGER-001 | Soft input (not yet authored) | Supplies the trigger contract; audit area 4 compares against it if present, otherwise produces its input list. |
+| GOAL-TRIGGER-001 | Soft input (candidate on `wo/GOAL-CONTRACT-TRIGGER` @ `64c843b`; backlog item pending in PR #5; neither on `main`) | Supplies the trigger contract; audit area 4 uses an assumption register and compares against the candidate where it exists. |
 | RECON-H2 | Input | Intake-model and ownership findings; cite by finding id. |
-| Lane C outputs (HELIOS trigger) | Soft input | The trigger shape and level vocabulary the TRON side must accept. If absent at audit time, record the assumption and flag UNVERIFIED. |
-| GOLD-MVP-001 | Parent | Receives the matrix and increment list; the cross-index in GOAL points here. |
+| `GOLD-AUD-C` | No dependency (ruling 5) | D does not depend on C. D uses its assumption register for trigger intake until `GOAL-TRIGGER-001` exists; C reads D's intake facts as a soft input. |
+| GOLD-MVP-001 | Parent | Receives the matrix and increment list. After D's evidence PR is accepted, one GOAL PR contributes D's entry to `audits/2026-10-15/gold-mvp/EVIDENCE-INDEX.md` (owned by `GOLD-MVP-001`; one lane per PR). |
 
 ## Safety boundaries
 
@@ -142,7 +143,7 @@ The audit reads the merged `mt5-gateway` main and PR #9 as the current truth and
 
 ## Deliverables
 
-All deliverables are committed under `audits/<date>/gold-aud-d/` in a GOAL evidence PR; TRON-facing and MT5-facing evidence is mirrored into the named repository by separate PRs (see the checklist).
+All deliverables are committed under `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/` in the one primary GOAL evidence PR (branch `wo/GOLD-AUD-D-evidence`); TRON-facing and MT5-facing mirror notes go into the named repository under `docs/evidence/GOLD-AUD-D/` by separate PRs on the same branch name (see the checklist).
 
 1. **Source inventory and baseline re-confirmation** (`BASELINE.md`): refs and SHAs read, commands used, and for each re-confirmed fact the result and the citing document.
 2. **Capability gap matrix** (`GAP-MATRIX.md`): one row per capability per hop, with the status "exists", "partial" or "missing", a citation, the owner and the classification (credential-free, DEMO read-only, write-test approval).
@@ -195,7 +196,7 @@ Mechanical, checkable by a fresh auditor:
 6. `PROOF-CLASSES.md` places every increment in exactly one class; no increment classed credential-free references a broker, gateway instance, account or secret.
 7. `ORDERING.md` contains the sentence structure: typed gateway before TRON integration or PAPER proof; a test asserts both obligations appear.
 8. Reproducibility: the baseline commands in `BASELINE.md` re-run to the recorded SHAs and counts on the audit's recorded base.
-9. A diff review shows no change outside `audits/` and the evidence mirrors; `backlog/backlog.yaml` and all `pids/` files other than this PID are byte-identical to base.
+9. A diff review shows no change outside `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/` and the `docs/evidence/GOLD-AUD-D/` mirror notes; `backlog/backlog.yaml` and all `pids/` files other than this PID are byte-identical to base.
 10. No finding is stated without a class of PROVEN, INFERRED or UNPROVEN; UNPROVEN items name the observation or decision needed.
 11. Public-repo scan over all evidence for IPv4 patterns, account-id-like numerics next to the words login/account/server, and token-like strings returns nothing.
 12. Fresh independent FORGE Auditor GREEN recorded against the exact evidence SHA.
@@ -221,13 +222,13 @@ Do not invent around a stop condition.
 | 2 | Is the first path allowed to use an in-memory journal port for the credential-free proof ahead of the Postgres decision | PO | Depends on R-4; this audit may not decide R-4. |
 | 3 | Treatment of the simulated-adapter lane in relation to the state `PAPER` | Matt | Reference R-9. |
 | 4 | Whether the audit may read-only inspect NEO and legacy executor source | PO | Source read only; no execution. Recommended: yes, text only. |
-| 5 | Whether audit area 4 waits for GOAL-TRIGGER-001 or proceeds with the assumption register only | PO | Recommended: proceed; refresh when the contract exists. |
+| 5 | Retired by programme-controller ruling 5: audit area 4 proceeds with the assumption register until `GOAL-TRIGGER-001` exists and is refreshed when it does | none | none |
 | 6 | Which of the DEMO owner decisions (account entitlement, existing versus fresh instance, one read-only session) are answered before this audit closes | Matt | Reference DEMO verification section 5; needed only to classify, not to execute. |
 | 7 | The TRON-side decisions the path depends on: R-1, R-2, R-4, R-5, R-6, R-7, R-8 | Matt | Referenced by id from TRON-D1-RATIFY; not restated. |
 
 ## Evidence
 
-Required evidence package (PR into GOAL under `audits/`, mirrors into the component repositories):
+Required evidence package (primary PR into GOAL under `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/`, mirror notes in the component repositories):
 
 - Deliverables 1..9 above with SHAs of every ref read.
 - Command transcripts for re-confirmation, redacted to the public-repo rule.
@@ -236,11 +237,11 @@ Required evidence package (PR into GOAL under `audits/`, mirrors into the compon
 
 ### Evidence PR checklist
 
-- [ ] GOAL evidence PR opened from `wo/GOAL-GOLD-AUD-D`, base `main`, one commit per deliverable group, trailer per CLAUDE.md
+- [ ] GOAL primary evidence PR opened from `wo/GOLD-AUD-D-evidence` (not the PID draft branch `wo/GOAL-GOLD-AUD-D`), base `main`, one commit per deliverable group, trailer per CLAUDE.md
 - [ ] `./tools/goal-validate` and `./tools/secret-scan` pass on the PR head
-- [ ] `maff0000/tron` evidence PR: TRON facts (inventory, gate coverage, journal, trigger assumptions) under `audits/`, no change to `main` content outside `audits/`
-- [ ] `maff0000/mt5-gateway` evidence PR: MT5 facts (state after MT5-GW-001, gap rows) under `docs/evidence/`, no change to source, compose or template files
-- [ ] Cross-index entry in GOAL pointing to both mirror PRs and to GOLD-MVP-001
+- [ ] `maff0000/tron` mirror-note PR (branch `wo/GOLD-AUD-D-evidence`): TRON facts (inventory, gate coverage, journal, trigger assumptions) under `docs/evidence/GOLD-AUD-D/`, no change outside that path
+- [ ] `maff0000/mt5-gateway` mirror-note PR (branch `wo/GOLD-AUD-D-evidence`): MT5 facts (state after MT5-GW-001, gap rows) under `docs/evidence/GOLD-AUD-D/`, no change to source, compose or template files
+- [ ] After acceptance: one GOAL PR contributing D's entry (pointing to the primary PR and both mirror PRs) to `EVIDENCE-INDEX.md`, owned by GOLD-MVP-001
 - [ ] CA evidence items 1 to 10 present in CA numbering (table in Deliverables)
 - [ ] Public-repo scan clean (acceptance 11)
 - [ ] No change to `backlog/backlog.yaml` or other PIDs (acceptance 9)

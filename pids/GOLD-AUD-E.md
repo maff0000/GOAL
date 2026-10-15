@@ -1,7 +1,8 @@
 # GOLD-AUD-E — FALCON evidence audit and minimum HELIOS/TRON publication set (GOLD MVP Lane E)
 
 **Lane:** research  
-**Target repository:** `maff0000/falcon` (evidence PR; GOAL carries the cross-component index only)  
+**Target repository:** `maff0000/falcon` (primary evidence PR; GOAL carries the index entry only)  
+**Evidence:** primary PR in `maff0000/falcon`, branch `wo/GOLD-AUD-E-evidence`, path `docs/evidence/GOLD-AUD-E/` (programme-controller rulings 1 to 3; `PORTFOLIO.md` appendix)  
 **Priority:** P1  
 **Risk:** Low  
 **Matt gate:** No  
@@ -106,7 +107,7 @@ Read 2026-10-15, read-only, unless marked UNVERIFIED. Fabric is memory, not auth
 
 ## Target outcome
 
-At closure, one evidence PR in `maff0000/falcon` and one index row in the GOAL GOLD-MVP index show:
+At closure, one primary evidence PR in `maff0000/falcon` and, after acceptance, one entry in the GOAL GOLD-MVP evidence index show:
 
 1. what is delivered and running, with the unverifiable parts named;
 2. a registered-versus-needed matrix for HELIOS and TRON, family by family, against the evidence
@@ -152,8 +153,8 @@ freeze to FALCON-T3. If CA prefers one item, the fallback is to append Deliverab
 "verification increment"; the cost is the carve-out reversal and a mixed risk posture.
 
 **Interfaces.** FALCON-T1 (registry reconciliation, soft; the audit reads T1's PID and branch if present
-and states which findings T1 absorbs). GOAL-TRIGGER-001 (candidate; DRAFT): the audit reads its envelope
-and evidence events and records the hook below; it does not depend on its approval. HELIOS-T3, TRON-T4
+and states which findings T1 absorbs). GOAL-TRIGGER-001 (PID candidate on `wo/GOAL-CONTRACT-TRIGGER` @ `64c843b`; its backlog item is added by GOAL PR #5, OPEN; neither is on `main`): the audit reads its envelope
+and evidence events and records the hook below; it does not depend on its approval. E's registry facts are a SOFT input to `GOLD-AUD-C` (ruling 5): E has no dependency on C. HELIOS-T3, TRON-T4
 (authors of trigger publication and inbox), HELIOS-T2 (live feed; replay evidence must be labelled).
 HELM owns runtime authorisation of any HELIOS or TRON input exposure; that is a later item.
 
@@ -182,7 +183,7 @@ authority (falcon Decision 15, `TRON-FALCON-CONTRACT.md` "Idempotency").
 ## Deliverables
 
 One evidence PR into `maff0000/falcon` (docs only, under `docs/evidence/GOLD-AUD-E/`, with
-`DOCUMENTATION-MANIFEST.json` updated as falcon CI requires) plus one GOLD-MVP index row. Ten deliverable parts
+`DOCUMENTATION-MANIFEST.json` updated as falcon CI requires), followed after acceptance by one GOAL PR contributing this lane's entry to `audits/2026-10-15/gold-mvp/EVIDENCE-INDEX.md` (owned by `GOLD-MVP-001`; one lane per PR). Ten deliverable parts
 (EP-1 to EP-10; their mapping to CA's evidence numbering follows the table below the parts list):
 
 | # | Evidence item | Content |
@@ -257,8 +258,8 @@ Mechanical; every row passes or the audit is not accepted.
    trigger is the publisher outbox and TRON inbox and journal, with FALCON a best-effort copy and a gap
    after outage backfilled from those journals, never the reverse; emission happens after the local
    durable commit; FALCON failure never changes a terminal outcome.
-7. `./tools/goal-validate` and `./tools/secret-scan` pass on the GOAL worktree; falcon CI is green on
-   the evidence PR (structure, manifest, link check, gitleaks, validator suite).
+7. `./tools/secret-scan` passes on the falcon evidence branch and falcon CI is green on the evidence PR (structure, manifest,
+   link check, gitleaks, validator suite); `./tools/goal-validate` and `./tools/secret-scan` pass on the later GOAL index-entry PR.
 8. A negative check: `git diff --stat` of the evidence PR shows docs only; zero lines in `registry/`,
    `schemas/`, `deploy/`, `tests/`.
 9. Audit log lists every runtime command run; none is outside the allowed list in Safety boundaries.
@@ -286,7 +287,7 @@ Mechanical; every row passes or the audit is not accepted.
 | D-6 | Where trigger evidence emission lives (publisher component versus HELIOS) | PO | later (HELIOS-T3 PID; GOAL-TRIGGER-001 D-10) |
 | D-7 | Add FALCON-T2 and FALCON-T3 to the backlog (RECON-F proposals), with this audit's work list as their input | PO | later |
 | D-8 | Retire or rename `tron.discovery_service` component and its input (PID-01 amendment authority) | PO / falcon architect | later |
-| D-9 | Evidence PR location: `docs/evidence/GOLD-AUD-E/` in falcon (proposed) | PO | approval (minor) |
+| D-9 | Retired by programme-controller rulings 1 to 3: evidence PR is primary in falcon, `docs/evidence/GOLD-AUD-E/` | none | none |
 
 ## Evidence
 
@@ -302,14 +303,14 @@ Mechanical; every row passes or the audit is not accepted.
 
 ## Evidence PR checklist
 
-- [ ] Branch `wo/GOAL-GOLD-AUD-E` in falcon, base audited SHA stated in the PR body
+- [ ] Branch `wo/GOLD-AUD-E-evidence` in falcon (`wo/GOAL-GOLD-AUD-E` is the PID draft branch, not evidence), base audited SHA stated in the PR body
 - [ ] `docs/evidence/GOLD-AUD-E/` contains EP-1 to EP-10 and the regeneration script; CA evidence items 1 to 10 present in CA numbering (table in Deliverables)
 - [ ] `DOCUMENTATION-MANIFEST.json` updated; internal links resolve
 - [ ] UNVERIFIED table present with reasons; no credential value anywhere
 - [ ] No IPs, accounts, credentials or key material (secret-scan and manual read)
 - [ ] `git diff --stat` shows docs only
-- [ ] falcon CI green; `./tools/goal-validate` and `./tools/secret-scan` green in GOAL
-- [ ] GOLD-MVP index row added by the master author with PR link and audited SHAs
+- [ ] falcon CI green; `./tools/secret-scan` green on the falcon branch
+- [ ] After acceptance: one GOAL PR adding E's entry (PR link, audited SHAs) to `EVIDENCE-INDEX.md`, owned by GOLD-MVP-001; `./tools/goal-validate` and `./tools/secret-scan` green there
 - [ ] No approval recorded by the author; PO/CA review requested
 
 ## Approval

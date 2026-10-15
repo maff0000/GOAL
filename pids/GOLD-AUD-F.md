@@ -1,12 +1,13 @@
 # GOLD-AUD-F — Lane F audit: CER / HSA / DARWIN / NEO qualification-to-review path
 
 **Lane:** research  
-**Target repository:** `maff0000/GOAL`  
+**Target repository:** `maff0000/GOAL` (primary evidence PR; mirror notes in CER, HSA, DARWIN and neo)  
+**Evidence:** primary PR in `maff0000/GOAL`, branch `wo/GOLD-AUD-F-evidence`, path `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/`; mirror notes on branch `wo/GOLD-AUD-F-evidence` in each of `CER`, `HSA`, `DARWIN` and `neo`, path `docs/evidence/GOLD-AUD-F/` (the `neo` note is sanitised because that repository is private; programme-controller rulings 1 to 3; `PORTFOLIO.md` appendix)  
 **Priority:** P1  
 **Risk:** Low  
 **Matt gate:** No  
 **PO gate:** Yes  
-**Delivery:** ROGUE → FORGE (read-only audit; evidence PRs into component repositories, GOAL cross-index)  
+**Delivery:** ROGUE → FORGE (read-only audit; one primary GOAL evidence PR, mirror notes into component repositories, then a GOAL index entry)  
 **Complements:** `CER-R1`, `NEO-R1`, `HSA-C1`, `DARWIN-R2` (none amended; Deliverable 8 holds ready-to-apply amendment text)
 
 Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
@@ -90,7 +91,7 @@ At closure the component repositories and GOAL hold a dated, reproducible audit 
 5. NEO review audit: observer failure cause class (read-only), read path to CER, the strategy-health authority split (RECON-G D4), and the practice executor assessed by reading only.
 6. Path matrix and MVP minimum (Deliverables 2 and 3).
 7. External evaluation register and reuse recommendations (Deliverable 4).
-8. Cross-index in GOAL: a pointer record to the component evidence PRs.
+8. Index entry: after acceptance, one GOAL PR contributes a pointer record to the primary and mirror PRs into `audits/2026-10-15/gold-mvp/EVIDENCE-INDEX.md` (owned by `GOLD-MVP-001`).
 
 ## Non-goals
 
@@ -106,7 +107,7 @@ At closure the component repositories and GOAL hold a dated, reproducible audit 
 
 - **Hard dependency (backlog):** `GOAL-DCP-001` (CLOSED). Nothing else.
 - **Reads, does not depend on:** RECON-G, RECON-H1; DARWIN-R1 PID draft (deployment truth); GOAL-STRAT-ADR-001 and HSA-C1 (proposed, not on `main`); the TRON and HELIOS-T3 design for the trigger path.
-- **Component repositories receiving evidence PRs:** `maff0000/CER`, `maff0000/HSA`, `maff0000/DARWIN`, `maff0000/neo`. Each PR is documents only. The `neo` PR needs PO approval because the repository is private and carries an order bridge.
+- **Component repositories receiving mirror-note PRs:** `maff0000/CER`, `maff0000/HSA`, `maff0000/DARWIN`, `maff0000/neo`. Each PR is documents only, under `docs/evidence/GOLD-AUD-F/`. The `neo` mirror note is sanitised before anything is placed in GOAL and needs PO approval because the repository is private and carries an order bridge (open decision D10).
 - **Needs authority outside FORGE:** read access on the dell host and Trinity host held by HELM; Fabric reads under read-only use.
 - **Collisions:** `/srv/NEO` holds uncommitted work; the audit works from its own clone and never edits that checkout. RECON-G NEO-R0 (reconciliation) and DARWIN-R1 may run in parallel; findings are cross-referenced, not merged.
 
@@ -121,7 +122,7 @@ At closure the component repositories and GOAL hold a dated, reproducible audit 
 
 ## Deliverables
 
-1. **Audit record** (`audits/<date>/gold-aud-f/AUDIT-F.md` in GOAL, sanitised) with, per CA evidence item below, the finding, citation and verdict.
+1. **Audit record** (`audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/AUDIT-F.md` in GOAL, sanitised, primary evidence PR on branch `wo/GOLD-AUD-F-evidence`) with, per CA evidence item below, the finding, citation and verdict.
 2. **Qualification-to-review path matrix.** Hops (each marked exists / partial / missing with evidence):
 
 | # | Hop | Existing function | Preliminary mark (to be proven) |
@@ -141,7 +142,7 @@ At closure the component repositories and GOAL hold a dated, reproducible audit 
 4. **External evaluation register** (the table above, re-verified, with licence-compatibility and service-dependency flags) and **reuse recommendations**, each stating the engineering saved or "none", the licence constraint, and whether it adds a third-party service. Default recommendation: no external engine is adopted for the MVP; an optional independent cross-check against APOLLO is recorded only if it saves work, using a library with no service dependency.
 5. **No-rebuild register:** delivered functions the MVP must reuse (HSA versioning and validation, DARWIN StrategyVersion and APOLLO core, CER registry and promotion records, HELIOS HSA boundary, GOLD-STRATEGY-RUNTIME, NEO strategy-health consumer).
 6. **Gap list** with owner, mapped to existing backlog ids or marked "no home".
-7. **Cross-index** in GOAL listing the four component evidence PRs and their merge SHAs.
+7. **Index entry** listing the primary PR and the four mirror-note PRs and their merge SHAs, contributed to `EVIDENCE-INDEX.md` by one GOAL PR after acceptance (single writer of the file: the `GOLD-MVP-001` PL).
 8. **Amendment text proposals** (not applied) for CER-R1, NEO-R1, HSA-C1 and DARWIN-R2, plus candidate rows only where a gap has no home. Informed by RECON-G S1-S8 and RECON-H1 P-14.
 
 CA's ten mandatory evidence items, in CA's numbering, as carried by `AUDIT-F.md`:
@@ -223,11 +224,12 @@ Do not invent around a stop condition.
 
 ## Evidence PR checklist
 
-- [ ] `maff0000/DARWIN`: strategy identity, APOLLO scope, deployment-gap record (documents only). PR link and SHA: ____
-- [ ] `maff0000/CER`: evidence-class sufficiency, promotion authority and citation record (documents only). PR link and SHA: ____
-- [ ] `maff0000/HSA`: gold candidate identity, handoff and immutability record (documents only). PR link and SHA: ____
-- [ ] `maff0000/neo`: review architecture, observer failure class, executor assessment (documents only; PO-approved, D10). PR link and SHA: ____
-- [ ] `maff0000/GOAL`: audit record, matrix, external register, amendment proposals, cross-index. PR link and SHA: ____
+- [ ] `maff0000/GOAL` (PRIMARY, branch `wo/GOLD-AUD-F-evidence`): audit record, matrix, external register, amendment proposals. PR link and SHA: ____
+- [ ] `maff0000/DARWIN` mirror note (`docs/evidence/GOLD-AUD-F/`): strategy identity, APOLLO scope, deployment-gap record (documents only). PR link and SHA: ____
+- [ ] `maff0000/CER` mirror note: evidence-class sufficiency, promotion authority and citation record (documents only). PR link and SHA: ____
+- [ ] `maff0000/HSA` mirror note: gold candidate identity, handoff and immutability record (documents only). PR link and SHA: ____
+- [ ] `maff0000/neo` mirror note: review architecture, observer failure class, executor assessment (documents only; sanitised; private repository; PO-approved, D10). PR link and SHA: ____
+- [ ] After acceptance: one GOAL PR adding F's entry to `EVIDENCE-INDEX.md` (owned by GOLD-MVP-001)
 - [ ] Each PR passes secret-scan; no address, port, account or credential text
 - [ ] Before and after identity snapshots attached and equal (Acceptance 4)
 - [ ] CA evidence items 1 to 10 each present in `AUDIT-F.md` in CA numbering
