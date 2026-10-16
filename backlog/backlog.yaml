@@ -805,6 +805,7 @@ items:
       - TRON-T2
       - TRON-T3
       - TRON-T4
+      - GOLD-MVP-001
     po_gate: true
     matt_gate: true
     pid_path: null
@@ -936,4 +937,35 @@ items:
     pid_path: pids/GOLD-AUD-F.md
     architecture_refs:
       - architecture/DELIVERY-CONTROL-PLANE.md
+      - audits/2026-10-15/gold-mvp/PORTFOLIO.md
+
+  # Approved PID (CA 2026-10-16); integration work stays BLOCKED until prerequisites and capital gates clear.
+  - id: GOLD-MVP-001
+    title: "GOLD MVP integration and acceptance: one governed XAUUSD strategy end to end on Vantage DEMO with FALCON evidence (state PAPER only after DEMO proof)"
+    lane: trading
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: capital
+    state: BLOCKED
+    depends_on:
+      - GOLD-AUD-A
+      - GOLD-AUD-B
+      - GOLD-AUD-C
+      - GOLD-AUD-D
+      - GOLD-AUD-E
+      - GOLD-AUD-F
+      - GOAL-CONTRACT-001
+      - GOAL-TRIGGER-001
+      - HELIOS-T3
+      - TRON-T2
+      - TRON-T3
+      - TRON-T4
+      - FALCON-T1
+    po_gate: true
+    matt_gate: true   # capital risk: Matt-gated for the FINAL DEMO acceptance, not for the six audits
+    pid_path: pids/GOLD-MVP-001.md
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - decisions/ADR-MT5-001-REUSE-CONTAINER-REPLACE-BRIDGE.md
       - audits/2026-10-15/gold-mvp/PORTFOLIO.md
