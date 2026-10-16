@@ -76,9 +76,8 @@ def test_canonical_backlog_has_nothing_ready_without_a_projection():
     """
     backlog = load_backlog()
 
-    gold_audits = [f"GOLD-AUD-{letter}" for letter in "ABCDEF"]
-    assert [item.id for item in ready_items(backlog)] == gold_audits
-    assert [e["id"] for e in readiness_payload(backlog)[READY_KEY]] == gold_audits
+    assert ready_items(backlog) == ()
+    assert readiness_payload(backlog) == {READY_KEY: []}
     assert backlog.by_id["GOAL-DCP-001"].state == "CLOSED"
     assert "CLOSED" in model.ACCEPTED_TERMINAL_STATES
 

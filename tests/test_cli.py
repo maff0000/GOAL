@@ -89,29 +89,6 @@ BACKLOG_YAML = "backlog/backlog.yaml"
 #: message: a command that validated nothing would still print a cheerful OK.
 CANONICAL_ITEM_COUNT = 50
 
-#: The six GOLD MVP audit items registered DELIVERY_READY on 2026-10-16 (CA
-#: formal approval); the only items the canonical backlog reports as ready.
-GOLD_AUDIT_READY = (
-    ("GOLD-AUD-A", "maff0000/hermes"),
-    ("GOLD-AUD-B", "maff0000/HELIOS"),
-    ("GOLD-AUD-C", "maff0000/GOAL"),
-    ("GOLD-AUD-D", "maff0000/GOAL"),
-    ("GOLD-AUD-E", "maff0000/falcon"),
-    ("GOLD-AUD-F", "maff0000/GOAL"),
-)
-CANONICAL_READY = {
-    "ready": [
-        {"id": i, "target_repository": r} for i, r in GOLD_AUDIT_READY
-    ]
-}
-CANONICAL_READY_WITH_PID = {
-    "ready": [
-        {"id": i, "target_repository": r, "pid_path": f"pids/{i}.md"}
-        for i, r in GOLD_AUDIT_READY
-    ]
-}
-CANONICAL_READY_STDOUT = json.dumps(CANONICAL_READY, separators=(",", ":")) + "\n"
-
 #: The PID-authoring-wave answer under the ``GOAL-DCP-001`` projection, as the
 #: CLI must report it: eleven items, sorted by id, with their declared target
 #: repositories. Written out in full on purpose - this is the answer the PO
@@ -291,7 +268,7 @@ def test_commands_resolve_their_repository_from_their_own_location(tmp_path):
 
     ready = run(GOAL_READY, cwd=tmp_path)
     assert ready.returncode == 0, ready.stderr
-    assert json.loads(ready.stdout) == CANONICAL_READY
+    assert json.loads(ready.stdout) == {"ready": []}
 
     docs = run(GOAL_DOCS, "--check", cwd=tmp_path)
     assert docs.returncode == 0, docs.stderr
@@ -348,7 +325,7 @@ def test_goal_validate_exit_two_on_a_missing_file():
 
 
 def test_goal_ready_answers_empty_on_the_canonical_backlog():
-    """Only the six approved GOLD audit items are FORGE-dispatchable today.
+    """Nothing is FORGE-dispatchable today, and that is the honest answer.
 
     Two independent reasons: ``GOAL-DCP-001`` is in ``FORGE_AUDIT``, which is
     not accepted-terminal, and no canonical item is in ``DELIVERY_READY`` at
@@ -359,8 +336,8 @@ def test_goal_ready_answers_empty_on_the_canonical_backlog():
 
     assert result.returncode == 0, result.stderr
     assert result.stderr == ""
-    assert json.loads(result.stdout) == CANONICAL_READY
-    assert result.stdout == CANONICAL_READY_STDOUT
+    assert json.loads(result.stdout) == {"ready": []}
+    assert result.stdout == '{"ready":[]}\n'
 
 
 def test_goal_ready_stays_empty_under_the_projection():
@@ -374,7 +351,7 @@ def test_goal_ready_stays_empty_under_the_projection():
 
     assert result.returncode == 0, result.stderr
     assert result.stderr == ""
-    assert result.stdout == CANONICAL_READY_STDOUT
+    assert result.stdout == '{"ready":[]}\n'
 
 
 def test_a_successful_ready_answer_never_contains_a_pid_less_item(repo_copy):
@@ -486,7 +463,7 @@ def test_the_canonical_pid_satisfies_minimum_pid_validity(repo_copy):
 
     answered = run(repo_copy / "tools" / "goal-ready")
     assert answered.returncode == 0, answered.stderr
-    assert answered.stdout == CANONICAL_READY_STDOUT
+    assert answered.stdout == '{"ready":[]}\n'
 
 
 def test_every_ready_entry_declares_a_pid_across_every_answerable_projection():
@@ -810,10 +787,7 @@ def test_goal_ready_pid_wave_reports_exactly_the_eleven_ids():
     )
 
     # ...and the same projection reports nothing as dispatchable.
-    assert (
-        run(GOAL_READY, "--assume-closed", "GOAL-DCP-001").stdout
-        == CANONICAL_READY_STDOUT
-    )
+    assert run(GOAL_READY, "--assume-closed", "GOAL-DCP-001").stdout == '{"ready":[]}\n'
 
 
 def test_goal_ready_accepts_a_comma_separated_projection():
@@ -880,7 +854,7 @@ def test_with_pid_adds_the_key_and_omitting_the_flag_leaves_it_out():
     # there. The list happens to be empty today, which is the correct answer.
     ready = run(GOAL_READY, *projection, "--with-pid")
     assert ready.returncode == 0, ready.stderr
-    assert json.loads(ready.stdout) == CANONICAL_READY_WITH_PID
+    assert json.loads(ready.stdout) == {"ready": []}
 
 
 def test_a_genuinely_ready_item_is_reported_with_its_real_pid(repo_copy):
