@@ -87,7 +87,7 @@ BACKLOG_YAML = "backlog/backlog.yaml"
 #: Number of items the canonical backlog declares. Asserted on the success
 #: line because ``backlog OK: N items`` is the contract, not an incidental
 #: message: a command that validated nothing would still print a cheerful OK.
-CANONICAL_ITEM_COUNT = 49
+CANONICAL_ITEM_COUNT = 50
 
 #: The six GOLD MVP audit items registered DELIVERY_READY on 2026-10-16 (CA
 #: formal approval); the only items the canonical backlog reports as ready.
