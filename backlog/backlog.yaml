@@ -710,6 +710,25 @@ items:
       - decisions/ADR-MT5-001-REUSE-CONTAINER-REPLACE-BRIDGE.md
       - audits/2026-10-14/reconciliation/RECONCILIATION-SUMMARY.md
 
+  # RECON: TRON-T3A is the minimum credential-free DEMO sizing and risk baseline (fixed sizing, position and loss/trade-count limits, ONE kill state, protected-order policy).
+  # RECON: CA 16 Oct 2026: TRON-T3 extends it; GOLD-MVP-001 depends on T3A directly; PAPER-E2E-001 keeps TRON-T3. No CER-R1 or broker-credential need. Parameters and DEMO order activity are separately Matt-gated.
+  - id: TRON-T3A
+    title: "Minimum fixed DEMO sizing, limits, one kill state"
+    lane: trading
+    component: TRON
+    target_repository: maff0000/tron
+    priority: P0
+    risk: high
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - TRON-T1
+    po_gate: true
+    matt_gate: false
+    pid_path: pids/TRON-T3A.md
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - audits/2026-10-14/reconciliation/RECONCILIATION-SUMMARY.md
+
   # RECON: TRON owns sizing, hard risk, kill and execution. ARES event risk enters TRON here as a later additive increment; no ARES-RISK-001 edge at P0.
   # RECON: title unchanged; the analyst proposal to rename away from DIKE is deferred (DIKE policy is researched in DARWIN and enforced here).
   - id: TRON-T3
@@ -722,6 +741,7 @@ items:
     state: ARCHITECTURE_REQUIRED
     depends_on:
       - TRON-T1
+      - TRON-T3A
     po_gate: true
     matt_gate: false
     pid_path: null
@@ -959,7 +979,7 @@ items:
       - GOAL-TRIGGER-001
       - HELIOS-T3
       - TRON-T2
-      - TRON-T3
+      - TRON-T3A
       - TRON-T4
       - FALCON-T1
     po_gate: true
