@@ -12,7 +12,7 @@ The author of this evidence, acting as the FORGE PL for GOLD-AUD-D, states that 
 - no connection was made to the existing unrestricted bridge, to any gateway or MT5 service, to any container, Redis, Graylog or database;
 - no legacy executor was run, imported, modified, stopped or connected to; legacy executor sources were read as text only (`CANDIDATES.md`);
 - no instance directory, secrets directory or credential file was opened;
-- nothing was pushed, no pull request was opened, no GitHub comment was made, and no existing checkout or worktree was edited.
+- during the audit itself nothing was pushed, no pull request was opened, no GitHub comment was made, and no existing checkout or worktree was edited.
 
 Reads were made by `git` (clone, log, show, archive, ls-tree, ls-remote), `gh` read calls, file reads, and test runs from scratch copies outside every repository.
 
@@ -120,7 +120,7 @@ Result: no contradiction changes a binding ruling, an ADR or an HR. No stop-and-
 | Reading would need a broker session, bridge connection, container probe or legacy-executor interaction | none; items needing them are recorded as "needs approval" in `PROOF-CLASSES.md` and left unperformed |
 | `GOAL-TRIGGER-001` authored in parallel with contradicting content | not observed; the candidate was read at TRG@64c843b and not seen to move. Refresh needed when the contract exists |
 | `mt5-gateway` `main` moves so the recorded SHA no longer represents main | no movement; re-read at the end of the audit equal to GW@6263d61 |
-| A secret, account identifier or address is found in any source being read | YES, one: F-D-15 (a stop-condition item in a legacy archive, handled in the private record). None other. Return to PO flagged; the audit continued only on material independent of that file |
+| A secret, account identifier or address is found in any source being read | Stop-condition handling is recorded in the private record (referenced from `EVIDENCE-HASHES.txt` by hash only); no enumeration is made in the public set. Returned to PO flagged; the audit continued only on material independent of the withheld item |
 | The increment list would need a decision that is Matt's | The list refers to R-1, R-2, R-4, R-5, R-6, R-7, R-8, R-9, R-10 and the DEMO owner decisions by id and decides none |
 
 ## 6. Status notes
