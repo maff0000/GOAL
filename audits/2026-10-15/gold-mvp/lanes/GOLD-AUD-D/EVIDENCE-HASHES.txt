@@ -1,0 +1,17 @@
+# GOLD-AUD-D evidence hashes (SHA-256). Verify the GOAL lines from the repository root with: grep -E "^[0-9a-f]{64}  audits" audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/EVIDENCE-HASHES.txt | sha256sum -c -   The mirror-note and private-record lines are for cross-reference.
+# Base: GOAL main ceaf0291a43d029b1a47b1c192a62ff147f05ac0; evidence branch wo/GOLD-AUD-D-evidence.
+176e12fa0df23e5854d9cb532f99870702bd0d6c5655019e73f056e6c76ffb57  audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/README.md
+85b96f65f5c6172cd8e4d84b23d6e5e46ece08578ff0640e59151e164f0c29ea  audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/BASELINE.md
+df72e8b990c88b21ed5915854916aa334272b740143db485e50058516f0f65a6  audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/GAP-MATRIX.md
+d56b65c1cd4961de3bdf3fc380d0b7a0528618016f3194476361f69674f49542  audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/CANDIDATES.md
+39bedacc0d1591b18a2c977a982376fa971c23d391f716d07c2c8d7b92856839  audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/TRIGGER-ASSUMPTIONS.md
+f2e24cf122529fade98c40613d32cec221a890a020d1d9d1b931aec8a0b1b1e4  audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/INCREMENTS.md
+d3496dc92c1e6fb47d5e33ea885d8dc5900df849168d84102d81ebd16caf39c4  audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/PROOF-CLASSES.md
+6571e2a6bf52c4c7e6a0002175578865dee02f18eed959eb138becdf3b29f93a  audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/ORDERING.md
+7f091c5cc4601b5695e582e9a93fb2432880baf7dd6a0ab3b54d6e668a66e26a  audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/FINDINGS.md
+74ba40ff4f175eeaed27416831697e3f1969537acba229552bcc54a4b2c18a99  audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/DISPOSITION.md
+# Mirror notes (separate repositories, same branch name):
+efbe6de89e110acbe7858060585bd43167d7bec4649811b1b1691c6fa293c1d3  maff0000/tron docs/evidence/GOLD-AUD-D/TRON-FACTS.md
+c6571c98365ded3727c6968f0b069bb965c911253bac96b5fde913230b3d66d4  maff0000/mt5-gateway docs/evidence/GOLD-AUD-D/MT5-FACTS.md
+# Private record (held outside every repository; generic description only: handling of one stop-condition item, F-D-15):
+b2107186d14ed559b4c68ae02a8efa125dbad7f19cc43c451ebb668af52ba4c5  PRIVATE-NOTES (private)
