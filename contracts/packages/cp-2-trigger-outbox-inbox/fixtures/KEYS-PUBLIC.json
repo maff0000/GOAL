@@ -1,0 +1,15 @@
+{
+  "note": "Ephemeral public keys used to sign these fixtures. The matching private keys were generated in memory, used once and discarded; they were never written to disk.",
+  "trusted_key_1": {
+    "key_id": "sha256:6c77b6748ec5482673d283ffcbaaf98320d421f64d64ed12d5ff3f417f402444",
+    "public_key": "ccfd4349a0bacdb2f30eba3b09d3e832d77571c035cae7ce282cc586eb704b67"
+  },
+  "trusted_key_2": {
+    "key_id": "sha256:8ef29dbbe97806d65bba3183ff8b3da42816bd1966c4ebe15158aca0d37e3bdb",
+    "public_key": "cb4033e8c7e5e4e8ccfba071f93613b673801d4e1aa8c9bb8d0b4c408f982d32"
+  },
+  "untrusted_key": {
+    "key_id": "sha256:3a01f2782bd1ed0ad80a72c3586dedfce2eee0535bc70c607448a4c6cb1a0336",
+    "public_key": "15f66500b1f5fe37131865136f90b3bf69d79061a6a223d3abbaa414721d55dc"
+  }
+}

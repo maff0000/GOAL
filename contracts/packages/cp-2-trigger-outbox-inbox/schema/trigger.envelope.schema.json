@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cp-2 conformance snapshot of the PROPOSED goal.strategy-trigger/v1 envelope",
+  "description": "Mechanical snapshot of the signed-field table of the GOAL-TRIGGER-001 candidate (commit 64c843b, section 'Proposed design'), used only to run fixtures. It is NOT a competing contract: the normative text is GOAL-TRIGGER-001 and GOAL-CONTRACT-001. Value domains marked ASSUMPTION in PACKAGE.md section 4 are not stated in the candidate. Every violation of this schema is outcome REJECTED_SCHEMA. Rules a schema cannot express (identifier derivation, valid_from equals bar_close_utc) are PACKAGE.md rules CP2-R04 and CP2-R05.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "trigger_id",
+    "strategy_id",
+    "strategy_version",
+    "strategy_fingerprint",
+    "binding_id",
+    "execution_policy_ref",
+    "instrument_id",
+    "timeframe",
+    "signal_class",
+    "output_direction",
+    "state_from",
+    "state_to",
+    "setup_origin_bar_utc",
+    "bar_close_utc",
+    "valid_from_utc",
+    "valid_until_utc",
+    "evaluation_id",
+    "input_snapshot_id",
+    "input_snapshot_hash",
+    "signing_key_id",
+    "signature"
+  ],
+  "properties": {
+    "schema": {
+      "const": "goal.strategy-trigger/v1"
+    },
+    "trigger_id": {
+      "type": "string",
+      "pattern": "^trg1_[0-9a-f]{64}$"
+    },
+    "strategy_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{2,63}$"
+    },
+    "strategy_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "strategy_fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "binding_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+    },
+    "execution_policy_ref": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+    },
+    "instrument_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9]{2,10}(_[A-Z0-9]{2,10})?$"
+    },
+    "timeframe": {
+      "enum": [
+        "M1",
+        "M5",
+        "M15",
+        "H1",
+        "H4",
+        "D1"
+      ]
+    },
+    "signal_class": {
+      "enum": [
+        "SETUP_ACTIVE",
+        "SETUP_INVALIDATED"
+      ]
+    },
+    "output_direction": {
+      "enum": [
+        "LONG",
+        "SHORT",
+        "NEUTRAL",
+        "NONE"
+      ]
+    },
+    "state_from": {
+      "enum": [
+        "DORMANT",
+        "FORMING",
+        "MATCHED",
+        "ACTIVE",
+        "WEAKENING",
+        "INVALID",
+        "EXPIRED"
+      ]
+    },
+    "state_to": {
+      "enum": [
+        "DORMANT",
+        "FORMING",
+        "MATCHED",
+        "ACTIVE",
+        "WEAKENING",
+        "INVALID",
+        "EXPIRED"
+      ]
+    },
+    "setup_origin_bar_utc": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+    },
+    "bar_close_utc": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+    },
+    "valid_from_utc": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+    },
+    "valid_until_utc": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+    },
+    "evaluation_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+    },
+    "input_snapshot_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+    },
+    "input_snapshot_hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "reference_levels": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "role",
+          "value"
+        ],
+        "properties": {
+          "role": {
+            "enum": [
+              "INVALIDATION",
+              "OBJECTIVE"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$"
+          }
+        }
+      }
+    },
+    "signing_key_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    }
+  },
+  "if": {
+    "properties": {
+      "signal_class": {
+        "const": "SETUP_ACTIVE"
+      }
+    },
+    "required": [
+      "signal_class"
+    ]
+  },
+  "then": {
+    "properties": {
+      "output_direction": {
+        "enum": [
+          "LONG",
+          "SHORT"
+        ]
+      }
+    }
+  }
+}

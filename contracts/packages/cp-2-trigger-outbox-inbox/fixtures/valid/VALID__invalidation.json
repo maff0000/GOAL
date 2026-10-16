@@ -1,0 +1,59 @@
+{
+  "fixture_schema": "cp-2/fixture/1",
+  "cp": "cp-2",
+  "level": "door",
+  "case_id": "invalidation",
+  "kind": "valid",
+  "rule": "CP2-R01..R11 all pass",
+  "expected_outcome": null,
+  "description": "A signed SETUP_INVALIDATED trigger for the same setup, one bar later.",
+  "context": {
+    "now_utc": "2026-01-02T18:00:30.000000Z",
+    "environment": "TEST",
+    "trust_store": {
+      "sha256:6c77b6748ec5482673d283ffcbaaf98320d421f64d64ed12d5ff3f417f402444": {
+        "public_key": "ccfd4349a0bacdb2f30eba3b09d3e832d77571c035cae7ce282cc586eb704b67",
+        "not_before": "2025-12-01T00:00:00.000000Z",
+        "not_after": "2026-12-01T00:00:00.000000Z",
+        "status": "ACTIVE",
+        "environment": "TEST"
+      },
+      "sha256:8ef29dbbe97806d65bba3183ff8b3da42816bd1966c4ebe15158aca0d37e3bdb": {
+        "public_key": "cb4033e8c7e5e4e8ccfba071f93613b673801d4e1aa8c9bb8d0b4c408f982d32",
+        "not_before": "2025-12-01T00:00:00.000000Z",
+        "not_after": "2026-12-01T00:00:00.000000Z",
+        "status": "ACTIVE",
+        "environment": "TEST"
+      }
+    },
+    "pinned_fingerprints": [
+      "sha256:b77391a594c07928c351f2c66475f54f7ec0541959c5f439587da97dde777855"
+    ],
+    "skew_tolerance_seconds": 120,
+    "max_window_seconds": 14400
+  },
+  "envelope": {
+    "schema": "goal.strategy-trigger/v1",
+    "strategy_id": "example_strategy_a",
+    "strategy_version": "1.0.0",
+    "strategy_fingerprint": "sha256:b77391a594c07928c351f2c66475f54f7ec0541959c5f439587da97dde777855",
+    "binding_id": "binding_example_1",
+    "execution_policy_ref": "policy_ref_example_1",
+    "instrument_id": "XAU_USD",
+    "timeframe": "H4",
+    "signal_class": "SETUP_INVALIDATED",
+    "output_direction": "NONE",
+    "state_from": "ACTIVE",
+    "state_to": "INVALID",
+    "setup_origin_bar_utc": "2026-01-02T06:00:00.000000Z",
+    "bar_close_utc": "2026-01-02T18:00:00.000000Z",
+    "valid_from_utc": "2026-01-02T18:00:00.000000Z",
+    "valid_until_utc": "2026-01-02T22:00:00.000000Z",
+    "evaluation_id": "eval_example_0002",
+    "input_snapshot_id": "snap_example_0002",
+    "input_snapshot_hash": "sha256:002f3a5dd12a6cc20c4a4f78f5d2e4b36a314105cfe1c79812420c444bbb444c",
+    "signing_key_id": "sha256:6c77b6748ec5482673d283ffcbaaf98320d421f64d64ed12d5ff3f417f402444",
+    "trigger_id": "trg1_ac2c860543695c7acc1deb34ca85572c41a0cda5ab295851923d51bea89f006f",
+    "signature": "9212969b870526df796e481bdfc69a5ec31ec6f43e3cf5778fc4e508a70aa0a5857964b0b739c15b36a0d4f9620f04e9cf7d88b7a37fe26fbbe359eed8e5b708"
+  }
+}

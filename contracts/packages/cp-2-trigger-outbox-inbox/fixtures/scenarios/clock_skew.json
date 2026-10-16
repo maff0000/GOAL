@@ -1,0 +1,116 @@
+{
+  "fixture_schema": "cp-2/scenario/1",
+  "cp": "cp-2",
+  "scenario_id": "clock_skew",
+  "description": "A trigger inside the skew tolerance is received; one beyond it is a terminal clock rejection.",
+  "context": {
+    "now_utc": "2026-01-02T14:00:30.000000Z",
+    "environment": "TEST",
+    "trust_store": {
+      "sha256:6c77b6748ec5482673d283ffcbaaf98320d421f64d64ed12d5ff3f417f402444": {
+        "public_key": "ccfd4349a0bacdb2f30eba3b09d3e832d77571c035cae7ce282cc586eb704b67",
+        "not_before": "2025-12-01T00:00:00.000000Z",
+        "not_after": "2026-12-01T00:00:00.000000Z",
+        "status": "ACTIVE",
+        "environment": "TEST"
+      },
+      "sha256:8ef29dbbe97806d65bba3183ff8b3da42816bd1966c4ebe15158aca0d37e3bdb": {
+        "public_key": "cb4033e8c7e5e4e8ccfba071f93613b673801d4e1aa8c9bb8d0b4c408f982d32",
+        "not_before": "2025-12-01T00:00:00.000000Z",
+        "not_after": "2026-12-01T00:00:00.000000Z",
+        "status": "ACTIVE",
+        "environment": "TEST"
+      }
+    },
+    "pinned_fingerprints": [
+      "sha256:b77391a594c07928c351f2c66475f54f7ec0541959c5f439587da97dde777855"
+    ],
+    "skew_tolerance_seconds": 120,
+    "max_window_seconds": 14400
+  },
+  "envelopes": {
+    "near_future": {
+      "schema": "goal.strategy-trigger/v1",
+      "strategy_id": "example_strategy_a",
+      "strategy_version": "1.0.0",
+      "strategy_fingerprint": "sha256:b77391a594c07928c351f2c66475f54f7ec0541959c5f439587da97dde777855",
+      "binding_id": "binding_example_1",
+      "execution_policy_ref": "policy_ref_example_1",
+      "instrument_id": "XAU_USD",
+      "timeframe": "H4",
+      "signal_class": "SETUP_ACTIVE",
+      "output_direction": "LONG",
+      "state_from": "FORMING",
+      "state_to": "MATCHED",
+      "setup_origin_bar_utc": "2026-01-02T06:00:00.000000Z",
+      "bar_close_utc": "2026-01-02T14:01:30.000000Z",
+      "valid_from_utc": "2026-01-02T14:01:30.000000Z",
+      "valid_until_utc": "2026-01-02T18:01:30.000000Z",
+      "evaluation_id": "eval_example_0001",
+      "input_snapshot_id": "snap_example_0001",
+      "input_snapshot_hash": "sha256:28d93a3eb874b7819a3be65f500e5fdff471da4251fd1dbd050eb03baade3ad4",
+      "signing_key_id": "sha256:6c77b6748ec5482673d283ffcbaaf98320d421f64d64ed12d5ff3f417f402444",
+      "trigger_id": "trg1_2119653636e010b3c684791392bd2d7fd317362d777e4c41847e76f1e184719a",
+      "signature": "c43f89462c988162f2ce89fbe1b6fdfc4b30671cb96d63332317f63c450a70557de740164b2310b68dfbea77a79fe8e00c33d17f299c2c31e8d23752f9493108"
+    },
+    "future": {
+      "schema": "goal.strategy-trigger/v1",
+      "strategy_id": "example_strategy_a",
+      "strategy_version": "1.0.0",
+      "strategy_fingerprint": "sha256:b77391a594c07928c351f2c66475f54f7ec0541959c5f439587da97dde777855",
+      "binding_id": "binding_example_1",
+      "execution_policy_ref": "policy_ref_example_1",
+      "instrument_id": "XAU_USD",
+      "timeframe": "H4",
+      "signal_class": "SETUP_ACTIVE",
+      "output_direction": "LONG",
+      "state_from": "FORMING",
+      "state_to": "MATCHED",
+      "setup_origin_bar_utc": "2026-01-02T06:00:00.000000Z",
+      "bar_close_utc": "2026-01-02T14:10:30.000000Z",
+      "valid_from_utc": "2026-01-02T14:10:30.000000Z",
+      "valid_until_utc": "2026-01-02T18:10:30.000000Z",
+      "evaluation_id": "eval_example_0001",
+      "input_snapshot_id": "snap_example_0001",
+      "input_snapshot_hash": "sha256:28d93a3eb874b7819a3be65f500e5fdff471da4251fd1dbd050eb03baade3ad4",
+      "signing_key_id": "sha256:6c77b6748ec5482673d283ffcbaaf98320d421f64d64ed12d5ff3f417f402444",
+      "trigger_id": "trg1_93ea6632e37c02bc8fa7931b749654f102c97231b6a54ff9b51cd4bb3fcb3541",
+      "signature": "97ec30824ea0ad4b48f87a99e31845bb949429d2f19b21b6bce272e5b7ed49cf6e2386cf9fd32e8b071d87fec23b1af18f7230db8e3fa9785fa545a57832df07"
+    }
+  },
+  "steps": [
+    {
+      "op": "publish",
+      "env": "near_future"
+    },
+    {
+      "op": "publish",
+      "env": "future"
+    },
+    {
+      "op": "pump",
+      "now_utc": "2026-01-02T14:00:30.000000Z"
+    },
+    {
+      "op": "snapshot",
+      "names": [
+        "near_future",
+        "future"
+      ],
+      "outbox_names": [
+        "near_future",
+        "future"
+      ],
+      "expect": {
+        "dispositions": {
+          "near_future": "RECEIVED",
+          "future": "REJECTED_CLOCK"
+        },
+        "outbox": {
+          "near_future": "DELIVERED",
+          "future": "DELIVERED"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "fixture_schema": "cp-1/fixture/1",
+  "cp": "cp-1",
+  "level": "frame",
+  "mode": "consumer",
+  "case_id": "consumer_base_accepts",
+  "kind": "valid",
+  "rule": "consumer acceptance baseline",
+  "expected_code": null,
+  "description": "Three well-formed frames within freshness policy.",
+  "context": {
+    "accepted_frame_schema_versions": [
+      "hermes.market_fact/1.0.0"
+    ],
+    "freshness": {
+      "max_age_multiplier": "1.5",
+      "grace_seconds": 120,
+      "clock_skew_tolerance_seconds": 120,
+      "allow_incomplete_frames": false
+    }
+  },
+  "document": {
+    "fixture_schema_version": "helios.hermes_fixture/1.0.0",
+    "fixture_id": "cp1_consumer_base",
+    "description": "base",
+    "expectations": [],
+    "instrument": "XAU_USD",
+    "timeframe": "H4",
+    "fact_schema_version": "hermes.market_fact/1.0.0",
+    "source": "hermes",
+    "reference_now_utc": "2026-01-01T18:01:00Z",
+    "frames": [
+      {
+        "timestamp_utc": "2026-01-01T06:00:00Z",
+        "candle": {
+          "open": "2395",
+          "high": "2398.5",
+          "low": "2393.5",
+          "close": "2397",
+          "volume": "1000",
+          "complete": true,
+          "source": "hermes"
+        },
+        "indicators": {
+          "rsi_14": "55.1234",
+          "ema_9": "2397.75",
+          "ema_21": "2397.125",
+          "ema_50": "2395.5",
+          "ema_200": "2377",
+          "atr_14": "6.5",
+          "regime": null,
+          "session": null
+        },
+        "observed_at_utc": "2026-01-01T10:00:05Z",
+        "ingested_at_utc": "2026-01-01T10:00:06Z"
+      },
+      {
+        "timestamp_utc": "2026-01-01T10:00:00Z",
+        "candle": {
+          "open": "2395",
+          "high": "2398.5",
+          "low": "2393.5",
+          "close": "2397",
+          "volume": "1000",
+          "complete": true,
+          "source": "hermes"
+        },
+        "indicators": {
+          "rsi_14": "55.1234",
+          "ema_9": "2397.75",
+          "ema_21": "2397.125",
+          "ema_50": "2395.5",
+          "ema_200": "2377",
+          "atr_14": "6.5",
+          "regime": null,
+          "session": null
+        },
+        "observed_at_utc": "2026-01-01T14:00:05Z",
+        "ingested_at_utc": "2026-01-01T14:00:06Z"
+      },
+      {
+        "timestamp_utc": "2026-01-01T14:00:00Z",
+        "candle": {
+          "open": "2395",
+          "high": "2398.5",
+          "low": "2393.5",
+          "close": "2397",
+          "volume": "1000",
+          "complete": true,
+          "source": "hermes"
+        },
+        "indicators": {
+          "rsi_14": "55.1234",
+          "ema_9": "2397.75",
+          "ema_21": "2397.125",
+          "ema_50": "2395.5",
+          "ema_200": "2377",
+          "atr_14": "6.5",
+          "regime": null,
+          "session": null
+        },
+        "observed_at_utc": "2026-01-01T18:00:05Z",
+        "ingested_at_utc": "2026-01-01T18:00:06Z"
+      }
+    ]
+  }
+}

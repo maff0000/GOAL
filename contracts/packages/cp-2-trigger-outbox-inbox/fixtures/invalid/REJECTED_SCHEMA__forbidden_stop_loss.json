@@ -1,0 +1,60 @@
+{
+  "fixture_schema": "cp-2/fixture/1",
+  "cp": "cp-2",
+  "level": "door",
+  "case_id": "forbidden_stop_loss",
+  "kind": "invalid",
+  "rule": "CP2-R02 closed vocabulary, no execution fields",
+  "expected_outcome": "REJECTED_SCHEMA",
+  "description": "Envelope carries a stop_loss field.",
+  "context": {
+    "now_utc": "2026-01-02T14:00:30.000000Z",
+    "environment": "TEST",
+    "trust_store": {
+      "sha256:6c77b6748ec5482673d283ffcbaaf98320d421f64d64ed12d5ff3f417f402444": {
+        "public_key": "ccfd4349a0bacdb2f30eba3b09d3e832d77571c035cae7ce282cc586eb704b67",
+        "not_before": "2025-12-01T00:00:00.000000Z",
+        "not_after": "2026-12-01T00:00:00.000000Z",
+        "status": "ACTIVE",
+        "environment": "TEST"
+      },
+      "sha256:8ef29dbbe97806d65bba3183ff8b3da42816bd1966c4ebe15158aca0d37e3bdb": {
+        "public_key": "cb4033e8c7e5e4e8ccfba071f93613b673801d4e1aa8c9bb8d0b4c408f982d32",
+        "not_before": "2025-12-01T00:00:00.000000Z",
+        "not_after": "2026-12-01T00:00:00.000000Z",
+        "status": "ACTIVE",
+        "environment": "TEST"
+      }
+    },
+    "pinned_fingerprints": [
+      "sha256:b77391a594c07928c351f2c66475f54f7ec0541959c5f439587da97dde777855"
+    ],
+    "skew_tolerance_seconds": 120,
+    "max_window_seconds": 14400
+  },
+  "envelope": {
+    "schema": "goal.strategy-trigger/v1",
+    "strategy_id": "example_strategy_a",
+    "strategy_version": "1.0.0",
+    "strategy_fingerprint": "sha256:b77391a594c07928c351f2c66475f54f7ec0541959c5f439587da97dde777855",
+    "binding_id": "binding_example_1",
+    "execution_policy_ref": "policy_ref_example_1",
+    "instrument_id": "XAU_USD",
+    "timeframe": "H4",
+    "signal_class": "SETUP_ACTIVE",
+    "output_direction": "LONG",
+    "state_from": "FORMING",
+    "state_to": "MATCHED",
+    "setup_origin_bar_utc": "2026-01-02T06:00:00.000000Z",
+    "bar_close_utc": "2026-01-02T14:00:00.000000Z",
+    "valid_from_utc": "2026-01-02T14:00:00.000000Z",
+    "valid_until_utc": "2026-01-02T18:00:00.000000Z",
+    "evaluation_id": "eval_example_0001",
+    "input_snapshot_id": "snap_example_0001",
+    "input_snapshot_hash": "sha256:28d93a3eb874b7819a3be65f500e5fdff471da4251fd1dbd050eb03baade3ad4",
+    "signing_key_id": "sha256:6c77b6748ec5482673d283ffcbaaf98320d421f64d64ed12d5ff3f417f402444",
+    "trigger_id": "trg1_c26662cb8dc00a27d9166cb027c90940e6dcaf229407a4e79af391aaedfcbeff",
+    "signature": "942988c1b1d4baa07d907cfcf50958931e58830d2be6a4364d07c09403d2a7d2ecf494929395534ca2ce20bf290371fed69cd0c4dc5704fad58a57fa049a700d",
+    "stop_loss": "2390"
+  }
+}

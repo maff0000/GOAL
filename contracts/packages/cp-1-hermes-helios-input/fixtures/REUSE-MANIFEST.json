@@ -1,0 +1,115 @@
+{
+  "source_repo": "HELIOS",
+  "source_sha": "7f7193d55475e40583892b94dd461b1b64d6f1ef",
+  "note": "document bodies are verbatim; sha256 is of the original file",
+  "entries": [
+    {
+      "file": "invalid/frame/CP1-F11__helios_duplicate_timestamp.json",
+      "source_path": "fixtures/hermes/malformed/duplicate_timestamp.json",
+      "sha256": "ce374b907d86368183d1d8dcc56389d5d538a7662ae7175de45d27bddeea3e80",
+      "code": "CP1-F11"
+    },
+    {
+      "file": "invalid/frame/CP1-F03__helios_high_below_low.json",
+      "source_path": "fixtures/hermes/malformed/high_below_low.json",
+      "sha256": "4c9c6ffba9942bf5ae6303f2fb9e89468c8655fa8a06bdd9d989087dea16dbae",
+      "code": "CP1-F03"
+    },
+    {
+      "file": "invalid/frame/CP1-F09__helios_ingested_before_observed.json",
+      "source_path": "fixtures/hermes/malformed/ingested_before_observed.json",
+      "sha256": "80f9cfe7427862c9931b3ac5cfc4ea3e3db913be2e38a5b73ec93502a7afc11c",
+      "code": "CP1-F09"
+    },
+    {
+      "file": "invalid/frame/CP1-F07__helios_misaligned_timestamp.json",
+      "source_path": "fixtures/hermes/malformed/misaligned_timestamp.json",
+      "sha256": "1ebe6f61fa6da774896b17ec532160d2ebfc2cb20dd0fa1e571f3584c58de62e",
+      "code": "CP1-F07"
+    },
+    {
+      "file": "invalid/frame/CP1-F17__helios_missing_candle_field.json",
+      "source_path": "fixtures/hermes/malformed/missing_candle_field.json",
+      "sha256": "9a5c187951ab0e3154c9a87841f291dc9d9c62182d3142b7daf1ab68bc60aabb",
+      "code": "CP1-F17"
+    },
+    {
+      "file": "invalid/frame/CP1-F10__helios_mixed_instrument.json",
+      "source_path": "fixtures/hermes/malformed/mixed_instrument.json",
+      "sha256": "ecaa531afe65da12c82b24b8bb72861e869aadae0383895644c857af9f974a95",
+      "code": "CP1-F10"
+    },
+    {
+      "file": "invalid/frame/CP1-F06__helios_naive_timestamp.json",
+      "source_path": "fixtures/hermes/malformed/naive_timestamp.json",
+      "sha256": "d4a454b2af6a6b0c95a3433eea5de38630cc78a376ff09f2ca90436df19a16d6",
+      "code": "CP1-F06"
+    },
+    {
+      "file": "invalid/frame/CP1-F04__helios_negative_volume.json",
+      "source_path": "fixtures/hermes/malformed/negative_volume.json",
+      "sha256": "f38084cae69d1358f698990e1851e43dcf343df09cb357ac84aec098803dab64",
+      "code": "CP1-F04"
+    },
+    {
+      "file": "invalid/frame/CP1-F12__helios_out_of_order.json",
+      "source_path": "fixtures/hermes/malformed/out_of_order.json",
+      "sha256": "b8f0717efb2b5450162d63af7505a3e3b26015fb2c51065e068de8ec5853fd7e",
+      "code": "CP1-F12"
+    },
+    {
+      "file": "invalid/frame/CP1-F05__helios_rsi_out_of_range.json",
+      "source_path": "fixtures/hermes/malformed/rsi_out_of_range.json",
+      "sha256": "6a1c320fc0946099d20eb53e6cb36257b356319625bd5a0c160ccdf50eabbedd",
+      "code": "CP1-F05"
+    },
+    {
+      "file": "invalid/frame/CP1-F02__helios_unknown_candle_field.json",
+      "source_path": "fixtures/hermes/malformed/unknown_candle_field.json",
+      "sha256": "4ab34f4ce473820b799b4465eb30c8f059d312afa13ea2e5ccbf3f84e6aa0a5c",
+      "code": "CP1-F02"
+    },
+    {
+      "file": "invalid/frame/CP1-F02__helios_unknown_document_key.json",
+      "source_path": "fixtures/hermes/malformed/unknown_document_key.json",
+      "sha256": "2f1c121b493e2fad9303b4d8f5d0228dc9f26b4882f382760c8904b9e2ec80a4",
+      "code": "CP1-F02"
+    },
+    {
+      "file": "invalid/frame/CP1-F18__helios_unknown_fixture_schema.json",
+      "source_path": "fixtures/hermes/malformed/unknown_fixture_schema.json",
+      "sha256": "e76da7efeb0855e2fcc7a687032eaeaba19092bacc4848930f498efaec78ee38",
+      "code": "CP1-F18"
+    },
+    {
+      "file": "invalid/frame/CP1-F02__helios_unknown_frame_key.json",
+      "source_path": "fixtures/hermes/malformed/unknown_frame_key.json",
+      "sha256": "d2a116eca617ba01e39a4bfa25aa3d41c19bc6b54810dc089010de153d93965a",
+      "code": "CP1-F02"
+    },
+    {
+      "file": "invalid/frame/CP1-F08__helios_unsupported_timeframe.json",
+      "source_path": "fixtures/hermes/malformed/unsupported_timeframe.json",
+      "sha256": "042eab3cce805a4db83a8bafa3a5d0ffbab66b4968671663eaf50710f571a93e",
+      "code": "CP1-F08"
+    },
+    {
+      "file": "invalid/frame/CP1-F14__helios_h4_stale.json",
+      "source_path": "fixtures/hermes/stale/xau_usd_h4_stale.json",
+      "sha256": "55a390bcdf6444253a699cc43f3b549dcb329cdb63e3c1ea332bbc2c056f77c8",
+      "code": "CP1-F14"
+    },
+    {
+      "file": "invalid/frame/CP1-F15__helios_h4_incomplete_last_bar.json",
+      "source_path": "fixtures/hermes/stale/xau_usd_h4_incomplete_last_bar.json",
+      "sha256": "d63bee839f3355877e6b6d5b4e195e273857a8c427c9806614de5d39fc815792",
+      "code": "CP1-F15"
+    },
+    {
+      "file": "valid/frame/VALID__helios_xau_usd_h4.json",
+      "source_path": "fixtures/hermes/xau_usd/xau_usd_h4.json",
+      "sha256": "7b1f577570adf8618f9a82f04ce6d1be95226fb561743e3f263d172e9e5089ab",
+      "code": null
+    }
+  ]
+}
