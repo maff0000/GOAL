@@ -10,12 +10,11 @@
 
 **Header notes:** Risk Capital carries the explicit PAPER gate (D-2 resolved by CA/PO adjudication 2026-10-15). The Matt gate is capital-risk, for the FINAL DEMO acceptance (and the PAPER transition); it does not apply to the six audit investigations (CA/PO adjudication 2026-10-15).
 
-Header values follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is not yet recorded and is entered by CA/PO only. `GOLD-MVP-001` is not yet in `backlog/backlog.yaml`; the exact
-backlog patch is specified in `audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11 and is not applied.
+Header values follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is recorded in the Approval section below. `GOLD-MVP-001` is registered in `backlog/backlog.yaml` with state `BLOCKED` and `pid_path: pids/GOLD-MVP-001.md`.
 
 ## Status
 
-DRAFT CANDIDATE for Central Architecture review. Not approved. Not DELIVERY_READY.
+APPROVED (Central Architecture, 16 October 2026; see Approval). Registered as BLOCKED; not DELIVERY_READY while prerequisites and capital gates are outstanding.
 
 **Binding architectural guidance (CA guidance 2026-10-15; recorded here as CA guidance, not as a controller ruling).**
 
@@ -280,4 +279,9 @@ service, Redis, broker or container; component repositories beyond the logs cite
 
 ## Approval
 
-PENDING. No approval has been recorded for this PID candidate. Approval is recorded here by Central Architecture/PO only.
+APPROVED. Recorded 2026-10-16 by ROGUE on the written authority of Central Architecture/PO.
+
+1. Central Architecture adjudication of the GOLD MVP Portfolio, 15 October 2026 (APPROVED WITH CORRECTIONS AND GOVERNED MERGE CONDITIONS; approves the architecture and scope of this PID).
+2. Central Architecture formal approval, 16 October 2026, Decision: OPTION 1. The previous adjudication is confirmed as the formal approval of record for the seven GOLD PIDs, including this one. No further approval of this PID scope is required unless a substantive change is proposed.
+
+Scope of this approval: registration of this PID. It is NOT DELIVERY_READY and its integration work must not be marked DELIVERY_READY while prerequisite engineering and capital gates remain outstanding. The Matt gate remains for FINAL DEMO acceptance (capital risk) and the PAPER transition. It authorises no deployment, production mutation, broker order, contract freeze or live-capital action.
