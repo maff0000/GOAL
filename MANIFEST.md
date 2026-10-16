@@ -27,6 +27,12 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `audits/2026-10-15/gold-mvp/DECISION-REGISTER.md`
 - `audits/2026-10-15/gold-mvp/DISPATCH-RECORD.md`
 - `audits/2026-10-15/gold-mvp/PORTFOLIO.md`
+- `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/AMENDMENT-PROPOSALS.md`
+- `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/APOLLO-ATHENA-EXTENSION.md`
+- `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/AUDIT-F.md`
+- `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/DISPOSITION.md`
+- `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/EXTERNAL-REGISTER.md`
+- `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/IDENTITY-SNAPSHOTS.md`
 - `backlog/MASTER-BACKLOG.md`
 - `backlog/SCHEMA.md`
 - `backlog/backlog.yaml`
