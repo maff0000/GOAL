@@ -53,14 +53,15 @@ region — change `backlog/backlog.yaml` and run `./tools/goal-docs --write`.
 | TRON-T4 | trading | TRON | TriggerInbox intake/idempotency | maff0000/tron | TRON-T1, GOAL-TRIGGER-001 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
 | TRON-T5 | trading | TRON | SizingPolicy + frozen EdgeProfile binding | maff0000/tron | TRON-T3, CER-R1 | P1 | medium | ARCHITECTURE_REQUIRED | Yes | No |
 | SKEPTIC-T1 | trading | TRON | asynchronous SHADOW reviewer | maff0000/tron | TRON-T1 | P2 | low | ARCHITECTURE_REQUIRED | Yes | No |
-| PAPER-E2E-001 | trading | GOAL | Full paper lane end-to-end proof on Vantage DEMO (not satisfiable by simulation) | maff0000/GOAL | HELIOS-T3, TRON-T2, TRON-T3, TRON-T4 | P0 | capital | ARCHITECTURE_REQUIRED | Yes | **Yes** |
+| PAPER-E2E-001 | trading | GOAL | Full paper lane end-to-end proof on Vantage DEMO (not satisfiable by simulation) | maff0000/GOAL | HELIOS-T3, TRON-T2, TRON-T3, TRON-T4, GOLD-MVP-001 | P0 | capital | ARCHITECTURE_REQUIRED | Yes | **Yes** |
 | LIVE-GATE-001 | ops | GOAL | Capital readiness + LIVE decision | maff0000/GOAL | PAPER-E2E-001, OPS-SAFE-001, OPS-SAFE-002, OPS-SAFE-003, OPS-LEGACY-001, OPS-CRED-001 | P0 | capital | ARCHITECTURE_REQUIRED | Yes | **Yes** |
-| GOLD-AUD-A | research | HERMES | GOLD MVP audit A: HERMES PROD XAUUSD Redis publication (read-only; strict subset of HERMES-CUR-001 scope item 1) | maff0000/hermes | GOAL-DCP-001 | P0 | medium | DELIVERY_READY | Yes | **Yes** |
-| GOLD-AUD-B | research | HELIOS | GOLD MVP audit B: locate and reconcile the HERMES Redis to HELIOS GOLD integration and review HSA packages (read-only) | maff0000/HELIOS | GOAL-DCP-001 | P0 | low | DELIVERY_READY | Yes | No |
-| GOLD-AUD-C | research | GOAL | GOLD MVP audit C: shared contract reconciliation, compatibility matrix and evidence index (read-only; complements GOAL-CONTRACT-001 and GOAL-TRIGGER-001) | maff0000/GOAL | GOAL-DCP-001 | P0 | medium | DELIVERY_READY | Yes | No |
-| GOLD-AUD-D | research | TRON/MT5 | GOLD MVP audit D: TRON design, risk rules, journal, trigger intake and the smallest MT5 DEMO execution path (read-only) | maff0000/GOAL | GOAL-DCP-001 | P0 | medium | DELIVERY_READY | Yes | No |
-| GOLD-AUD-E | research | FALCON | GOLD MVP audit E: FALCON registry and ingestion, minimum HELIOS and TRON event publication (read-only; complements FALCON-T1) | maff0000/falcon | GOAL-DCP-001 | P0 | low | DELIVERY_READY | Yes | No |
-| GOLD-AUD-F | research | CER/HSA/DARWIN/NEO | GOLD MVP audit F: strategy qualification, registration, execution and NEO review across CER, HSA, DARWIN and NEO (read-only) | maff0000/GOAL | GOAL-DCP-001 | P1 | low | DELIVERY_READY | Yes | No |
+| GOLD-AUD-A | research | HERMES | GOLD MVP audit A: HERMES PROD XAUUSD Redis publication (read-only; strict subset of HERMES-CUR-001 scope item 1) | maff0000/hermes | GOAL-DCP-001 | P0 | medium | ROGUE_DISPATCHED | Yes | **Yes** |
+| GOLD-AUD-B | research | HELIOS | GOLD MVP audit B: locate and reconcile the HERMES Redis to HELIOS GOLD integration and review HSA packages (read-only) | maff0000/HELIOS | GOAL-DCP-001 | P0 | low | ROGUE_DISPATCHED | Yes | No |
+| GOLD-AUD-C | research | GOAL | GOLD MVP audit C: shared contract reconciliation, compatibility matrix and evidence index (read-only; complements GOAL-CONTRACT-001 and GOAL-TRIGGER-001) | maff0000/GOAL | GOAL-DCP-001 | P0 | medium | ROGUE_DISPATCHED | Yes | No |
+| GOLD-AUD-D | research | TRON/MT5 | GOLD MVP audit D: TRON design, risk rules, journal, trigger intake and the smallest MT5 DEMO execution path (read-only) | maff0000/GOAL | GOAL-DCP-001 | P0 | medium | ROGUE_DISPATCHED | Yes | No |
+| GOLD-AUD-E | research | FALCON | GOLD MVP audit E: FALCON registry and ingestion, minimum HELIOS and TRON event publication (read-only; complements FALCON-T1) | maff0000/falcon | GOAL-DCP-001 | P0 | low | ROGUE_DISPATCHED | Yes | No |
+| GOLD-AUD-F | research | CER/HSA/DARWIN/NEO | GOLD MVP audit F: strategy qualification, registration, execution and NEO review across CER, HSA, DARWIN and NEO (read-only) | maff0000/GOAL | GOAL-DCP-001 | P1 | low | ROGUE_DISPATCHED | Yes | No |
+| GOLD-MVP-001 | trading | GOAL | GOLD MVP integration and acceptance: one governed XAUUSD strategy end to end on Vantage DEMO with FALCON evidence (state PAPER only after DEMO proof) | maff0000/GOAL | GOLD-AUD-A, GOLD-AUD-B, GOLD-AUD-C, GOLD-AUD-D, GOLD-AUD-E, GOLD-AUD-F, GOAL-CONTRACT-001, GOAL-TRIGGER-001, HELIOS-T3, TRON-T2, TRON-T3, TRON-T4, FALCON-T1 | P0 | capital | BLOCKED | Yes | **Yes** |
 
 <!-- END GENERATED: backlog-table -->
 
