@@ -84,11 +84,11 @@ def test_canonical_backlog_loads_and_every_item_exposes_all_thirteen_fields():
 def test_canonical_backlog_has_exactly_forty_three_items_with_unique_ids():
     backlog = load_backlog()
 
-    assert len(backlog.items) == 43
+    assert len(backlog.items) == 49
     ids = [item.id for item in backlog.items]
-    assert len(set(ids)) == 43
+    assert len(set(ids)) == 49
     assert backlog.duplicate_ids == ()
-    assert len(backlog.by_id) == 43
+    assert len(backlog.by_id) == 49
 
 
 def test_canonical_backlog_repo_root_is_the_repository_root():

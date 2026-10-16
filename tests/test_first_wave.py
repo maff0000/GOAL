@@ -144,15 +144,19 @@ def test_the_wave_is_absent_before_closure(canonical, tmp_path):
 
 
 def test_nothing_is_forge_dispatchable_before_or_after_the_projection(canonical):
-    """The dispatch answer is empty, and that is the honest answer.
+    """None of the eleven is dispatchable; only the six approved GOLD audits are.
 
     The eleven have no canonical PID, so closing GOAL-DCP-001 does not make
     them dispatchable - it makes their PIDs the next thing to write. A tool
     that reported them as ``ready`` would be handing ROGUE work FORGE cannot
     build, which is the defect this round repaired.
     """
-    assert ready_items(canonical) == ()
-    assert ready_items(canonical, frozenset({PROJECTION_ID})) == ()
+    gold_audits = tuple(f"GOLD-AUD-{letter}" for letter in "ABCDEF")
+    assert tuple(i.id for i in ready_items(canonical)) == gold_audits
+    assert (
+        tuple(i.id for i in ready_items(canonical, frozenset({PROJECTION_ID})))
+        == gold_audits
+    )
 
 
 def test_the_wave_is_blocked_only_by_the_projected_item(canonical):

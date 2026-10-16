@@ -13,13 +13,12 @@
 **Header notes:** GOAL carries the index entry only; the primary evidence PR is in `maff0000/falcon`. Priority P0 was raised from P1 by the CA/PO adjudication 2026-10-15. `FALCON-T1` is complemented as a carve-out (the excluded `strategy_trigger` and `tron.*` families); amendment fallback in Dependencies and interfaces. Evidence location follows programme-controller rulings 1 to 3 (`PORTFOLIO.md` appendix).
 
 
-Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
-`audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
-six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is not yet recorded and is entered by CA/PO only.
+Header values match the registered backlog item (`backlog/backlog.yaml`, `pid_path: pids/GOLD-AUD-E.md`). Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
+six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is recorded in the Approval section below.
 
 ## Status
 
-DRAFT CANDIDATE for Central Architecture review. Not approved. Not DELIVERY_READY.
+APPROVED (Central Architecture, 16 October 2026; see Approval). Registered in the backlog as DELIVERY_READY by the governed amendment.
 
 Form decision: a **thin new audit item** (option ii), not an amendment of `FALCON-T1` (see Dependencies
 and interfaces, "Amend or new"). It composes FALCON-T1 and RECON-F's FALCON-T2/T3 and duplicates none.
@@ -325,4 +324,9 @@ Mechanical; every row passes or the audit is not accepted.
 
 ## Approval
 
-PENDING. No approval has been recorded for this PID candidate. Approval is recorded here by Central Architecture/PO only.
+APPROVED. Recorded 2026-10-16 by ROGUE on the written authority of Central Architecture/PO.
+
+1. Central Architecture adjudication of the GOLD MVP Portfolio, 15 October 2026 (APPROVED WITH CORRECTIONS AND GOVERNED MERGE CONDITIONS; approves the architecture and scope of this audit PID).
+2. Central Architecture formal approval, 16 October 2026, Decision: OPTION 1. The previous adjudication is confirmed as the formal approval of record for the seven GOLD PIDs, including this one. No further approval of this PID scope is required unless a substantive change is proposed.
+
+Scope of this approval: the read-only audit scope in this PID. It authorises no deployment, production mutation, broker order, contract freeze or live-capital action.

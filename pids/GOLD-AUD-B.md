@@ -12,14 +12,13 @@
 
 **Header notes:** GOAL holds an index entry only; the primary evidence PR is in `maff0000/HELIOS`. Delivery is a read-only audit increment. `HELIOS-T2` is complemented as a separate audit item that is an input to it (`HELIOS-T2` owns the adapter implementation; this audit is not an increment or amendment of it). Evidence location follows programme-controller rulings 1 to 3 (`PORTFOLIO.md` appendix).
 
-Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
-`audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
-six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is not yet recorded and is entered by CA/PO only.
+Header values match the registered backlog item (`backlog/backlog.yaml`, `pid_path: pids/GOLD-AUD-B.md`). Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
+six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is recorded in the Approval section below.
 
 
 ## Status
 
-DRAFT CANDIDATE for Central Architecture review. Not approved. Not DELIVERY_READY.
+APPROVED (Central Architecture, 16 October 2026; see Approval). Registered in the backlog as DELIVERY_READY by the governed amendment.
 
 This is a bounded, read-only audit increment of GOLD MVP Lane B. It is drafted
 as the Lane B member of the master `GOLD-MVP-001` frame (audit id `GOLD-AUD-B`,
@@ -385,4 +384,9 @@ content, live HERMES state (2026-10-07 sample only), HERMES Lane A output.
 
 ## Approval
 
-PENDING. No approval has been recorded for this PID candidate. Approval is recorded here by Central Architecture/PO only.
+APPROVED. Recorded 2026-10-16 by ROGUE on the written authority of Central Architecture/PO.
+
+1. Central Architecture adjudication of the GOLD MVP Portfolio, 15 October 2026 (APPROVED WITH CORRECTIONS AND GOVERNED MERGE CONDITIONS; approves the architecture and scope of this audit PID).
+2. Central Architecture formal approval, 16 October 2026, Decision: OPTION 1. The previous adjudication is confirmed as the formal approval of record for the seven GOLD PIDs, including this one. No further approval of this PID scope is required unless a substantive change is proposed.
+
+Scope of this approval: the read-only audit scope in this PID. It authorises no deployment, production mutation, broker order, contract freeze or live-capital action.
