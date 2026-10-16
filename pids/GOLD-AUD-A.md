@@ -12,14 +12,13 @@
 
 **Header notes:** The Matt gate applies to production Redis read access only (open decision D1: Matt's express permission and a HELM-operated bounded protocol; the gate stays TRUE until he expressly permits); no Matt gate applies to the GitHub / source analysis, which may proceed meanwhile. GOAL holds an index entry only; the primary evidence PR is in `maff0000/hermes`. The audit is a strict subset ('Increment A') of `HERMES-CUR-001` scope item 1 (amendment fallback below). Evidence location follows programme-controller rulings 1 to 3 (`PORTFOLIO.md` appendix). Delivery: the evidence run is performed by a HELM-lane operator; FORGE produces the docs and fixtures PR only.
 
-Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
-`audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
-six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is not yet recorded and is entered by CA/PO only.
+Header values match the registered backlog item (`backlog/backlog.yaml`, `pid_path: pids/GOLD-AUD-A.md`). Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
+six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is recorded in the Approval section below.
 
 
 ## Status
 
-DRAFT CANDIDATE for Central Architecture review. Not approved. Not DELIVERY_READY.
+APPROVED (Central Architecture, 16 October 2026; see Approval). Registered in the backlog as DELIVERY_READY by the governed amendment.
 
 `depends_on: GOAL-DCP-001` (CLOSED). Parent programme item: GOLD-MVP-001 (Lane A).
 
@@ -336,4 +335,11 @@ Sources read for this draft (2026-10-15), all read-only:
 
 ## Approval
 
-PENDING. No approval has been recorded for this PID candidate. Approval is recorded here by Central Architecture/PO only.
+APPROVED. Recorded 2026-10-16 by ROGUE on the written authority of Central Architecture/PO.
+
+1. Central Architecture adjudication of the GOLD MVP Portfolio, 15 October 2026 (APPROVED WITH CORRECTIONS AND GOVERNED MERGE CONDITIONS; approves the architecture and scope of this audit PID).
+2. Central Architecture formal approval, 16 October 2026, Decision: OPTION 1. The previous adjudication is confirmed as the formal approval of record for the seven GOLD PIDs, including this one. No further approval of this PID scope is required unless a substantive change is proposed.
+
+Scope of this approval: the read-only audit scope in this PID. It authorises no deployment, production mutation, broker order, contract freeze or live-capital action.
+
+Production Redis read: separately authorised by Matt on 16 October 2026 (DR-4 owner condition satisfied; relayed by Central Architecture; the dated authorisation is held in the private owner-authorisation record, with no connection details published). It additionally requires HELM to verify the authoritative instance and logical database, confirm a read-only connection and review the exact S1 to S9 command protocol. The `matt_gate` flag stays true and `goal-ready` does not read it (R-19), so this precondition is checked manually before the production-read phase is dispatched. Source and GitHub analysis may begin immediately.

@@ -13,14 +13,13 @@
 
 **Header notes:** Risk Medium: specification only, no runtime change. Matt gate No: D-3 of `GOAL-TRIGGER-001` keeps its own Matt gate and this item does not decide it. Delivery: evidence and contract PRs into `maff0000/GOAL`. `GOAL-DCP-001` is CLOSED. `GOAL-CONTRACT-001` and `GOAL-TRIGGER-001` are the approval owners of their contracts and this item freezes nothing (amendment fallback in D-C2). Evidence location follows programme-controller rulings 1 to 4 (`PORTFOLIO.md` appendix).
 
-Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
-`audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
-six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is not yet recorded and is entered by CA/PO only.
+Header values match the registered backlog item (`backlog/backlog.yaml`, `pid_path: pids/GOLD-AUD-C.md`). Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
+six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is recorded in the Approval section below.
 This item is a read-only audit; the contract packages it produces are specifications marked PROPOSED.
 
 ## Status
 
-DRAFT CANDIDATE for Central Architecture review. Not approved. Not DELIVERY_READY.
+APPROVED (Central Architecture, 16 October 2026; see Approval). Registered in the backlog as DELIVERY_READY by the governed amendment.
 
 **Form decision: option (ii), a thin new item.** It is justified in the section "Form decision" below. It does not amend, supersede or compete with
 `GOAL-CONTRACT-001` or `GOAL-TRIGGER-001` (candidates on branch `wo/GOAL-CONTRACT-TRIGGER`, `64c843b`, with
@@ -336,4 +335,9 @@ Owner PO unless stated; none needs Matt from this item. D-xx and C/S/O/T decisio
 
 ## Approval
 
-PENDING. No approval has been recorded for this PID candidate. Approval is recorded here by Central Architecture/PO only.
+APPROVED. Recorded 2026-10-16 by ROGUE on the written authority of Central Architecture/PO.
+
+1. Central Architecture adjudication of the GOLD MVP Portfolio, 15 October 2026 (APPROVED WITH CORRECTIONS AND GOVERNED MERGE CONDITIONS; approves the architecture and scope of this audit PID).
+2. Central Architecture formal approval, 16 October 2026, Decision: OPTION 1. The previous adjudication is confirmed as the formal approval of record for the seven GOLD PIDs, including this one. No further approval of this PID scope is required unless a substantive change is proposed.
+
+Scope of this approval: the read-only audit scope in this PID. It authorises no deployment, production mutation, broker order, contract freeze or live-capital action.

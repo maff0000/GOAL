@@ -833,3 +833,107 @@ items:
     pid_path: null
     architecture_refs:
       - architecture/DELIVERY-CONTROL-PLANE.md
+
+  # GOLD MVP read-only audit items (CA directive 2026-10-15). Read-only, no engineering dependency.
+  - id: GOLD-AUD-A
+    title: "GOLD MVP audit A: HERMES PROD XAUUSD Redis publication (read-only; strict subset of HERMES-CUR-001 scope item 1)"
+    lane: research
+    component: HERMES
+    target_repository: maff0000/hermes
+    priority: P0
+    risk: medium
+    state: DELIVERY_READY
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: true   # production-read gate only: TRUE until Matt expressly permits production Redis read (DR-4)
+    pid_path: pids/GOLD-AUD-A.md
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - audits/2026-10-15/gold-mvp/PORTFOLIO.md
+
+  - id: GOLD-AUD-B
+    title: "GOLD MVP audit B: locate and reconcile the HERMES Redis to HELIOS GOLD integration and review HSA packages (read-only)"
+    lane: research
+    component: HELIOS
+    target_repository: maff0000/HELIOS
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: pids/GOLD-AUD-B.md
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - audits/2026-10-15/gold-mvp/PORTFOLIO.md
+
+  - id: GOLD-AUD-C
+    title: "GOLD MVP audit C: shared contract reconciliation, compatibility matrix and evidence index (read-only; complements GOAL-CONTRACT-001 and GOAL-TRIGGER-001)"
+    lane: research
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: medium
+    state: DELIVERY_READY
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: pids/GOLD-AUD-C.md
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - audits/2026-10-15/gold-mvp/PORTFOLIO.md
+
+  - id: GOLD-AUD-D
+    title: "GOLD MVP audit D: TRON design, risk rules, journal, trigger intake and the smallest MT5 DEMO execution path (read-only)"
+    lane: research
+    component: TRON/MT5
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: medium
+    state: DELIVERY_READY
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: pids/GOLD-AUD-D.md
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - decisions/ADR-MT5-001-REUSE-CONTAINER-REPLACE-BRIDGE.md
+      - audits/2026-10-15/gold-mvp/PORTFOLIO.md
+
+  - id: GOLD-AUD-E
+    title: "GOLD MVP audit E: FALCON registry and ingestion, minimum HELIOS and TRON event publication (read-only; complements FALCON-T1)"
+    lane: research
+    component: FALCON
+    target_repository: maff0000/falcon
+    priority: P0
+    risk: low
+    state: DELIVERY_READY
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: pids/GOLD-AUD-E.md
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - audits/2026-10-15/gold-mvp/PORTFOLIO.md
+
+  - id: GOLD-AUD-F
+    title: "GOLD MVP audit F: strategy qualification, registration, execution and NEO review across CER, HSA, DARWIN and NEO (read-only)"
+    lane: research
+    component: CER/HSA/DARWIN/NEO
+    target_repository: maff0000/GOAL
+    priority: P1
+    risk: low
+    state: DELIVERY_READY
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: pids/GOLD-AUD-F.md
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - audits/2026-10-15/gold-mvp/PORTFOLIO.md

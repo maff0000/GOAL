@@ -12,13 +12,12 @@
 
 **Header notes:** GOAL is the primary repository for the TRON and MT5 facts, with mirror notes in `maff0000/tron` and `maff0000/mt5-gateway`. Risk Medium: this is a read-only audit and the path it analyses is capital-adjacent. `TRON-D1-RATIFY` is consumed, not redone; amendment fallback in Purpose. Evidence location follows programme-controller rulings 1 to 3 (`PORTFOLIO.md` appendix).
 
-Header values are PROVISIONAL: the item is not in `backlog/backlog.yaml`; the backlog patch is specified, not applied, in
-`audits/2026-10-15/gold-mvp/PORTFOLIO.md` section 11. Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
-six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is not yet recorded and is entered by CA/PO only.
+Header values match the registered backlog item (`backlog/backlog.yaml`, `pid_path: pids/GOLD-AUD-D.md`). Lane vocabulary is the backlog set {shared, research, trading, ops}; `research` is used for all
+six audits (CA frame). Priority, lane and risk follow the CA/PO adjudication 2026-10-15 (recorded in `PORTFOLIO.md`, not in this PID); approval is recorded in the Approval section below.
 
 **Audit id:** GOLD-AUD-D (child audit of GOLD-MVP-001)  
 **Depends on:** `GOAL-DCP-001` only  
-**Status:** DRAFT CANDIDATE
+**Status:** APPROVED (Central Architecture, 16 October 2026; see Approval). Registered in the backlog as DELIVERY_READY by the governed amendment.
 
 ## Purpose
 
@@ -261,4 +260,11 @@ Required evidence package (primary PR into GOAL under `audits/2026-10-15/gold-mv
 
 ## Approval
 
-PENDING. No approval has been recorded for this PID candidate. Approval is recorded here by Central Architecture/PO only.
+APPROVED. Recorded 2026-10-16 by ROGUE on the written authority of Central Architecture/PO.
+
+1. Central Architecture adjudication of the GOLD MVP Portfolio, 15 October 2026 (APPROVED WITH CORRECTIONS AND GOVERNED MERGE CONDITIONS; approves the architecture and scope of this audit PID).
+2. Central Architecture formal approval, 16 October 2026, Decision: OPTION 1. The previous adjudication is confirmed as the formal approval of record for the seven GOLD PIDs, including this one. No further approval of this PID scope is required unless a substantive change is proposed.
+
+Scope of this approval: the read-only audit scope in this PID. It authorises no deployment, production mutation, broker order, contract freeze or live-capital action.
+
+TRON-T3A remains subject to this audit's design and dependency validation before its own separate backlog amendment.
