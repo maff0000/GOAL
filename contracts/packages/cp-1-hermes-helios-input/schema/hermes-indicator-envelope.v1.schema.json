@@ -1,0 +1,146 @@
+{
+  "type": "object",
+  "x-code": "CP1-W03",
+  "properties": {
+    "publisher": {
+      "const": "HERMES",
+      "x-code": "CP1-W02"
+    },
+    "schema_version": {
+      "const": "v1",
+      "x-code": "CP1-W01"
+    },
+    "contract_version": {
+      "const": "v1",
+      "x-code": "CP1-W01"
+    },
+    "instrument": {
+      "type": "string",
+      "x-code": "CP1-W09"
+    },
+    "timeframe": {
+      "type": "string",
+      "x-code": "CP1-W09"
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+      "x-code": "CP1-W07"
+    },
+    "value_open_time_utc": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+      "x-code": "CP1-W07"
+    },
+    "source_candle_contract": {
+      "const": "v1",
+      "x-code": "CP1-W01"
+    },
+    "source_timeframes": {
+      "type": "array",
+      "x-code": "CP1-W03"
+    },
+    "indicator_set_version": {
+      "const": "v1",
+      "x-code": "CP1-W01"
+    },
+    "indicators": {
+      "type": "object",
+      "minProperties": 1,
+      "x-code": "CP1-W03",
+      "propertyNames": {
+        "x-code": "CP1-W05",
+        "not": {
+          "pattern": "regime|regime_confidence|risk|order_block|liquidity|decision|trade|gate|password|secret|credential|acl|noauth"
+        }
+      },
+      "additionalProperties": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "x-code": "CP1-W06"
+      }
+    },
+    "methods": {
+      "type": "object",
+      "x-code": "CP1-W03"
+    },
+    "freshness_state": {
+      "enum": [
+        "FRESH",
+        "STALE",
+        "FORMING",
+        "UNAVAILABLE"
+      ],
+      "x-code": "CP1-W03"
+    },
+    "deterministic_only": {
+      "const": true,
+      "x-code": "CP1-W03"
+    },
+    "history": {
+      "type": "object",
+      "x-code": "CP1-W03",
+      "properties": {
+        "history_contract_version": {},
+        "publish_run_id": {},
+        "published_at_utc": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+          "x-code": "CP1-W07"
+        },
+        "source_candle_history_key": {},
+        "source_timestamp_utc": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+          "x-code": "CP1-W07"
+        }
+      },
+      "required": [
+        "history_contract_version",
+        "publish_run_id",
+        "published_at_utc",
+        "source_candle_history_key",
+        "source_timestamp_utc"
+      ],
+      "x-code-required": "CP1-W04",
+      "additionalProperties": false,
+      "x-code-additional": "CP1-W04",
+      "propertyNames": {
+        "x-code": "CP1-W05",
+        "not": {
+          "pattern": "regime|regime_confidence|risk|order_block|liquidity|decision|trade|gate|password|secret|credential|acl|noauth"
+        }
+      }
+    }
+  },
+  "required": [
+    "publisher",
+    "schema_version",
+    "contract_version",
+    "instrument",
+    "timeframe",
+    "generated_at_utc",
+    "value_open_time_utc",
+    "source_candle_contract",
+    "source_timeframes",
+    "indicator_set_version",
+    "indicators",
+    "methods",
+    "freshness_state",
+    "deterministic_only"
+  ],
+  "x-code-required": "CP1-W03",
+  "additionalProperties": false,
+  "x-code-additional": "CP1-W04",
+  "propertyNames": {
+    "x-code": "CP1-W05",
+    "not": {
+      "pattern": "regime|regime_confidence|risk|order_block|liquidity|decision|trade|gate|password|secret|credential|acl|noauth"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cp-1 HERMES indicator envelope (hermes:indicators v1, latest or history record)",
+  "description": "Wire-side schema, provider = HERMES publication. The set of admissible indicator names (CP1-J03) and the pinned method tokens (CP1-J04) are rule tables in PACKAGE.md, not schema keywords. PROPOSED, freezes nothing."
+}

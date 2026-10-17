@@ -1,0 +1,109 @@
+{
+  "fixture_schema": "cp-1/fixture/1",
+  "cp": "cp-1",
+  "level": "frame",
+  "mode": "adapter",
+  "case_id": "unknown_indicator_in_frame",
+  "kind": "invalid",
+  "rule": "F02 closed world",
+  "expected_code": "CP1-F02",
+  "description": "Frame indicators carry ema_12, which the HELIOS fact contract does not know.",
+  "context": {
+    "accepted_frame_schema_versions": [
+      "hermes.market_fact/1.0.0"
+    ]
+  },
+  "frames": [
+    {
+      "instrument": "XAU_USD",
+      "timeframe": "H4",
+      "timestamp_utc": "2026-01-01T06:00:00.000000Z",
+      "candle": {
+        "open": "2395",
+        "high": "2398.5",
+        "low": "2393.5",
+        "close": "2397",
+        "volume": "1000",
+        "complete": true,
+        "source": "hermes"
+      },
+      "indicators": {
+        "rsi_14": "55.1234",
+        "ema_9": "2397.75",
+        "ema_21": "2397.125",
+        "ema_50": "2395.5",
+        "ema_200": "2377",
+        "atr_14": "6.5",
+        "regime": null,
+        "session": null,
+        "ema_12": "2397.5"
+      },
+      "provenance": {
+        "source": "hermes",
+        "schema_version": "hermes.market_fact/1.0.0",
+        "observed_at_utc": "2026-01-01T10:00:05.000000Z",
+        "ingested_at_utc": "2026-01-01T18:01:00.500000Z"
+      }
+    },
+    {
+      "instrument": "XAU_USD",
+      "timeframe": "H4",
+      "timestamp_utc": "2026-01-01T10:00:00.000000Z",
+      "candle": {
+        "open": "2397",
+        "high": "2401.25",
+        "low": "2396",
+        "close": "2400.5",
+        "volume": "1120",
+        "complete": true,
+        "source": "hermes"
+      },
+      "indicators": {
+        "rsi_14": "55.1234",
+        "ema_9": "2401.25",
+        "ema_21": "2400.625",
+        "ema_50": "2399",
+        "ema_200": "2380.5",
+        "atr_14": "6.5",
+        "regime": null,
+        "session": null
+      },
+      "provenance": {
+        "source": "hermes",
+        "schema_version": "hermes.market_fact/1.0.0",
+        "observed_at_utc": "2026-01-01T14:00:05.000000Z",
+        "ingested_at_utc": "2026-01-01T18:01:00.500000Z"
+      }
+    },
+    {
+      "instrument": "XAU_USD",
+      "timeframe": "H4",
+      "timestamp_utc": "2026-01-01T14:00:00.000000Z",
+      "candle": {
+        "open": "2400.5",
+        "high": "2402",
+        "low": "2397.75",
+        "close": "2398.25",
+        "volume": "980",
+        "complete": true,
+        "source": "hermes"
+      },
+      "indicators": {
+        "rsi_14": "55.1234",
+        "ema_9": "2399",
+        "ema_21": "2398.375",
+        "ema_50": "2396.75",
+        "ema_200": "2378.25",
+        "atr_14": "6.5",
+        "regime": null,
+        "session": null
+      },
+      "provenance": {
+        "source": "hermes",
+        "schema_version": "hermes.market_fact/1.0.0",
+        "observed_at_utc": "2026-01-01T18:00:05.000000Z",
+        "ingested_at_utc": "2026-01-01T18:01:00.500000Z"
+      }
+    }
+  ]
+}

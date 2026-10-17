@@ -1,0 +1,355 @@
+{
+  "fixture_schema": "cp-1/fixture/1",
+  "cp": "cp-1",
+  "level": "wire",
+  "case_id": "bar_not_closed",
+  "kind": "invalid",
+  "rule": "S01 forming bar",
+  "expected_code": "CP1-S01",
+  "description": "Newest bar is still forming (is_closed false).",
+  "context": {
+    "ingested_at_utc": "2026-01-01T18:01:00.500000Z",
+    "accepted_frame_schema_versions": [
+      "hermes.market_fact/1.0.0"
+    ],
+    "freshness": {
+      "max_age_multiplier": "1.5",
+      "grace_seconds": 120,
+      "clock_skew_tolerance_seconds": 120,
+      "allow_incomplete_frames": false
+    }
+  },
+  "wire": {
+    "instrument": "XAU_USD",
+    "timeframe": "H4",
+    "bars": [
+      {
+        "candle_key": "hermes:candles:XAU_USD:H4:history:v1:1767247200",
+        "candle": {
+          "schema_version": "v1",
+          "service": "HERMES",
+          "domain": "candles",
+          "contract": "hermes.candles.latest",
+          "contract_version": "v1",
+          "key": "hermes:candles:XAU_USD:H4:latest:v1",
+          "generated_at_utc": "2026-01-01T10:00:00.000Z",
+          "valid_until_utc": "2026-01-01T14:00:00.000Z",
+          "ttl_seconds": 14400,
+          "freshness_state": "FRESH",
+          "status": "OK",
+          "reason_codes": [
+            "DERIVED_FROM_LOWER_TIMEFRAME",
+            "OK_COMPLETE"
+          ],
+          "provenance": {
+            "publisher": "HERMES",
+            "source": "upstream_feed",
+            "source_timeframe": "H1",
+            "derivation": "DERIVED_FROM_LOWER_TIMEFRAME",
+            "generated_at_utc": "2026-01-01T10:00:00.000Z",
+            "source_policy_epoch": "H4_FROM_H1_NY1700_V1"
+          },
+          "data": {
+            "instrument": "XAU_USD",
+            "timeframe": "H4",
+            "timestamp_utc": "2026-01-01T06:00:00.000Z",
+            "open": 2395.0,
+            "high": 2398.5,
+            "low": 2393.5,
+            "close": 2397.0,
+            "volume": 1000,
+            "body_high": 2397.0,
+            "body_low": 2395.0,
+            "body_size": 2.0,
+            "range_size": 5.0,
+            "wick_high": 1.5,
+            "wick_low": 1.5,
+            "candle_direction": "UP",
+            "is_closed": true,
+            "source_timeframe": "H1",
+            "source_coverage": 1.0,
+            "source_count": 4,
+            "expected_source_count": 4,
+            "gap_state": "NONE",
+            "derivation_policy": "DERIVED_H4_FROM_H1",
+            "source_policy_epoch": "H4_FROM_H1_NY1700_V1",
+            "publisher": "HERMES",
+            "contract_version": "v1"
+          },
+          "history": {
+            "history_contract_version": "v1",
+            "backfill_run_id": "FORWARD:example",
+            "backfill_inserted_at_utc": "2026-01-01T10:00:00.000Z",
+            "source_table": "example_table",
+            "source_timestamp_utc": "2026-01-01T06:00:00.000Z"
+          }
+        },
+        "indicator_key": "hermes:indicators:XAU_USD:H4:history:v1:1767247200",
+        "indicator": {
+          "publisher": "HERMES",
+          "schema_version": "v1",
+          "contract_version": "v1",
+          "instrument": "XAU_USD",
+          "timeframe": "H4",
+          "generated_at_utc": "2026-01-01T10:00:05.000Z",
+          "value_open_time_utc": "2026-01-01T06:00:00.000Z",
+          "source_candle_contract": "v1",
+          "source_timeframes": [
+            "H4"
+          ],
+          "indicator_set_version": "v1",
+          "indicators": {
+            "ema_12": 2397.5,
+            "ema_26": 2397.25,
+            "rsi_14": 55.1234,
+            "atr_14": 6.5,
+            "ema_50": 2395.5,
+            "ema_9": 2397.75,
+            "ema_21": 2397.125,
+            "ema_200": 2377.0,
+            "bollinger_upper_20_2": 2406.0,
+            "bollinger_middle_20_2": 2397.0,
+            "bollinger_lower_20_2": 2388.0,
+            "adx_14": 22.5,
+            "adx_plus_di_14": 25.0,
+            "adx_minus_di_14": 15.0
+          },
+          "methods": {
+            "ema_method": "STANDARD_2_OVER_N_PLUS_1_SMA_SEED",
+            "rsi_method": "CUTLER_SMA_14",
+            "atr_method": "SMA_14",
+            "bands_method": "SMA_N_STD_2",
+            "adx_method": "WILDER_ADX_14"
+          },
+          "freshness_state": "FRESH",
+          "deterministic_only": true,
+          "history": {
+            "history_contract_version": "v1",
+            "publish_run_id": "FORWARD:example",
+            "published_at_utc": "2026-01-01T10:00:05.000Z",
+            "source_candle_history_key": "hermes:candles:XAU_USD:H4:history:v1:1767247200",
+            "source_timestamp_utc": "2026-01-01T06:00:00.000Z"
+          }
+        }
+      },
+      {
+        "candle_key": "hermes:candles:XAU_USD:H4:history:v1:1767261600",
+        "candle": {
+          "schema_version": "v1",
+          "service": "HERMES",
+          "domain": "candles",
+          "contract": "hermes.candles.latest",
+          "contract_version": "v1",
+          "key": "hermes:candles:XAU_USD:H4:latest:v1",
+          "generated_at_utc": "2026-01-01T14:00:00.000Z",
+          "valid_until_utc": "2026-01-01T18:00:00.000Z",
+          "ttl_seconds": 14400,
+          "freshness_state": "FRESH",
+          "status": "OK",
+          "reason_codes": [
+            "DERIVED_FROM_LOWER_TIMEFRAME",
+            "OK_COMPLETE"
+          ],
+          "provenance": {
+            "publisher": "HERMES",
+            "source": "upstream_feed",
+            "source_timeframe": "H1",
+            "derivation": "DERIVED_FROM_LOWER_TIMEFRAME",
+            "generated_at_utc": "2026-01-01T14:00:00.000Z",
+            "source_policy_epoch": "H4_FROM_H1_NY1700_V1"
+          },
+          "data": {
+            "instrument": "XAU_USD",
+            "timeframe": "H4",
+            "timestamp_utc": "2026-01-01T10:00:00.000Z",
+            "open": 2397.0,
+            "high": 2401.25,
+            "low": 2396.0,
+            "close": 2400.5,
+            "volume": 1120,
+            "body_high": 2400.5,
+            "body_low": 2397.0,
+            "body_size": 3.5,
+            "range_size": 5.25,
+            "wick_high": 0.75,
+            "wick_low": 1.0,
+            "candle_direction": "UP",
+            "is_closed": true,
+            "source_timeframe": "H1",
+            "source_coverage": 1.0,
+            "source_count": 4,
+            "expected_source_count": 4,
+            "gap_state": "NONE",
+            "derivation_policy": "DERIVED_H4_FROM_H1",
+            "source_policy_epoch": "H4_FROM_H1_NY1700_V1",
+            "publisher": "HERMES",
+            "contract_version": "v1"
+          },
+          "history": {
+            "history_contract_version": "v1",
+            "backfill_run_id": "FORWARD:example",
+            "backfill_inserted_at_utc": "2026-01-01T14:00:00.000Z",
+            "source_table": "example_table",
+            "source_timestamp_utc": "2026-01-01T10:00:00.000Z"
+          }
+        },
+        "indicator_key": "hermes:indicators:XAU_USD:H4:history:v1:1767261600",
+        "indicator": {
+          "publisher": "HERMES",
+          "schema_version": "v1",
+          "contract_version": "v1",
+          "instrument": "XAU_USD",
+          "timeframe": "H4",
+          "generated_at_utc": "2026-01-01T14:00:05.000Z",
+          "value_open_time_utc": "2026-01-01T10:00:00.000Z",
+          "source_candle_contract": "v1",
+          "source_timeframes": [
+            "H4"
+          ],
+          "indicator_set_version": "v1",
+          "indicators": {
+            "ema_12": 2401.0,
+            "ema_26": 2400.75,
+            "rsi_14": 55.1234,
+            "atr_14": 6.5,
+            "ema_50": 2399.0,
+            "ema_9": 2401.25,
+            "ema_21": 2400.625,
+            "ema_200": 2380.5,
+            "bollinger_upper_20_2": 2409.5,
+            "bollinger_middle_20_2": 2400.5,
+            "bollinger_lower_20_2": 2391.5,
+            "adx_14": 22.5,
+            "adx_plus_di_14": 25.0,
+            "adx_minus_di_14": 15.0
+          },
+          "methods": {
+            "ema_method": "STANDARD_2_OVER_N_PLUS_1_SMA_SEED",
+            "rsi_method": "CUTLER_SMA_14",
+            "atr_method": "SMA_14",
+            "bands_method": "SMA_N_STD_2",
+            "adx_method": "WILDER_ADX_14"
+          },
+          "freshness_state": "FRESH",
+          "deterministic_only": true,
+          "history": {
+            "history_contract_version": "v1",
+            "publish_run_id": "FORWARD:example",
+            "published_at_utc": "2026-01-01T14:00:05.000Z",
+            "source_candle_history_key": "hermes:candles:XAU_USD:H4:history:v1:1767261600",
+            "source_timestamp_utc": "2026-01-01T10:00:00.000Z"
+          }
+        }
+      },
+      {
+        "candle_key": "hermes:candles:XAU_USD:H4:history:v1:1767276000",
+        "candle": {
+          "schema_version": "v1",
+          "service": "HERMES",
+          "domain": "candles",
+          "contract": "hermes.candles.latest",
+          "contract_version": "v1",
+          "key": "hermes:candles:XAU_USD:H4:latest:v1",
+          "generated_at_utc": "2026-01-01T18:00:00.000Z",
+          "valid_until_utc": "2026-01-01T22:00:00.000Z",
+          "ttl_seconds": 14400,
+          "freshness_state": "FORMING",
+          "status": "FORMING",
+          "reason_codes": [
+            "DERIVED_FROM_LOWER_TIMEFRAME",
+            "OK_COMPLETE"
+          ],
+          "provenance": {
+            "publisher": "HERMES",
+            "source": "upstream_feed",
+            "source_timeframe": "H1",
+            "derivation": "DERIVED_FROM_LOWER_TIMEFRAME",
+            "generated_at_utc": "2026-01-01T18:00:00.000Z",
+            "source_policy_epoch": "H4_FROM_H1_NY1700_V1"
+          },
+          "data": {
+            "instrument": "XAU_USD",
+            "timeframe": "H4",
+            "timestamp_utc": "2026-01-01T14:00:00.000Z",
+            "open": 2400.5,
+            "high": 2402.0,
+            "low": 2397.75,
+            "close": 2398.25,
+            "volume": 980,
+            "body_high": 2400.5,
+            "body_low": 2398.25,
+            "body_size": 2.25,
+            "range_size": 4.25,
+            "wick_high": 1.5,
+            "wick_low": 0.5,
+            "candle_direction": "DOWN",
+            "is_closed": false,
+            "source_timeframe": "H1",
+            "source_coverage": 1.0,
+            "source_count": 4,
+            "expected_source_count": 4,
+            "gap_state": "NONE",
+            "derivation_policy": "DERIVED_H4_FROM_H1",
+            "source_policy_epoch": "H4_FROM_H1_NY1700_V1",
+            "publisher": "HERMES",
+            "contract_version": "v1"
+          },
+          "history": {
+            "history_contract_version": "v1",
+            "backfill_run_id": "FORWARD:example",
+            "backfill_inserted_at_utc": "2026-01-01T18:00:00.000Z",
+            "source_table": "example_table",
+            "source_timestamp_utc": "2026-01-01T14:00:00.000Z"
+          }
+        },
+        "indicator_key": "hermes:indicators:XAU_USD:H4:history:v1:1767276000",
+        "indicator": {
+          "publisher": "HERMES",
+          "schema_version": "v1",
+          "contract_version": "v1",
+          "instrument": "XAU_USD",
+          "timeframe": "H4",
+          "generated_at_utc": "2026-01-01T18:00:05.000Z",
+          "value_open_time_utc": "2026-01-01T14:00:00.000Z",
+          "source_candle_contract": "v1",
+          "source_timeframes": [
+            "H4"
+          ],
+          "indicator_set_version": "v1",
+          "indicators": {
+            "ema_12": 2398.75,
+            "ema_26": 2398.5,
+            "rsi_14": 55.1234,
+            "atr_14": 6.5,
+            "ema_50": 2396.75,
+            "ema_9": 2399.0,
+            "ema_21": 2398.375,
+            "ema_200": 2378.25,
+            "bollinger_upper_20_2": 2407.25,
+            "bollinger_middle_20_2": 2398.25,
+            "bollinger_lower_20_2": 2389.25,
+            "adx_14": 22.5,
+            "adx_plus_di_14": 25.0,
+            "adx_minus_di_14": 15.0
+          },
+          "methods": {
+            "ema_method": "STANDARD_2_OVER_N_PLUS_1_SMA_SEED",
+            "rsi_method": "CUTLER_SMA_14",
+            "atr_method": "SMA_14",
+            "bands_method": "SMA_N_STD_2",
+            "adx_method": "WILDER_ADX_14"
+          },
+          "freshness_state": "FRESH",
+          "deterministic_only": true,
+          "history": {
+            "history_contract_version": "v1",
+            "publish_run_id": "FORWARD:example",
+            "published_at_utc": "2026-01-01T18:00:05.000Z",
+            "source_candle_history_key": "hermes:candles:XAU_USD:H4:history:v1:1767276000",
+            "source_timestamp_utc": "2026-01-01T14:00:00.000Z"
+          }
+        }
+      }
+    ]
+  }
+}
