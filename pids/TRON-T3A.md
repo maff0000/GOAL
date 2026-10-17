@@ -12,9 +12,9 @@
 
 ## Status
 
-Approved in principle by DR-36 (CA/PO adjudication 2026-10-15); this PID's approval is pending. Central Architecture approved the planning PR in principle on 17 October 2026, subject only to the protective-level correction recorded in Scope item 5.
+PID SCOPE APPROVED (Central Architecture/PO, 17 October 2026; see Approval). Earlier: approved in principle by DR-36 (CA/PO adjudication 2026-10-15), and the planning PR was approved in principle on 17 October 2026 subject only to the protective-level correction recorded in Scope item 5, which is merged.
 
-PID DRAFT for PO review. Approval PENDING. Backlog state `ARCHITECTURE_REQUIRED`. Promotion to `DELIVERY_READY` is a separate act by the programme controller on written PO approval of this PID and of the Lane D scope validation. Nothing in this PID authorises engineering, deployment, broker order, contract freeze or live-capital action.
+Backlog state remains `ARCHITECTURE_REQUIRED`. Approval of this PID's scope is not delivery readiness: `TRON-T1` is not accepted-terminal, and promotion to `DELIVERY_READY` is a separate act by the programme controller once `TRON-T1` and the normal control-plane readiness conditions are satisfied. Nothing in this PID authorises engineering, deployment, broker order, contract freeze or live-capital action.
 
 ## Purpose
 
@@ -79,4 +79,9 @@ Design record and test approach in the delivery PR in `maff0000/tron`, with an i
 
 ## Approval
 
-PENDING. Approval is recorded by Central Architecture/PO only. The CA direction of 16 October 2026 authorises this governed backlog and PID planning proposal and nothing further. No engineering dispatch is authorised.
+APPROVED (PID scope only). Recorded 2026-10-17 by ROGUE on the written authority of Central Architecture/PO.
+
+1. Central Architecture/PO adjudication of GOAL PRs #16 to #19, 17 October 2026: PID approved in principle subject to one bounded correction (TRON-owned protective-level derivation or validation, fail-closed validation, credential-free no-OPEN tests, one kill state, broker-side placement and read-back deferred to the separately authorised DEMO integration proof). The correction merged in GOAL PR #16.
+2. Central Architecture/PO post-audit closure directive, 17 October 2026: the merged protective-order corrections satisfy CA's scope requirement and the PID scope is approved.
+
+Limits: this approves the PID scope only. `TRON-T3A` must remain in a pre-delivery state until `TRON-T1` and the required governance conditions are satisfied. No engineering dispatch is authorised, no numeric DEMO policy values are approved, and no broker operation, deployment, contract freeze or live-capital action is authorised. Actual DEMO order activity and final parameters remain separately Matt-gated.
