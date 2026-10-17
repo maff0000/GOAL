@@ -330,3 +330,13 @@ APPROVED. Recorded 2026-10-16 by ROGUE on the written authority of Central Archi
 2. Central Architecture formal approval, 16 October 2026, Decision: OPTION 1. The previous adjudication is confirmed as the formal approval of record for the seven GOLD PIDs, including this one. No further approval of this PID scope is required unless a substantive change is proposed.
 
 Scope of this approval: the read-only audit scope in this PID. It authorises no deployment, production mutation, broker order, contract freeze or live-capital action.
+
+## Amendment (17 October 2026, Central Architecture decision)
+
+Dated 17 October 2026. This section records a Central Architecture decision of 17 October 2026. No lane state changes. It changes nothing else in this PID.
+
+1. **Rehearsal reassigned.** The actual FALCON-outage integration rehearsal (a full execution path completed with FALCON ingestion stopped, on an isolated DEV/test FALCON) is assigned to `GOLD-MVP-001` Acceptance AC-12. It is not a deliverable of this lane, and this section does not claim that the rehearsal has been performed.
+2. **Lane responsibility retained.** This lane retains responsibility for the documented requirements and the test design of EP-9 (Acceptance criterion 6).
+3. **Verification status.** Running ingestion remains UNVERIFIED wherever it was not observed.
+4. **Timing budget.** The timing budget for the rehearsal remains an open PO decision. Baseline elapsed time plus 10 percent is not adopted by default; it stays a proposed value for PO confirmation, as in `GOLD-MVP-001` AC-12.
+5. **Advancement.** The lane may advance to `MERGED` only after its remaining acceptance criteria are verified and PO acceptance is recorded.
