@@ -118,7 +118,7 @@ strategy, risk, sizing or execution logic.
 1. No component implementation (HERMES, HELIOS, TRON, MT5 gateway, FALCON, CER, HSA, DARWIN, NEO changes belong to their own PIDs).
 2. No additional HERMES feeds, no broad research-platform expansion, and no new third-party engine or SaaS dependency (binding constraint, CA guidance 2026-10-15, item 4; external evaluations are information only).
 3. No live capital execution, no LIVE state, no LIVE credentials anywhere in the acceptance stack.
-4. No ARES event risk (enters later through TRON, `TRON-T3`), no DIKE research, no LEAN, no SKEPTIC.
+4. No ARES event risk (enters later through TRON, `TRON-T3`, which extends `TRON-T3A`), no DIKE research, no LEAN, no SKEPTIC.
 5. No second strategy, no strategy portfolio, no parameter search; qualification of the one strategy only. No strategy is selected by this PID: selection is a PO decision after audits A and B are reconciled (D-5).
 6. No NEO discretionary action; NEO review is read-only and after the fact.
 7. No simulation milestone that carries state `PAPER`.
@@ -134,10 +134,10 @@ Hard engineering prerequisites of the acceptance run (canonical ids; the backlog
 | `GOLD-AUD-A` to `GOLD-AUD-F` | read-only audits whose accepted verdicts convert UNVERIFIED rows to proven and feed the compatibility matrix |
 | `GOAL-CONTRACT-001`, `GOAL-TRIGGER-001` | frozen strategy and trigger contracts (the latter's backlog item is on `main`; its PID candidate is on `wo/GOAL-CONTRACT-TRIGGER`) |
 | `HELIOS-T3` (and transitively `HELIOS-T2`, `HELIOS-T1`, `GOAL-CORE-001`, `HERMES-FACT-001`) | signed durable trigger; the HELIOS-side external HERMES adapter (outside the pure engine; its PID owner and repository are open, D-8; whether it is carried by `HELIOS-T2` or by a new adapter item is part of that decision) |
-| `TRON-T2`, `TRON-T3`, `TRON-T4` (and transitively `TRON-T1`, `TRON-D1-RATIFY`, `MT5-GW-001` to `-004`) | Vantage DEMO adapter, hard risk and kill, trigger inbox |
-| `TRON-T3A` (`GAP-TRON-FIXED-SIZE-DEMO-RISK`) | approved as proposed by CA/PO adjudication 2026-10-15 subject to `GOLD-AUD-D` scope validation; reuses or extends the `TRON-T3` hard-risk / kill-switch design; one kill switch, no competing one |
+| `TRON-T2`, `TRON-T3A`, `TRON-T4` (and transitively `TRON-T1`, `TRON-D1-RATIFY`, `MT5-GW-001` to `-004`) | Vantage DEMO adapter, hard risk and kill, trigger inbox |
+| `TRON-T3A` (`GAP-TRON-FIXED-SIZE-DEMO-RISK`) | approved as proposed by CA/PO adjudication 2026-10-15 subject to `GOLD-AUD-D` scope validation; registered in the backlog by the governed planning change (state `ARCHITECTURE_REQUIRED`, `pids/TRON-T3A.md`); `TRON-T3` depends on it and extends it; this PID depends on `TRON-T3A` directly, not on `TRON-T3`; one kill state, no competing one |
 | `FALCON-T1` plus a minimum FALCON event-publication increment for `strategy_trigger` and `tron.*` | evidence; the increment has no item yet (D-4) |
-| `GAP-TRON-FIXED-SIZE-DEMO-RISK`: a minimum fixed-size DEMO risk and sizing policy owned by TRON, credential-free | `TRON-T3A` is approved as proposed (D-3, DR-36) subject to Lane D scope validation, and its backlog entry (PORTFOLIO section 11.4) is a later serial governed change, not applied here; `GOLD-MVP-001` acceptance requires it (AC-8, AC-16) |
+| `GAP-TRON-FIXED-SIZE-DEMO-RISK`: a minimum fixed-size DEMO risk and sizing policy owned by TRON, credential-free | `TRON-T3A` is approved as proposed (D-3, DR-36) subject to Lane D scope validation, and its backlog entry is registered by the governed planning change (state `ARCHITECTURE_REQUIRED`; no engineering dispatch); `GOLD-MVP-001` acceptance requires it (AC-8, AC-16) |
 | PO strategy selection record | taken after audits A and B are reconciled (D-5); no acceptance planning before it |
 
 Interfaces (each owned by exactly one contract owner; this PID verifies them, it does not define them):
@@ -231,7 +231,7 @@ D-2 (RESOLVED by CA/PO adjudication 2026-10-15: risk `capital`; Matt-gated for t
 rule), or risk `high` with Matt gate only at the PAPER transition. Recommendation: `capital` and Matt gate true,
 because the run places real orders on a broker account (DEMO) and ends in a protected state. Owner PO, informs Matt.
 
-D-3 (RESOLVED with a condition by CA/PO adjudication 2026-10-15, DR-36: `TRON-T3A` approved as a proposed P0 / high-risk, credential-free minimum DEMO sizing and risk item, subject to Lane D scope validation; a single kill switch exists, `TRON-T3A` reuses or extends the `TRON-T3` design and creates no second). Original text: **`GAP-TRON-FIXED-SIZE-DEMO-RISK`: approval of the item that closes it.** TRON cannot order without a
+D-3 (RESOLVED with a condition by CA/PO adjudication 2026-10-15, DR-36: `TRON-T3A` approved as a proposed P0 / high-risk, credential-free minimum DEMO sizing and risk item, subject to Lane D scope validation; a single kill switch exists, `TRON-T3A` owns the single kill state, `TRON-T3` extends it per the CA arrangement of 16 October 2026, and no second is created). Original text: **`GAP-TRON-FIXED-SIZE-DEMO-RISK`: approval of the item that closes it.** TRON cannot order without a
 quantity or without gates that run before submit, and no item owns a minimum fixed-size DEMO risk policy (`TRON-T5` pulls in `CER-R1`; `TRON-T5A` is only a
 deferred candidate; D1's MVP checks contain no exposure, size, loss or drawdown gate). Required content: fixed DEMO base quantity from configuration;
 per-instrument one-position rule; maximum open positions; maximum daily loss and trade-count guard; kill switch (with a setter); hard gates before submit,

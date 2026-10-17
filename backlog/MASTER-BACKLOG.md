@@ -49,7 +49,8 @@ region — change `backlog/backlog.yaml` and run `./tools/goal-docs --write`.
 | TRON-D1-RATIFY | trading | TRON | Ratify TRON D1 design baseline: independent audit, merge to the default branch, and disposition of open decisions | maff0000/tron | GOAL-DCP-001 | P0 | medium | PID_DRAFT | Yes | **Yes** |
 | TRON-T1 | trading | TRON | Core execution journal/reconciliation + Trading Postgres | maff0000/tron | GOAL-DCP-001, TRON-D1-RATIFY | P0 | high | PID_DRAFT | Yes | No |
 | TRON-T2 | trading | TRON | Vantage DEMO broker-neutral adapter | maff0000/tron | TRON-T1, MT5-GW-004 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
-| TRON-T3 | trading | TRON | DIKE/hard risk/kill | maff0000/tron | TRON-T1 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| TRON-T3A | trading | TRON | Minimum fixed DEMO sizing, limits, one kill state | maff0000/tron | TRON-T1 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
+| TRON-T3 | trading | TRON | DIKE/hard risk/kill | maff0000/tron | TRON-T1, TRON-T3A | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
 | TRON-T4 | trading | TRON | TriggerInbox intake/idempotency | maff0000/tron | TRON-T1, GOAL-TRIGGER-001 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
 | TRON-T5 | trading | TRON | SizingPolicy + frozen EdgeProfile binding | maff0000/tron | TRON-T3, CER-R1 | P1 | medium | ARCHITECTURE_REQUIRED | Yes | No |
 | SKEPTIC-T1 | trading | TRON | asynchronous SHADOW reviewer | maff0000/tron | TRON-T1 | P2 | low | ARCHITECTURE_REQUIRED | Yes | No |
@@ -61,7 +62,7 @@ region — change `backlog/backlog.yaml` and run `./tools/goal-docs --write`.
 | GOLD-AUD-D | research | TRON/MT5 | GOLD MVP audit D: TRON design, risk rules, journal, trigger intake and the smallest MT5 DEMO execution path (read-only) | maff0000/GOAL | GOAL-DCP-001 | P0 | medium | ROGUE_DISPATCHED | Yes | No |
 | GOLD-AUD-E | research | FALCON | GOLD MVP audit E: FALCON registry and ingestion, minimum HELIOS and TRON event publication (read-only; complements FALCON-T1) | maff0000/falcon | GOAL-DCP-001 | P0 | low | ROGUE_DISPATCHED | Yes | No |
 | GOLD-AUD-F | research | CER/HSA/DARWIN/NEO | GOLD MVP audit F: strategy qualification, registration, execution and NEO review across CER, HSA, DARWIN and NEO (read-only) | maff0000/GOAL | GOAL-DCP-001 | P1 | low | ROGUE_DISPATCHED | Yes | No |
-| GOLD-MVP-001 | trading | GOAL | GOLD MVP integration and acceptance: one governed XAUUSD strategy end to end on Vantage DEMO with FALCON evidence (state PAPER only after DEMO proof) | maff0000/GOAL | GOLD-AUD-A, GOLD-AUD-B, GOLD-AUD-C, GOLD-AUD-D, GOLD-AUD-E, GOLD-AUD-F, GOAL-CONTRACT-001, GOAL-TRIGGER-001, HELIOS-T3, TRON-T2, TRON-T3, TRON-T4, FALCON-T1 | P0 | capital | BLOCKED | Yes | **Yes** |
+| GOLD-MVP-001 | trading | GOAL | GOLD MVP integration and acceptance: one governed XAUUSD strategy end to end on Vantage DEMO with FALCON evidence (state PAPER only after DEMO proof) | maff0000/GOAL | GOLD-AUD-A, GOLD-AUD-B, GOLD-AUD-C, GOLD-AUD-D, GOLD-AUD-E, GOLD-AUD-F, GOAL-CONTRACT-001, GOAL-TRIGGER-001, HELIOS-T3, TRON-T2, TRON-T3A, TRON-T4, FALCON-T1 | P0 | capital | BLOCKED | Yes | **Yes** |
 
 <!-- END GENERATED: backlog-table -->
 
