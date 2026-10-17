@@ -118,7 +118,7 @@ The audit reads the merged `mt5-gateway` main (including PR #9) as the current t
 - No contact with, or runtime inspection of, the legacy MT5 services. Legacy trading executors: source text only may be read; no running, no execution, no modification, no connection.
 - No ratification of D1 and no decision on R-1..R-10; no acceptance of any "Proposed" value.
 - No authoring of GOAL-TRIGGER-001, no HELIOS or FALCON repository change, and no competing trigger, outbox or inbox contract (CA guidance 2026-10-15, item 2): the trigger-assumption register records TRON's assumptions against `GOAL-TRIGGER-001`, it does not define an alternative.
-- No backlog edit for `GAP-TRON-FIXED-SIZE-DEMO-RISK`: `TRON-T3A` is APPROVED as proposed subject to this audit's scope validation (DR-36 resolved), listed in `PORTFOLIO.md` section 11.4; its backlog entry is a later serial governed change and is not applied.
+- No backlog edit for `GAP-TRON-FIXED-SIZE-DEMO-RISK`: `TRON-T3A` is APPROVED as proposed subject to this audit's scope validation (DR-36 resolved), listed in `PORTFOLIO.md` section 11.4; its backlog entry is registered by the governed planning change of 16 October 2026 (state `ARCHITECTURE_REQUIRED`), with no engineering dispatch.
 - No backlog edit, no `pid_path`, no `DELIVERY_READY`, no approval, no running of `goal-docs --write`.
 - No merge, no force push, no PR merge on any repository.
 - No claim that a simulated lane satisfies ADR-MT5-001 or the state `PAPER` (R-9 is Matt's).
@@ -233,7 +233,7 @@ Do not invent around a stop condition.
 | 5 | Retired by programme-controller ruling 5: audit area 4 proceeds with the assumption register until `GOAL-TRIGGER-001` exists and is refreshed when it does | none | none |
 | 6 | Which of the DEMO owner decisions (account entitlement, existing versus fresh instance, one read-only session) are answered before this audit closes | Matt | Reference DEMO verification section 5; needed only to classify, not to execute. |
 | 7 | The TRON-side decisions the path depends on: R-1, R-2, R-4, R-5, R-6, R-7, R-8 | Matt | Referenced by id from TRON-D1-RATIFY; not restated. |
-| 8 | RESOLVED with a condition by CA/PO adjudication 2026-10-15 (DR-36): `TRON-T3A` approved as proposed (P0, high risk, credential-free); condition: this audit validates its scope and the single-kill-switch rule. Backlog application is a later governed change. | PO | blocks `PAPER-E2E-001` and `GOLD-MVP-001` acceptance until closed |
+| 8 | RESOLVED with a condition by CA/PO adjudication 2026-10-15 (DR-36): `TRON-T3A` approved as proposed (P0, high risk, credential-free); condition: this audit validates its scope and the single-kill-switch rule. Superseding CA arrangement 2026-10-16: `TRON-T3A` depends on `TRON-T1`, `TRON-T3` extends it, `GOLD-MVP-001` depends on it directly, and its backlog entry is a governed planning change. | PO | blocks `PAPER-E2E-001` and `GOLD-MVP-001` acceptance until closed |
 
 ## Evidence
 
@@ -267,4 +267,4 @@ APPROVED. Recorded 2026-10-16 by ROGUE on the written authority of Central Archi
 
 Scope of this approval: the read-only audit scope in this PID. It authorises no deployment, production mutation, broker order, contract freeze or live-capital action.
 
-TRON-T3A remains subject to this audit's design and dependency validation before its own separate backlog amendment.
+TRON-T3A is registered as a planning item; this audit's design and dependency validation must be accepted by Central Architecture before any engineering dispatch.
