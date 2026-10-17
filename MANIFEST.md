@@ -60,6 +60,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `pids/GOLD-AUD-E.md`
 - `pids/GOLD-AUD-F.md`
 - `pids/GOLD-MVP-001.md`
+- `pids/HELIOS-STRATEGY-STANDARD-PID.md`
 - `pids/TRON-T3A.md`
 - `templates/DECISION-BRIEF.md`
 - `tests/fixtures/README.md`
