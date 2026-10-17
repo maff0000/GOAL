@@ -238,3 +238,64 @@ A proposed amendment to `pids/GOLD-AUD-C.md` has been submitted to Central Archi
 * CP-1 freeze is blocked while `C-12` of `GOAL-CONTRACT-001` is open (CP-1 stays `PROPOSED`).
 * Findings AC-1 to AC-18, AC-26 and AC-29 to AC-38 stay open with the owners above; the withheld findings stay in the private record.
 * Closing owner: Central Architecture / PO for the amendment decision, acceptance and the `MERGED` transition.
+
+## Lane E: GOLD-AUD-E (FALCON registry and ingestion evidence; minimum HELIOS and TRON publication work)
+
+Backlog item `GOLD-AUD-E`, state at contribution `PO_ACCEPTANCE`. Acceptance decision: none recorded in this file.
+
+### References
+
+| Repository | PR | Audited head | Merge commit |
+|---|---|---|---|
+| `maff0000/falcon` | #21 | pre-publication head (inferred from local history), published head `f5c9300cb9c48990eab794f225f9d115c4b1e78d` | `7734856596085200967b94a79ff4faa697633878` |
+
+Evidence: `docs/evidence/GOLD-AUD-E/` in `maff0000/falcon` (`README`, `EP-01` to `EP-10`, `MINIMUM-WORK-LIST`, `DISPOSITION`, `UNVERIFIED`, `AUDIT-LOG`, `VERDICT`, and three stdlib scripts `regenerate_ep3.py`, `verify_stale_lines.py`, `ep09_reference_model.py`), plus an entry count change in `DOCUMENTATION-MANIFEST.json`. Falcon CI on the PR: 2 of 2 success; main CI after the merge: success.
+
+### Independent verdicts
+
+| Subject | Head | Technical | Public-safety | Source |
+|---|---|---|---|---|
+| falcon #21 (delta re-audit of the amended head) | amended head, not named in the PR body | `GREEN` | `SAFE` | PR body |
+| post-audit one-line substitution (accepted by Central Architecture as equivalent to the requested deletion) | `f5c9300c` | `GREEN-WITH-NOTICE` | `SAFE` | controller record |
+
+Recorded notice, **unverifiable from the public record**: the PR body describes the post-audit edit as "deletion-only"; the controller's delta check found a one-line rewrite (one insertion, one deletion) that removed location pointers and added only a connective phrase, no new facts. The falcon pull request is merged and the pre-edit head is not preserved on GitHub, so a reader of the public record cannot check which description is accurate. At the published head the three scripts pass (`regenerate_ep3.py --check` 28 rows, `verify_stale_lines.py` 31 rows, `ep09_reference_model.py` 8 tests).
+
+### Provenance
+
+Read-only audit, 15 to 16 October 2026, falcon `8f218ec`, HELIOS `7f7193d`, TRON `5577039` (main) and `37d5f00` (design branch), GOAL `ceaf029`. No running service was inspected; the lane's own record states that the running-ingestion facts of the PID are agent assertions, not established facts.
+
+### Findings (headline; full text in the evidence files)
+
+| Ref | Summary | Status at this contribution | Closing owner |
+|---|---|---|---|
+| EP-4 s2 | HELIOS publication is synchronous and fatal: a sink error ends the evaluation loop (P-H1) | open | `HELIOS-T2` / HELIOS architect |
+| EP-4 s3 | HELIOS cannot supply the registered strategy families (8 of 13 required fields not published; no `evaluation_id`) | open | `FALCON-T1`, HELIOS |
+| EP-5 | TRON has no runtime or publisher code; three differing pictures of its evidence and intake; lifecycle families missing for claim disposition and reconcile | open | `TRON-T1`, `TRON-T4`, FALCON |
+| EP-8 | registered FALCON trigger payload is not aligned with the unpublished trigger authority; re-read needed when that is published | open | `GOAL-TRIGGER-001`; FALCON trigger-evidence item (proposed in lane E decision D-7, not in the backlog) |
+| EP-10 | stale discovery-model language: 31 rows in 22 files | open | FALCON amendment route |
+| U1 to U6 | running FALCON ingestion, Graylog configuration and volume, HERMES publication state: not established | open, **runtime-dependent** | operations owner read-only export (decision D-4) |
+| U11 | the isolated-FALCON outage rehearsal was not run | open, **runtime-dependent** | follow-on items and `GOLD-MVP-001` |
+| U7 to U10, U12, U13 | producer code, HELIOS deployment configuration, TRON runtime, legacy stack, real volumes, trigger content after approval | open | as listed in `UNVERIFIED.md` |
+
+### Original acceptance criteria (`pids/GOLD-AUD-E.md`, Acceptance 1 to 10)
+
+| # | Result | Cross-reference |
+|---|---|---|
+| 1 | NOT RE-VERIFIED HERE | EP-1 to EP-10 files exist; the per-EP path-and-SHA citation was not re-checked row by row |
+| 2 | MET | `regenerate_ep3.py --check` reproduces the 28-row matrix (delta auditor) |
+| 3 | PARTLY MET | `UNVERIFIED.md` has 13 rows with reasons; the per-claim command excerpts in EP-2 were not re-checked |
+| 4 | MET | `verify_stale_lines.py` passes 31 rows (at least the 9 required) |
+| 5 | MET | `MINIMUM-WORK-LIST.md` has owner, delta, fixture, acceptance test, sequencing and a "FALCON absent means" column per row |
+| 6 | MET as a statement; **rehearsal NOT performed** | `EP-09-outside-the-path.md` states the requirements and a test for each, with a reference model (8 tests pass); the outage rehearsal on an isolated FALCON (EP-9 R-5, U11) has not been run; the proposed timing bound in the PID is not approved and is not asserted here |
+| 7 | MET (CI); scan tool NOT RE-VERIFIED HERE | falcon CI 2 of 2 success on the PR; the GOAL scan tool was not run against the falcon branch for this entry |
+| 8 | MET | the delta auditor found only `docs/evidence/GOLD-AUD-E/` and `DOCUMENTATION-MANIFEST.json` changed; no lines in `registry/`, `schemas/`, `deploy/`, `tests/` |
+| 9 | NOT RE-VERIFIED HERE | `AUDIT-LOG.md` exists; each command was not re-checked against the allowed list |
+| 10 | MET | `DISPOSITION.md` present |
+
+### Unsatisfied or open obligations of the lane
+
+* **Operational outage rehearsal** (EP-9 R-5, U11): not run. It needs an isolated development or test FALCON and a real component under test.
+* **Running-ingestion facts** (U1 to U6): not established; they need the operations owner's read-only export (D-4).
+* Criteria 1, 3, 7 (scan tool) and 9 were not re-verified for this entry; the independent verdict file for CA item 10 is held outside the repository.
+* **Proposed amendment (text only; the PID is not edited here):** transfer the integration execution proofs (the isolated-FALCON outage rehearsal, and the running-ingestion verification through the D-4 export) from `GOLD-AUD-E` to `GOLD-MVP-001` and the follow-on items P-H1 and P-T1, stating that the research audit did not perform them and that no result of them is claimed. The research deliverables (EP-1 to EP-10, the work list, the disposition table) stay as delivered.
+* Closing owner: Central Architecture / PO for acceptance or amendment; the operations owner for the export; HELIOS and TRON owners for the follow-on proofs.
