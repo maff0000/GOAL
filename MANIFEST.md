@@ -25,8 +25,10 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `audits/2026-10-14/reconciliation/CORRECTION-2026-10-14-REPOSITORY-NAMES.md`
 - `audits/2026-10-14/reconciliation/RECONCILIATION-SUMMARY.md`
 - `audits/2026-10-15/gold-mvp/AUDIT-STATE-RECONCILIATION.md`
+- `audits/2026-10-15/gold-mvp/COMPATIBILITY-MATRIX.md`
 - `audits/2026-10-15/gold-mvp/DECISION-REGISTER.md`
 - `audits/2026-10-15/gold-mvp/DISPATCH-RECORD.md`
+- `audits/2026-10-15/gold-mvp/EVIDENCE-INDEX.md`
 - `audits/2026-10-15/gold-mvp/PORTFOLIO.md`
 - `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-C/AUDIT-VERDICT.md`
 - `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-C/DISPOSITION.md`
