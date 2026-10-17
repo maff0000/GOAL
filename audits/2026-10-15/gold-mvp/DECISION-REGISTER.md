@@ -46,7 +46,7 @@ Source key: `A D1` = decision D1 of `GOLD-AUD-A`; `B 1` = decision 1 of `GOLD-AU
 | DR-30 | Strategy-chain terms: representation authority, `EdgeProfileVersion`, strategy-health authority, meaning of `LEAN-P1` / `DARWIN-R2` | per RECON-G and RECON-H1 | rule only if the MVP needs them (audit F reports); defer otherwise | PO | CER-R1, TRON-T5, hop 2 / 9 conclusions | F D3, D4, D6, D7 |
 | DR-32 | Visibility of `maff0000/mt5-gateway` (public per MT5-READINESS, an earlier record says private). CA/PO adjudication 2026-10-15: the GitHub PRIVATE visibility change is now eligible for Matt's authorisation (Gate A is closed green with notices at `6263d61f4cb0d4d5b16337e67c30f409bc9c5051`) | Matt authorises the PRIVATE change or leaves it public | Matt's decision; evidence treated as public-level until changed | Matt | none (flagged) | PD-11 |
 | DR-37 | Who adjudicates the REUSE / REFACTOR / REPLACE / RETIRE verdicts in the audits' disposition tables (CA/PO legacy application doctrine 2026-10-15). Verdicts are recommendations only; any physical retirement, service shutdown or production mutation needs a separate authorised work order | CA/PO per component; PO alone; the lane's PL | CA/PO, per component, after the audit's independent verdict | CA / PO | acceptance of every lane (the table must exist); any later retirement work order | legacy doctrine (appendix D of `PORTFOLIO.md`) |
-| DR-38 | Historical-document hygiene review (scope and method for CA/Matt to define); out of scope for the audits; no document is edited by this portfolio | review and remediate; accept | CA/Matt to decide, later | CA / Matt | none (later) | independent audit of the portfolio |
+| DR-38 | Historical-document hygiene review (bounded, confidential, no operational remediation; scope amended 2026-10-17, see the amendment below); out of scope for the audits; no document is edited by this portfolio | review and remediate; accept | CA/Matt to decide, later | CA / Matt | none (later) | independent audit of the portfolio |
 
 ## Resolved
 
@@ -86,3 +86,13 @@ Binding architectural guidance from Central Architecture, recorded as CA guidanc
 | DR-23 | First strategy and threshold | guidance 6 | not resolved: restated without any recommendation, moved to section 3, taken after audits A and B are reconciled |
 | DR-34, DR-35, DR-36 | new decisions created by the guidance | guidance 1, 5 | adapter repository, adapter PID author and form, approval of the TRON fixed-size DEMO risk item |
 
+## Amendment 2026-10-17: DR-38 scope (Central Architecture directive of 17 October 2026)
+
+Recorded by ROGUE on the written authority of Central Architecture. This amends the scope of DR-38 only. It remediates nothing and edits no accepted evidence.
+
+- **Nature.** A bounded, confidential review of historical documentation in public repositories. Method, reporting and any later remediation are decided separately by CA and Matt. No operational remediation is authorised by this amendment: no credential change, service change, shutdown, deployment, history rewrite or force-push.
+- **Repositories in scope for assessment.** GOAL, HERMES and FALCON, and any other public repository that holds relevant historical material (HELIOS, tron and mt5-gateway are to be assessed, and others as found). Inclusion in the assessment is not a finding about any repository.
+- **Superseded pull requests.** Closed, unmerged pull requests #6 and #7 (superseded by the clean backup-plan and portfolio replacements) and #13 and #15 (superseded by the clean lane F and lane C replacements) remain reachable through their cached pull references and history. Their historical contents may remain accessible. They are included in this review and in the GitHub Support enquiry.
+- **GitHub Support enquiry.** A minimally disclosing request has been drafted for Matt to submit. It has not been submitted. Nothing in this record claims that any cached reference or historical content has been purged, and none may be claimed unless GitHub confirms it in writing.
+- **Accepted evidence.** Accepted evidence history is not rewritten. The remaining class-level references to a withheld item in the lane D evidence are accepted as class-level audit evidence, subject to a renewed safety review that finds no identifying disclosure.
+- **Particulars.** No sensitive particular is recorded here. Confidential detail stays in the private record.
