@@ -299,3 +299,69 @@ Read-only audit, 15 to 16 October 2026, falcon `8f218ec`, HELIOS `7f7193d`, TRON
 * Criteria 1, 3, 7 (scan tool) and 9 were not re-verified for this entry; the independent verdict file for CA item 10 is held outside the repository.
 * **Proposed amendment (text only; the PID is not edited here):** transfer the integration execution proofs (the isolated-FALCON outage rehearsal, and the running-ingestion verification through the D-4 export) from `GOLD-AUD-E` to `GOLD-MVP-001` and the follow-on items P-H1 and P-T1, stating that the research audit did not perform them and that no result of them is claimed. The research deliverables (EP-1 to EP-10, the work list, the disposition table) stay as delivered.
 * Closing owner: Central Architecture / PO for acceptance or amendment; the operations owner for the export; HELIOS and TRON owners for the follow-on proofs.
+
+## Lane F: GOLD-AUD-F (qualification-to-review path)
+
+Backlog item `GOLD-AUD-F`, state at contribution `PO_ACCEPTANCE`. Acceptance decision: none recorded in this file. The observer safety blocker (below) is retained.
+
+### References
+
+| Repository | PR | Audited head | Merge commit |
+|---|---|---|---|
+| `maff0000/GOAL` (clean replacement, primary evidence) | #18 | `e2a2c525e72041d632abfc8069a005a1ed74a2a0`, then main-reconcile merge `186f3af1f4daa28391c03694923b9e38fc417f89` | `ddf6a7ad9349187dee54d6172ddfd584ab8690f3` |
+| `maff0000/GOAL` (superseded) | #13 | `4f424dcfb69ee08487fb652bee4f0f55000969ab`, closed unmerged | not merged |
+| component mirror notes (`maff0000/DARWIN`, `maff0000/CER`, `maff0000/HSA`) | none opened | n/a | **not published** (see obligations) |
+| component mirror note for a private repository | none opened | n/a | **withheld** pending owner decision D10 |
+
+Lane files: `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/` (`AUDIT-F`, `DISPOSITION`, `EXTERNAL-REGISTER`, `IDENTITY-SNAPSHOTS`, `AMENDMENT-PROPOSALS`, `APOLLO-ATHENA-EXTENSION`). Main CI after the merge: success. Cached references of the superseded PR #13 and its original content remain accessible on GitHub; they are tracked under DR-38. Private source detail stays in the private record.
+
+### Independent verdicts
+
+| Subject | Head | Technical | Public-safety | Source |
+|---|---|---|---|---|
+| first clean replacement (local, never published) | `6a82e39c` | `GREEN-WITH-NOTICE` | `SAFE-WITH-REDACTIONS` (private repository names and component kinds to reduce) | controller record, not public PR content |
+| GOAL #18 after redactions | `e2a2c525` | `GREEN-WITH-NOTICE` | `SAFE` | PR #18 body |
+| main reconcile merge (delta) | `186f3af1` | `GREEN` | `SAFE` | controller record, not in the PR body |
+
+Recorded notice: the redactions condensed more of the disposition rows than strictly required (criteria detail and retained-value lists). The verdict-bearing component rows are as in the published `DISPOSITION.md`; counts are not restated here.
+
+### Provenance
+
+Read-only audit, 15 to 16 October 2026, over the public component repositories at the revisions recorded in `AUDIT-F.md` section 2 and over private sources described at class level only. No broker contact, no outbound call to any evaluated service, no installation of evaluated code. Before and after identity snapshots for the public checkouts are in `IDENTITY-SNAPSHOTS.md`; those for private sources were removed from the public set by the sanitisation and replaced by a one-line unchanged statement.
+
+### Findings (`AUDIT-F.md` section 6)
+
+| Id | Severity | Summary | Status at this contribution | Closing owner |
+|---|---|---|---|---|
+| F-01 | BLOCKER | no translator from the HSA package to the HELIOS runtime package; HELIOS refuses both candidates as authored | open | `HSA-C1` (partial); emission of the runtime package: no home |
+| F-02, F-03 | MAJOR, MINOR | no shared fingerprint across HSA / HELIOS / DARWIN / CER; no HSA-to-DARWIN importer; CER version record has no package-hash field | open | `GOAL-CONTRACT-001`, `DARWIN-R2` (undefined), `CER-R1` |
+| F-04, F-05, F-15 | BLOCKER, MAJOR, MAJOR | APOLLO 006B cannot test either candidate; no `APOLLO_PROOF` producer; no engine yields backtest evidence for either candidate | open | `DARWIN-R3` (scope stale) or DARWIN-internal; no GOAL home |
+| F-06, F-07, F-09 | MAJOR | no writer of any evidence class into CER; promotion authority free text and evidence per state undefined; CER strategies, versions and runs unreadable | open | `CER-R1` and candidates; PO / CA rule |
+| F-08 | MAJOR | HELIOS performs no promotion check | open | no home (candidate row proposed) |
+| F-10 | BLOCKER for a "read-only" claim | **the NEO observer is not approved as a read-only GOLD MVP consumer**: it has no CER client and its review capability is not mechanically read-only | open; **blocker retained** | `NEO-R1` and a PO disposition ruling |
+| F-11, F-12, F-13 | MAJOR / UNVERIFIED | NEO test hermeticity and CI; NEO observer runtime state unknown; deployed DARWIN / CER / HELIOS builds versus main unknown | open | `NEO-R0` (deferred candidate); HELM-operated reads; `DARWIN-R1` |
+| F-14 | MINOR | no hypothesis intake | open (deferred beyond MVP) | `NEO-R2`, `HSA-C2` (deferred candidates) |
+| F-16, F-17, F-18 | BLOCKER (outside lane), MAJOR, MAJOR | trigger path to TRON not built; HELIOS has no live HERMES transport; the two candidates have never run through HELIOS | open | `TRON-D1-RATIFY`, `TRON-T1`, `GOAL-TRIGGER-001`; `HELIOS-T2`; follows F-01 |
+
+### Original acceptance criteria (`pids/GOLD-AUD-F.md`, Acceptance 1 to 9)
+
+| # | Result | Cross-reference |
+|---|---|---|
+| 1 | NOT RE-VERIFIED HERE | 10-hop path matrix, `AUDIT-F.md` section 3.1; citation re-runs were not repeated for this entry |
+| 2 | PARTLY MET | 10 hops and CA items 1 to 10 present; the count of memory-fabric review records in the external register depends on private identifiers that the clean replacement removed from the public set; that count is held in the private record |
+| 3 | MET | `goal-validate` and `secret-scan` clean at the merge; independent public-safety audits found no address or key-like string |
+| 4 | PARTLY MET | identity snapshots equal for the public checkouts; private-source snapshots are not in the public set |
+| 5 | MET (lane statement) | no external code installed, no outbound call to an evaluated service; not re-verified here |
+| 6 | MET | no backlog, `pid_path` or state change in the lane PR (the later reconciliation PR, not this lane, changes the state) |
+| 7 | NOT RE-VERIFIED HERE | each missing mark names an owner or "no home"; external register is information only; no strategy ranked; audits found no contradiction |
+| 8 | MET | `DISPOSITION.md` present with verdict-bearing component rows per the published file (counts not restated here); each row carries a cost cell; NEO parts are kept apart as roles |
+| 9 | MET in substance; record not in repository | verdicts above are in PR bodies, reports held outside the repository; PO acceptance is by Central Architecture directive, not recorded in GitHub |
+
+### Unsatisfied or open obligations of the lane
+
+* **Mandatory public component mirrors not published.** PID checklist items for `maff0000/DARWIN`, `maff0000/CER` and `maff0000/HSA` (documents only) remain unpublished. Local drafts exist but are stale: they point at the old unpublished primary branch and list non-public repositories among the audited set, so each needs revision against the sanitised primary record and an independent public-safety audit before any publication. They are to be raised as separate one-repository pull requests; that is a follow-on action, not done here.
+* **Private-repository mirror note withheld** pending owner decision D10 and the owner's ruling on the observer blocker.
+* **Proposed limited PID amendment (text only; the PID is not edited here):** the checklist item for the private-repository mirror is made conditional on D10 and that ruling; if no safe public mirror can be produced, the mirror is held in the private record and the primary record's class-level statement and the retained observer blocker are the only public statement. No other mirror is proposed for amendment: the three public mirrors can be produced safely once revised.
+* The observer blocker F-10 stays: the NEO observer is not approved as a read-only GOLD MVP consumer.
+* Amendment text proposals for `CER-R1`, `NEO-R1`, `HSA-C1` and `DARWIN-R2` are delivered as proposals (`AMENDMENT-PROPOSALS.md`), not applied.
+* Closing owner: Central Architecture / PO for acceptance; the `GOLD-AUD-F` forge lead for the three public mirrors; Central Architecture for the items that depend on the observer ruling.
