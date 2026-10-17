@@ -12,7 +12,7 @@
 
 ## Status
 
-Approved in principle by DR-36 (CA/PO adjudication 2026-10-15); this PID's approval is pending.
+Approved in principle by DR-36 (CA/PO adjudication 2026-10-15); this PID's approval is pending. Central Architecture approved the planning PR in principle on 17 October 2026, subject only to the protective-level correction recorded in Scope item 5.
 
 PID DRAFT for PO review. Approval PENDING. Backlog state `ARCHITECTURE_REQUIRED`. Promotion to `DELIVERY_READY` is a separate act by the programme controller on written PO approval of this PID and of the Lane D scope validation. Nothing in this PID authorises engineering, deployment, broker order, contract freeze or live-capital action.
 
@@ -28,10 +28,14 @@ In scope (design and credential-free engineering once approved):
 2. A one-position-per-instrument rule and a maximum number of open positions.
 3. A maximum daily loss limit and a maximum daily trade-count limit.
 4. ONE enforceable kill state with a setter. Every order path checks it, and it fails closed. There is no second kill switch anywhere in TRON.
-5. A protected-order policy: which order types and modifications are permitted, and which are rejected before submission.
+5. A protected-order policy: which order types and modifications are permitted, and which are rejected before submission. The policy explicitly requires all of the following:
+   1. TRON-owned deterministic derivation, or validation, of protective levels from a versioned risk and protection policy.
+   2. Validation of protective level direction, distance, instrument precision and the relevant symbol constraints. The check fails closed: if any requirement is unsatisfied, the order is refused.
+   3. The pre-submit protection gate uses the existing risk-admission architecture and the one kill state. It adds no second gate path and no second kill mechanism.
+   4. Policy values are not set here. No numeric policy value is decided by this PID.
 6. Hard gates evaluated before any submit, deterministic, fail-closed, and testable without a broker connection.
 
-Out of scope: broker connectivity, order submission, credential handling, strategy logic, event-risk inputs and edge-profile binding.
+Out of scope: broker connectivity, order submission, credential handling, strategy logic, event-risk inputs and edge-profile binding. Broker-side protection placement and read-back belong to the later, separately authorised DEMO integration proof, not to this item.
 
 ## Non-goals
 
@@ -48,7 +52,7 @@ Credential-free. No broker connection. No production mutation, deployment, contr
 ## Deliverables
 
 1. Design record for the six elements in Scope, including the single kill state and the protected-order policy.
-2. A list of the hard gates that run before submit, each with a credential-free proof.
+2. A list of the hard gates that run before submit, each with a credential-free proof, including credential-free tests showing that no OPEN is submitted when valid required protection cannot be established.
 3. Reconciliation with the `TRON-T3` design so that it extends rather than duplicates this baseline.
 4. Engineering and test plan for a later, separately authorised delivery.
 
@@ -59,6 +63,7 @@ Credential-free. No broker connection. No production mutation, deployment, contr
 3. No element requires a broker credential or a `CER-R1` dependency.
 4. Lane D has validated the scope, and `TRON-T3` is shown to extend this baseline without conflict.
 5. Parameter values and DEMO order activity remain recorded as Matt-gated.
+6. Credential-free tests prove that no OPEN is submitted if valid required protection cannot be established, and that the protection gate sits inside the existing risk-admission path with the one kill state preserved.
 
 ## Stop conditions
 
