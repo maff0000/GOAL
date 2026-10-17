@@ -44,6 +44,12 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/PROOF-CLASSES.md`
 - `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/README.md`
 - `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-D/TRIGGER-ASSUMPTIONS.md`
+- `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/AMENDMENT-PROPOSALS.md`
+- `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/APOLLO-ATHENA-EXTENSION.md`
+- `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/AUDIT-F.md`
+- `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/DISPOSITION.md`
+- `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/EXTERNAL-REGISTER.md`
+- `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/IDENTITY-SNAPSHOTS.md`
 - `backlog/MASTER-BACKLOG.md`
 - `backlog/SCHEMA.md`
 - `backlog/backlog.yaml`
@@ -140,6 +146,8 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `pids/GOLD-AUD-E.md`
 - `pids/GOLD-AUD-F.md`
 - `pids/GOLD-MVP-001.md`
+- `pids/HELIOS-STRATEGY-STANDARD-PID.md`
+- `pids/TRON-T3A.md`
 - `templates/DECISION-BRIEF.md`
 - `tests/cp_support/__init__.py`
 - `tests/cp_support/cp1_checker_a.py`
