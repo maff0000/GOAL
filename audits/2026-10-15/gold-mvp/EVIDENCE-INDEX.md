@@ -176,3 +176,65 @@ Strategy-model finding: the 4-stage H4/H1/M15/M5 sequence skeleton is expressibl
 * Criterion 1 (scan tool on the HELIOS branch) and the independent-verdict file for CA item 10 (the verdicts above are recorded in the PR body, the reports are held outside the repository).
 * `PO_ACCEPTANCE` is retained; no transition is requested.
 * Closing owners: production-dependent items, HELM and `GOLD-AUD-A`; the others as in the findings table.
+
+## Lane C: GOLD-AUD-C (shared contract reconciliation, CP-1 and reference-only CP-2)
+
+Backlog item `GOLD-AUD-C`, state at contribution `PO_ACCEPTANCE`. A bounded dated amendment to the lane's PID has been prepared and submitted to Central Architecture for approval; it is **not effective**, and **the original CP-2 criteria stand unchanged** until Central Architecture approves it. The lane is not marked `MERGED` before an approved amendment (if any) and the acceptance gates pass. Acceptance decision: none recorded in this file.
+
+### References
+
+| Repository | PR | Audited head | Merge commit |
+|---|---|---|---|
+| `maff0000/GOAL` (clean replacement) | #19 | `618520a3547964fcb3a39af43c8a4d6361cd88c5`, then main-reconcile merge `554802f8c010d0cb216666ef641156e79f72ac9e` | `0f0dc45c9765568a823c3e5fed5befcf9e4361f2` |
+| `maff0000/GOAL` (superseded) | #15 | `44d62793c3b0a63c12347913127691a89b850ce2`, closed unmerged | not merged |
+
+Lane files: `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-C/` (`RECONCILIATION`, `DISPOSITION`, `AUDIT-VERDICT`, `SOURCES.tsv`, `verify-sources.sh`, `negative-searches.sh`); packages: `contracts/packages/cp-1-hermes-helios-input/` and the one-file reference-only `contracts/packages/cp-2-trigger-outbox-inbox/PACKAGE.md`; tests `tests/test_cp1_conformance.py`, `tests/test_cp_packages_common.py`, `tests/cp_support/`. Main CI after the merge: success. Cached references of the superseded PR #15 and its original content remain accessible on GitHub; they are tracked under DR-38.
+
+### Independent verdicts
+
+| Subject | Head | Technical | Public-safety | Source |
+|---|---|---|---|---|
+| first clean replacement attempt (local, never published) | `46e0c812` | `RED` (a test listed unpublished-contract vocabulary; MANIFEST drift) | `SAFE-WITH-REDACTIONS` | controller record, not public PR content |
+| GOAL #19 | `618520a3` | `GREEN-WITH-NOTICE` | `SAFE` | PR #19 body |
+| main reconcile merge (delta) | `554802f8` | `GREEN` | `SAFE` | controller record, not in the PR body |
+
+Recorded notices: the reference-only guard in the tests is a structural tripwire, not a content guarantee (plain prose restatement, or text added to other documents, would not be caught; the guarantee depends on audit review); the withheld finding-id range shows how many findings were withheld; `SOURCES.tsv` records digests of three unpublished texts.
+
+### Provenance
+
+Read-only reconciliation, 15 to 17 October 2026. The unpublished trigger and contract texts were read from a local commit that is not on GitHub; their substance is not republished (the withdrawn draft is held in the private record). `verify-sources.sh` re-reads every cited source at its recorded revision: `verified=84 mismatched=0 skipped=3` on the delivery host (the three skipped are the unpublished texts); an independent run against stale local clones saw one mismatch that disappears with fresh clones.
+
+### Findings (`RECONCILIATION.md` section 4 and section 8)
+
+| Ids | Summary | Status at this contribution | Closing owner |
+|---|---|---|---|
+| AC-1 to AC-15 | HERMES surface versus HELIOS input: no manifest entry, version-string inconsistency, number and instant forms, no supplier for `regime` / `session`, extra indicators, indicator method, H4 and D1 grid and depth, future-dated refusal omitted from the published rules, ingest-clock rule, no external adapter or Redis reader | open | `HERMES-FACT-001`, `HELIOS-T2`, `GOAL-CONTRACT-001` / CP-1 |
+| AC-16 to AC-18, AC-26 | published-component facts about the trigger path (HELIOS has no trigger or outbox code; FALCON's registered payload and TRON D1 intake have different shapes; the normative sources are unpublished) | open | `GOAL-TRIGGER-001` |
+| AC-19 to AC-25, AC-27, AC-28 | withheld; ids reserved; held in the private record | open, private | CA / `GOAL-TRIGGER-001` |
+| AC-29 to AC-38 | strategy definition: no shared fingerprint or canonical form across HSA, HELIOS and DARWIN; no importer or emitter; three condition semantics; timeframe grammars differ; no reproducibility vectors | open | `GOAL-CONTRACT-001`, `HELIOS-STRATEGY-STANDARD-001` (documentation) |
+
+### Original acceptance criteria (`pids/GOLD-AUD-C.md`, A-1 to A-9), unchanged, against the delivered reference-only scope
+
+| # | Result | Cross-reference |
+|---|---|---|
+| A-1 | MET for CP-1; NOT MET for CP-2 (CP-2 delivered reference-only) | `tests/test_cp1_conformance.py` and `tests/test_cp_packages_common.py`: 136 passed; full suite 493 passed |
+| A-2 | MET for CP-1 with a CI limit | schema validator plus two hand-written checkers; with `jsonschema` or `cryptography` absent the checker-A tests skip (80 passed, 56 skipped), reported not hidden |
+| A-3 | MET for CP-1 (rejection matrix covered by the conformance tests); NOT MET for CP-2 | `PACKAGE.md` section 6; fixtures `<code>__<case>.json` |
+| A-4 | MET for the CP-1 scenarios (10 scenario fixtures); NOT MET for CP-2 scenarios | `fixtures/scenarios/` |
+| A-5 | MET | `verify-sources.sh`: 84 verified, 0 mismatched, 3 skipped (unpublished texts) with fresh clones |
+| A-6 | MET | forbidden-content test in the suite; sanitisation tests pass |
+| A-7 | NOT MET for CP-2 (no CP-2 rows by design); MET for CP-1 | 7 CP-1 rows exist; none `COMPATIBLE`; no package marked `FROZEN`; no CP-2 rows by design |
+| A-8 | PARTLY MET | `goal-validate` OK, `secret-scan` clean, no existing test fails; the `C-1` to `C-14` re-test is delivered (section 5); the `T-1` to `T-11` re-test is not delivered |
+| A-9 | MET in substance; record not in repository | verdicts above are recorded in PR bodies, reports held outside the repository; PO acceptance is by Central Architecture directive, not recorded in GitHub |
+
+### Proposed amendment (not effective)
+
+A proposed amendment to `pids/GOLD-AUD-C.md` has been submitted to Central Architecture for approval. It is not part of this repository change and is not effective; until Central Architecture approves it, the original CP-2 criteria above stand unchanged.
+
+### Unsatisfied or open obligations of the lane
+
+* The original CP-2 criteria (A-1, A-3, A-4, A-7 and A-8, their CP-2 parts) are not met by the reference-only delivery and stand unchanged unless and until Central Architecture approves a proposed amendment.
+* Normative CP-2 conformance tests, scenarios and matrix rows, and the `T-1` to `T-11` re-test, depend on the unpublished trigger authority (`GOAL-TRIGGER-001`) and are not delivered.
+* CP-1 freeze is blocked while `C-12` of `GOAL-CONTRACT-001` is open (CP-1 stays `PROPOSED`).
+* Findings AC-1 to AC-18, AC-26 and AC-29 to AC-38 stay open with the owners above; the withheld findings stay in the private record.
+* Closing owner: Central Architecture / PO for the amendment decision, acceptance and the `MERGED` transition.
