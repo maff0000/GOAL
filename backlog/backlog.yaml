@@ -989,3 +989,22 @@ items:
       - architecture/DELIVERY-CONTROL-PLANE.md
       - decisions/ADR-MT5-001-REUSE-CONTAINER-REPLACE-BRIDGE.md
       - audits/2026-10-15/gold-mvp/PORTFOLIO.md
+  - id: HELIOS-STRATEGY-STANDARD-001
+    title: HELIOS Strategy Development Standard and Common Strategy Language (documentation and interoperability planning)
+    lane: shared
+    component: HELIOS
+    target_repository: maff0000/HELIOS
+    priority: P1
+    risk: low
+    state: BLOCKED
+    depends_on:
+      - GOAL-DCP-001
+      - GOLD-AUD-B
+      - GOLD-AUD-C
+      - GOLD-AUD-F
+    po_gate: true
+    matt_gate: false
+    pid_path: pids/HELIOS-STRATEGY-STANDARD-001.md
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - audits/2026-10-15/gold-mvp/PORTFOLIO.md
