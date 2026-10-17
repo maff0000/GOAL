@@ -107,3 +107,72 @@ Results are those of the independent verification of this contribution.
 * Criterion 12 (exact-head verdict record and PO acceptance record in GitHub): Central Architecture ruling.
 * The transition from `PO_ACCEPTANCE` to `MERGED` is Central Architecture's, after the two items above; this entry does not make it.
 * All `open` findings above remain open whatever the lane's state.
+
+## Lane B: GOLD-AUD-B (HERMES to HELIOS integration search and reconciliation)
+
+Backlog item `GOLD-AUD-B`, state at contribution `PO_ACCEPTANCE`; Central Architecture directed (17 October 2026) that it **retains `PO_ACCEPTANCE`** until this entry and its production-dependent comparison obligations are satisfied or formally transferred through a CA-approved scope amendment. Acceptance decision: none recorded in this file.
+
+### References
+
+| Repository | PR | Audited head | Merge commit |
+|---|---|---|---|
+| `maff0000/HELIOS` | #3 | published head `691558afba89f2258d2ea7c92f7a112dd96b05df` (earlier pre-publication heads exist only in local history) | `fd181215c35d760c279c27f1b7831f2d8121dd07` |
+
+Evidence: `docs/evidence/GOLD-AUD-B/` in `maff0000/HELIOS` (`README`, `INVENTORY`, `CONTRACT-MAPPING`, `TESTS-AND-REPRODUCTION`, `GAPS`, `CANDIDATE-REQUIREMENTS`, `ADAPTATION-PLAN`, `SAFETY`, `SEARCH-LOG`, `DISPOSITION`, `STRATEGY-MODEL`). HELIOS has no CI, so no automated scan covers the merge; this was recorded when Central Architecture accepted it.
+
+### Independent verdicts
+
+| Subject | Head | Technical | Public-safety | Source |
+|---|---|---|---|---|
+| HELIOS #3 ("this head") | published head `691558af` | `GREEN-WITH-NOTICE` (re-audit) | `SAFE` | PR body |
+| two post-audit wording edits | `691558af` | `GREEN-WITH-NOTICE` | `SAFE` | controller record; **unverifiable from the public record**: the audited pre-edit head is not preserved on GitHub, so the delta cannot be re-derived there |
+
+The PR body also records that the first audit of an earlier head was `RED` for a mis-copied disposition file, since resolved.
+
+### Provenance
+
+Read-only audit, 15 to 16 October 2026, against HELIOS `7f7193d`, hermes `ca19017`, HSA `279ec18`, falcon `8f218ec`, cerberus `ffe85e6`, GOAL `ceaf029`; private repositories were summarised only. A throwaway no-network container reproduced the probe accept and refuse results; HELIOS's own suite ran unchanged: 1000 passed and 5 skipped (1005 collected, equal to the baseline count). Disclosed deviation (PR body, rated a low notice by the independent auditor): three throwaway no-network containers reproduced the validator probe and loaded the HSA packages, one process list was read, and the five Docker runtime tests were skipped.
+
+### Findings (`GAPS.md`, `README.md`)
+
+| Id | Summary | Status at this contribution | Closing owner |
+|---|---|---|---|
+| headline 1 | no completed HERMES Redis to new-HELIOS integration found in the searched locations (absence elsewhere UNVERIFIED) | open | `HELIOS-T2` |
+| headline 4 | live HERMES output does not pass HELIOS validators untranslated (5 of 6 raw probes refused; accepted only after translation) | open | `HELIOS-T2`, `HERMES-FACT-001` |
+| G-01 to G-04 | schema identity, float versus exact decimal, `is_closed` versus `complete`, extra indicators and session case | open | `GOAL-CONTRACT-001` / CP-1 decision; HELIOS adapter |
+| G-05, G-06 | DEV and PROD facts indistinguishable in the frame; publisher status, gap and derivation accounting not carried | open | HERMES, HELIOS adapter |
+| G-07, G-08 | H4 `ema_200` depth arithmetic (UNVERIFIED); RSI and ATR method not Wilder | open | HERMES, `HERMES-FACT-001` |
+| G-09, G-10 | `XAUUSD` versus `XAU_USD` identity; timeframe spelling | open | `GOAL-CONTRACT-001` |
+| G-11, G-14 | ingest clock determinism; no live-source seam | open | `HELIOS-T2` |
+| G-12 | characterisation of the deployed stack's input | reported privately | per the private record |
+| G-13 | `regime` fact absent from HERMES | open | ARES / `HELIOS-T1` |
+| G-15, G-16, G-22 | no HSA-to-HELIOS emitter; atom needs mismatched; no published `goal.strategy/v1` text | open | `GOAL-CONTRACT-001`, HSA, HELIOS |
+| G-17 | HELIOS H4 fixtures use a different grid from HERMES | open | HELIOS |
+| G-18 | HERMES production facts unavailable (Lane A pending): completeness, freshness and key presence UNVERIFIED | open, **production-dependent** | `GOLD-AUD-A` / HELM |
+| G-19 | no `tools/` in HELIOS for the PID's scan | open | ROGUE |
+| G-20 | indicator history production activation recorded as pending | open, **production-dependent** | HERMES / `GOLD-AUD-A` |
+| G-21 | probe provenance and citation permission unconfirmed | open | PO / ROGUE |
+
+Strategy-model finding: the 4-stage H4/H1/M15/M5 sequence skeleton is expressible in HELIOS v1; the proposed `GOLD-TREND-PO3-001` content is only partly expressible with the six shipped atoms (design candidate only, not selected); neither HSA candidate package loads in HELIOS as authored (`STRATEGY-MODEL.md`, `TESTS-AND-REPRODUCTION.md` section 3).
+
+### Original acceptance criteria (`pids/GOLD-AUD-B.md`, Acceptance 1 to 10)
+
+| # | Result | Cross-reference |
+|---|---|---|
+| 1 | NOT MET | the PID names the GOAL scan tool on the HELIOS branch; HELIOS has no `tools/` (G-19); public-safety was checked by independent audit instead |
+| 2 | MET | the HELIOS PR changed only `docs/evidence/GOLD-AUD-B/`; this lane's GOAL commit in this stack changes only the two index files |
+| 3 | NOT MET as written | the PID asks for the same pass count as the 1005 baseline; the actual result is 1000 passed and 5 skipped (1005 collected) because the five Docker runtime tests were skipped (`TESTS-AND-REPRODUCTION.md` section 1) |
+| 4 | NOT RE-VERIFIED HERE | candidate-inventory marks in `INVENTORY.md`; not re-checked row by row for this entry |
+| 5 | NOT RE-VERIFIED HERE | sanitisation grep; relied on three independent safety audits (`SAFE`) |
+| 6 | NOT MET (production-dependent part) | each GOLD-capable package has a requirements row (`CANDIDATE-REQUIREMENTS.md`, 7 rows covering the two HSA candidates and the HELIOS reference packages, unranked), but the check against the audit A facts could not be made (G-18) |
+| 7 | MET | every gap in `GAPS.md` names an owner repository and a closing proof |
+| 8 | NOT MET (disclosed deviation) | the PID forbids `docker exec` and any service start; the PR body discloses three throwaway no-network containers and one process-list read (rated a low notice); `SAFETY.md` records no write or unit-state change; not repeated here |
+| 9 | MET | the checklist is `README.md` (CA items 1 to 10); item 10 is the verdict row above |
+| 10 | MET | `DISPOSITION.md` present (31 lines); the newer engine has rows distinct from legacy generations |
+
+### Unsatisfied or open obligations of the lane
+
+* **Production-dependent comparison obligations** (criterion 6, G-07, G-18, G-20): the field-level comparison of the adapter mapping against Lane A's production facts, and the HERMES production completeness and freshness statements. They cannot be satisfied before the HELM production read and independent acceptance of Lane A; they may instead be transferred by a CA-approved scope amendment, which is **not** proposed or assumed here.
+* Criterion 1 (scan tool on the HELIOS branch) and the independent-verdict file for CA item 10 (the verdicts above are recorded in the PR body, the reports are held outside the repository).
+* `PO_ACCEPTANCE` is retained; no transition is requested.
+* Closing owners: production-dependent items, HELM and `GOLD-AUD-A`; the others as in the findings table.
