@@ -24,6 +24,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `audits/2026-10-13/goal-dcp-001/REPAIR-EVIDENCE.md`
 - `audits/2026-10-14/reconciliation/CORRECTION-2026-10-14-REPOSITORY-NAMES.md`
 - `audits/2026-10-14/reconciliation/RECONCILIATION-SUMMARY.md`
+- `audits/2026-10-15/gold-mvp/AUDIT-STATE-RECONCILIATION.md`
 - `audits/2026-10-15/gold-mvp/DECISION-REGISTER.md`
 - `audits/2026-10-15/gold-mvp/DISPATCH-RECORD.md`
 - `audits/2026-10-15/gold-mvp/PORTFOLIO.md`

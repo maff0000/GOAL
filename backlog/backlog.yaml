@@ -880,7 +880,7 @@ items:
     target_repository: maff0000/HELIOS
     priority: P0
     risk: low
-    state: ROGUE_DISPATCHED
+    state: PO_ACCEPTANCE
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -897,7 +897,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: medium
-    state: ROGUE_DISPATCHED
+    state: PO_ACCEPTANCE
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -914,7 +914,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: medium
-    state: ROGUE_DISPATCHED
+    state: PO_ACCEPTANCE
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -932,7 +932,7 @@ items:
     target_repository: maff0000/falcon
     priority: P0
     risk: low
-    state: ROGUE_DISPATCHED
+    state: PO_ACCEPTANCE
     depends_on:
       - GOAL-DCP-001
     po_gate: true
@@ -949,7 +949,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P1
     risk: low
-    state: ROGUE_DISPATCHED
+    state: PO_ACCEPTANCE
     depends_on:
       - GOAL-DCP-001
     po_gate: true
