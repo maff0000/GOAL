@@ -268,3 +268,11 @@ APPROVED. Recorded 2026-10-16 by ROGUE on the written authority of Central Archi
 Scope of this approval: the read-only audit scope in this PID. It authorises no deployment, production mutation, broker order, contract freeze or live-capital action.
 
 TRON-T3A is registered as a planning item; this audit's design and dependency validation must be accepted by Central Architecture before any engineering dispatch.
+
+## Amendment (17 October 2026, Central Architecture decision)
+
+Dated 17 October 2026. This section records a Central Architecture decision of 17 October 2026. No lane state changes. It changes nothing else in this PID.
+
+1. **Criterion 7 is not waived.** Central Architecture does not waive Acceptance criterion 7 (`ORDERING.md` states the typed-gateway ordering obligations: typed gateway before accepted TRON integration, and typed gateway before PAPER proof; a test asserts both obligations appear). A bounded repository policy test enforcing both obligations is assigned to FORGE. Criterion 7 is not waived and must be satisfied before `MERGED`, per item 3.
+2. **Criterion 12 as amended.** Acceptance criterion 12 is amended to read: "Fresh independent FORGE Auditor verdict recorded against the exact evidence SHA, being GREEN or an independently verified GREEN-WITH-NOTICE, provided that each notice has a named owner, the confidential evidence provenance is recorded, and PO acceptance of the verdict and its notices is recorded." Historic audit verdicts are not relabelled GREEN; a recorded GREEN-WITH-NOTICE remains GREEN-WITH-NOTICE.
+3. **Advancement.** The lane may advance to `MERGED` only after criterion 7 and criterion 12 (as amended) are both satisfied and acceptance is recorded in GitHub, through the governed state transition.
