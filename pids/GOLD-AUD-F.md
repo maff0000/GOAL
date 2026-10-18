@@ -249,3 +249,11 @@ APPROVED. Recorded 2026-10-16 by ROGUE on the written authority of Central Archi
 2. Central Architecture formal approval, 16 October 2026, Decision: OPTION 1. The previous adjudication is confirmed as the formal approval of record for the seven GOLD PIDs, including this one. No further approval of this PID scope is required unless a substantive change is proposed.
 
 Scope of this approval: the read-only audit scope in this PID. It authorises no deployment, production mutation, broker order, contract freeze or live-capital action.
+
+## Amendment (17 October 2026, Central Architecture decision)
+
+Dated 17 October 2026. This section records a Central Architecture decision of 17 October 2026. No lane state changes. It changes nothing else in this PID.
+
+1. **Public mirror notes approved.** The public documentation-only mirror notes to CER, HSA and DARWIN are approved, each independently audited before publication.
+2. **Private mirror note deferred.** The private NEO mirror note is deferred. It is not published by this amendment. The NEO safety finding and the SEC-B investigation are unchanged, and nothing here implies that the NEO observer is approved for read-only consumption.
+3. **Advancement.** The lane may advance to `MERGED` only after the three public mirror notes and the remaining acceptance criteria pass.
