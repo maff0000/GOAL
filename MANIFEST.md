@@ -236,6 +236,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `tests/test_cp_packages_common.py`
 - `tests/test_docsync.py`
 - `tests/test_first_wave.py`
+- `tests/test_gold_aud_d_ordering_policy.py`
 - `tests/test_model.py`
 - `tests/test_readiness.py`
 - `tests/test_secret_scan.py`
