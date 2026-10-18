@@ -94,7 +94,7 @@ Results are those of the independent verification of this contribution.
 | 4 | MET | no uncited `partial` row |
 | 5 | MET | all 17 increments (INC-01 to INC-17) have a mapping and a done-test and appear in `PROOF-CLASSES.md` |
 | 6 | MET | each increment is in exactly one proof class; `GAP-TRON-FIXED-SIZE-DEMO-RISK` (INC-05) carries all six elements and is classed credential-free |
-| 7 | NOT MET | `ORDERING.md` states both obligations (typed gateway before TRON integration or PAPER proof) but no repository test asserts them; a test from a forge lead, or a Central Architecture waiver, is needed |
+| 7 | NOT MET (at contribution; still NOT MET, see update below) | `ORDERING.md` states both obligations (typed gateway before TRON integration or PAPER proof) but no repository test asserts them; a test from a forge lead, or a Central Architecture waiver (waiver not available per GOAL #30), is needed |
 | 8 | MET | baselines reproduce: the TRON D1 gate reports 148 passed; the gateway reports 105 passed and 3 xfailed with CI success; no typed gateway and no DEMO latch exist; the dependency graph at `e80fcda` is acyclic |
 | 9 | MET | the PR #14 diff was 12 files (11 under the lane directory plus the generated `MANIFEST.md`); `backlog/backlog.yaml` and other PIDs byte-identical to base |
 | 10 | MET | every finding carries a class |
@@ -103,8 +103,9 @@ Results are those of the independent verification of this contribution.
 
 ### Unsatisfied or open obligations of the lane
 
-* Criterion 7 (no repository test asserts the ordering obligations): owner `GOLD-AUD-D` forge lead to supply the test, or Central Architecture to waive. Nothing is implied by this entry.
+* Criterion 7 (no repository test asserts the ordering obligations): owner `GOLD-AUD-D` forge lead to supply the test. Nothing is implied by this entry.
 * Criterion 12 (exact-head verdict record and PO acceptance record in GitHub): Central Architecture ruling.
+* **Update, 18 October 2026 (amendment merged):** the lane's PID amendment, GOAL #30 (merge `2caad714247cbe098412832e1cbbf5286c13b82f`), is effective. Criterion 7 is **not waived** and remains **NOT MET** until the FORGE policy test merges; that work is in progress and no test or commit is cited here. Criterion 12 is reworded by the amendment (the amended wording governs). No PO acceptance is recorded in GitHub for this lane.
 * The transition from `PO_ACCEPTANCE` to `MERGED` is Central Architecture's, after the two items above; this entry does not make it.
 * All `open` findings above remain open whatever the lane's state.
 
@@ -179,7 +180,7 @@ Strategy-model finding: the 4-stage H4/H1/M15/M5 sequence skeleton is expressibl
 
 ## Lane C: GOLD-AUD-C (shared contract reconciliation, CP-1 and reference-only CP-2)
 
-Backlog item `GOLD-AUD-C`, state at contribution `PO_ACCEPTANCE`. A bounded dated amendment to the lane's PID has been prepared and submitted to Central Architecture for approval; it is **not effective**, and **the original CP-2 criteria stand unchanged** until Central Architecture approves it. The lane is not marked `MERGED` before an approved amendment (if any) and the acceptance gates pass. Acceptance decision: none recorded in this file.
+Backlog item `GOLD-AUD-C`, state at contribution `PO_ACCEPTANCE`. The lane's bounded dated PID amendment, GOAL #29 (merge `028870fcc7213043fb6eb144b1f5d6b93b4f5faa`), was approved by Central Architecture on 17 October 2026 and is **effective**: the original CP-2 criteria are replaced as the amendment states. The lane is not marked `MERGED` until the acceptance gates pass. Acceptance decision: none recorded in this file.
 
 ### References
 
@@ -213,7 +214,9 @@ Read-only reconciliation, 15 to 17 October 2026. The unpublished trigger and con
 | AC-19 to AC-25, AC-27, AC-28 | withheld; ids reserved; held in the private record | open, private | CA / `GOAL-TRIGGER-001` |
 | AC-29 to AC-38 | strategy definition: no shared fingerprint or canonical form across HSA, HELIOS and DARWIN; no importer or emitter; three condition semantics; timeframe grammars differ; no reproducibility vectors | open | `GOAL-CONTRACT-001`, `HELIOS-STRATEGY-STANDARD-001` (documentation) |
 
-### Original acceptance criteria (`pids/GOLD-AUD-C.md`, A-1 to A-9), unchanged, against the delivered reference-only scope
+### Acceptance criteria as recorded at contribution (`pids/GOLD-AUD-C.md`, A-1 to A-9), against the delivered reference-only scope
+
+This table is the record made at contribution. The merged amendment (GOAL #29) has since replaced the original CP-2 criteria; see the amendment subsection below for the current status.
 
 | # | Result | Cross-reference |
 |---|---|---|
@@ -225,19 +228,19 @@ Read-only reconciliation, 15 to 17 October 2026. The unpublished trigger and con
 | A-6 | MET | forbidden-content test in the suite; sanitisation tests pass |
 | A-7 | NOT MET for CP-2 (no CP-2 rows by design); MET for CP-1 | 7 CP-1 rows exist; none `COMPATIBLE`; no package marked `FROZEN`; no CP-2 rows by design |
 | A-8 | PARTLY MET | `goal-validate` OK, `secret-scan` clean, no existing test fails; the `C-1` to `C-14` re-test is delivered (section 5); the `T-1` to `T-11` re-test is not delivered |
-| A-9 | MET in substance; record not in repository | verdicts above are recorded in PR bodies, reports held outside the repository; PO acceptance is by Central Architecture directive, not recorded in GitHub |
+| A-9 | NOT MET (updated 18 October 2026; recorded at contribution as "MET in substance") | verdicts above are recorded in PR bodies, reports held outside the repository; PO acceptance is by Central Architecture directive, not recorded in GitHub. Current status: the independent verdict for GOAL #19 is GREEN-WITH-NOTICE, and no PO acceptance is recorded, so A-9 is not met |
 
-### Proposed amendment (not effective)
+### Amendment (merged, effective)
 
-A proposed amendment to `pids/GOLD-AUD-C.md` has been submitted to Central Architecture for approval. It is not part of this repository change and is not effective; until Central Architecture approves it, the original CP-2 criteria above stand unchanged.
+The amendment to `pids/GOLD-AUD-C.md`, GOAL #29 (merge `028870fcc7213043fb6eb144b1f5d6b93b4f5faa`), was approved by Central Architecture on 17 October 2026 and is effective. The original CP-2 criteria are replaced as the amendment states; the CP-2 parts of the earlier criteria no longer stand as written. Current status: the CP-1 parts above are as recorded; the CP-2 parts are governed by the amendment (reference-only delivery; normative CP-2 work deferred to `GOAL-TRIGGER-001`); A-9 is **not met** (no PO acceptance recorded; GREEN-WITH-NOTICE verdict for #19). The lane stays in `PO_ACCEPTANCE`.
 
 ### Unsatisfied or open obligations of the lane
 
-* The original CP-2 criteria (A-1, A-3, A-4, A-7 and A-8, their CP-2 parts) are not met by the reference-only delivery and stand unchanged unless and until Central Architecture approves a proposed amendment.
+* The original CP-2 criteria (A-1, A-3, A-4, A-7 and A-8, their CP-2 parts) were replaced by the merged amendment (GOAL #29); the reference-only delivery is assessed against the amended criteria. A-9 remains not met.
 * Normative CP-2 conformance tests, scenarios and matrix rows, and the `T-1` to `T-11` re-test, depend on the unpublished trigger authority (`GOAL-TRIGGER-001`) and are not delivered.
 * CP-1 freeze is blocked while `C-12` of `GOAL-CONTRACT-001` is open (CP-1 stays `PROPOSED`).
 * Findings AC-1 to AC-18, AC-26 and AC-29 to AC-38 stay open with the owners above; the withheld findings stay in the private record.
-* Closing owner: Central Architecture / PO for the amendment decision, acceptance and the `MERGED` transition.
+* Closing owner: Central Architecture / PO for acceptance and the `MERGED` transition.
 
 ## Lane E: GOLD-AUD-E (FALCON registry and ingestion evidence; minimum HELIOS and TRON publication work)
 
@@ -297,7 +300,8 @@ Read-only audit, 15 to 16 October 2026, falcon `8f218ec`, HELIOS `7f7193d`, TRON
 * **Operational outage rehearsal** (EP-9 R-5, U11): not run. It needs an isolated development or test FALCON and a real component under test.
 * **Running-ingestion facts** (U1 to U6): not established; they need the operations owner's read-only export (D-4).
 * Criteria 1, 3, 7 (scan tool) and 9 were not re-verified for this entry; the independent verdict file for CA item 10 is held outside the repository.
-* **Proposed amendment (text only; the PID is not edited here):** transfer the integration execution proofs (the isolated-FALCON outage rehearsal, and the running-ingestion verification through the D-4 export) from `GOLD-AUD-E` to `GOLD-MVP-001` and the follow-on items P-H1 and P-T1, stating that the research audit did not perform them and that no result of them is claimed. The research deliverables (EP-1 to EP-10, the work list, the disposition table) stay as delivered.
+* **Update, 18 October 2026 (amendment merged):** GOAL #31 (merge `b5752fd6adb6ef0fa6d64bf26af05c556bdc04f1`) is effective. Execution of the outage rehearsal is reassigned to `GOLD-MVP-001` AC-12; it has not been run. Running ingestion remains UNVERIFIED. The rehearsal timing budget is an open PO decision. No PO acceptance is recorded for this lane.
+* **Amendment text as proposed at contribution (superseded in part by the merge above):** transfer the integration execution proofs (the isolated-FALCON outage rehearsal, and the running-ingestion verification through the D-4 export) from `GOLD-AUD-E` to `GOLD-MVP-001` and the follow-on items P-H1 and P-T1, stating that the research audit did not perform them and that no result of them is claimed. The research deliverables (EP-1 to EP-10, the work list, the disposition table) stay as delivered.
 * Closing owner: Central Architecture / PO for acceptance or amendment; the operations owner for the export; HELIOS and TRON owners for the follow-on proofs.
 
 ## Lane F: GOLD-AUD-F (qualification-to-review path)
@@ -310,8 +314,10 @@ Backlog item `GOLD-AUD-F`, state at contribution `PO_ACCEPTANCE`. Acceptance dec
 |---|---|---|---|
 | `maff0000/GOAL` (clean replacement, primary evidence) | #18 | `e2a2c525e72041d632abfc8069a005a1ed74a2a0`, then main-reconcile merge `186f3af1f4daa28391c03694923b9e38fc417f89` | `ddf6a7ad9349187dee54d6172ddfd584ab8690f3` |
 | `maff0000/GOAL` (superseded) | #13 | `4f424dcfb69ee08487fb652bee4f0f55000969ab`, closed unmerged | not merged |
-| component mirror notes (`maff0000/DARWIN`, `maff0000/CER`, `maff0000/HSA`) | none opened | n/a | **not published** (see obligations) |
-| component mirror note for a private repository | none opened | n/a | **withheld** pending owner decision D10 |
+| `maff0000/CER` (public mirror note) | #2 | `3985333ff6342c01298c1e0ddee2cee5eaffb724` | `1bde04d493837a3a41daacfda0abc745bccd94d5` |
+| `maff0000/HSA` (public mirror note) | #2 | `6ef5b075380f6e8c63618737f4cdaad8e1993cc2` | `b196fb4c3783097676a77b09dcbcc8196986ebc4` |
+| `maff0000/DARWIN` (public mirror note) | #27 | `56a2170ce2a04e7c0e62e726ba304e4aa91c4b1c` | **not merged** (OPEN, held) |
+| component mirror note for a private repository | none opened | n/a | **deferred, not published** |
 
 Lane files: `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/` (`AUDIT-F`, `DISPOSITION`, `EXTERNAL-REGISTER`, `IDENTITY-SNAPSHOTS`, `AMENDMENT-PROPOSALS`, `APOLLO-ATHENA-EXTENSION`). Main CI after the merge: success. Cached references of the superseded PR #13 and its original content remain accessible on GitHub; they are tracked under DR-38. Private source detail stays in the private record.
 
@@ -355,11 +361,13 @@ Read-only audit, 15 to 16 October 2026, over the public component repositories a
 | 6 | MET | no backlog, `pid_path` or state change in the lane PR (the later reconciliation PR, not this lane, changes the state) |
 | 7 | NOT RE-VERIFIED HERE | each missing mark names an owner or "no home"; external register is information only; no strategy ranked; audits found no contradiction |
 | 8 | MET | `DISPOSITION.md` present with verdict-bearing component rows per the published file (counts not restated here); each row carries a cost cell; NEO parts are kept apart as roles |
-| 9 | MET in substance; record not in repository | verdicts above are in PR bodies, reports held outside the repository; PO acceptance is by Central Architecture directive, not recorded in GitHub |
+| 9 | NOT MET (updated 18 October 2026; recorded at contribution as "MET in substance") | verdicts above are in PR bodies, reports held outside the repository; PO acceptance is by Central Architecture directive, not recorded in GitHub. Current status: the independent verdicts are GREEN-WITH-NOTICE, and no PO acceptance is recorded in GitHub, so criterion 9 is not met |
 
 ### Unsatisfied or open obligations of the lane
 
-* **Mandatory public component mirrors not published.** PID checklist items for `maff0000/DARWIN`, `maff0000/CER` and `maff0000/HSA` (documents only) remain unpublished. Local drafts exist but are stale: they point at the old unpublished primary branch and list non-public repositories among the audited set, so each needs revision against the sanitised primary record and an independent public-safety audit before any publication. They are to be raised as separate one-repository pull requests; that is a follow-on action, not done here.
+* **Update, 18 October 2026 (public mirrors):** the CER mirror (#2) and HSA mirror (#2) are merged at the references above; neither repository has CI configured; the independent audit of each is GREEN-WITH-NOTICE and SAFE. The DARWIN mirror (#27, head `56a2170ce2a04e7c0e62e726ba304e4aa91c4b1c`) is OPEN and held: the PR's CI fails Ruff on three existing lines in `tests/unit/test_utc_semantics.py`, which this docs-only PR does not touch; the last DARWIN main CI run (2 October 2026) was green; ruff is unpinned in CI. The pull request is not merged. The private-repository mirror is deferred and not published. The observer safety finding (F-10) and SEC-B are unchanged, and this entry implies no observer approval. No PO acceptance is recorded for this lane; the DARWIN mirror remains outstanding.
+* **Update, 18 October 2026 (amendment merged):** the lane F PID amendment, GOAL #32 (merge `a33f954f6c00076ae044b2b5fe552aefb8699266`), is effective. The public mirrors are approved; the private NEO mirror is deferred. The NEO observer safety finding and SEC-B are unchanged, and no observer approval is implied.
+* **Mandatory public component mirrors, as recorded at contribution (superseded in part by the update above).** PID checklist items for `maff0000/DARWIN`, `maff0000/CER` and `maff0000/HSA` (documents only) were unpublished. Local drafts exist but are stale: they point at the old unpublished primary branch and list non-public repositories among the audited set, so each needs revision against the sanitised primary record and an independent public-safety audit before any publication. They are to be raised as separate one-repository pull requests; that is a follow-on action, not done here.
 * **Private-repository mirror note withheld** pending owner decision D10 and the owner's ruling on the observer blocker.
 * **Proposed limited PID amendment (text only; the PID is not edited here):** the checklist item for the private-repository mirror is made conditional on D10 and that ruling; if no safe public mirror can be produced, the mirror is held in the private record and the primary record's class-level statement and the retained observer blocker are the only public statement. No other mirror is proposed for amendment: the three public mirrors can be produced safely once revised.
 * The observer blocker F-10 stays: the NEO observer is not approved as a read-only GOLD MVP consumer.

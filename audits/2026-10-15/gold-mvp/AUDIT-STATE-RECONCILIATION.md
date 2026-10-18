@@ -62,3 +62,7 @@ The private owner-authorisation record for the bounded production read is dated 
 ## Readiness consequence
 
 `GOLD-MVP-001` depends on all six audits and on other items, and `HELIOS-STRATEGY-STANDARD-001` depends on lanes B, C and F. None of those dependencies is satisfied by `PO_ACCEPTANCE`, which is not an accepted terminal state, so both items remain BLOCKED and `./tools/goal-ready` is unchanged. This change does not alter either item.
+
+## Update note, 18 October 2026
+
+`EVIDENCE-INDEX.md` and `COMPATIBILITY-MATRIX.md` now exist on main; the Outstanding item 1 above, which says neither file exists yet, is as recorded on 17 October 2026 and is not rewritten. The lane states are unchanged: lane A `ROGUE_DISPATCHED`; lanes B to F `PO_ACCEPTANCE`. No acceptance is recorded in GitHub for any lane, no backlog item, PID or lane state is changed by this note, and no matrix row is `COMPATIBLE`. Since the record above, the lane C, D, E and F PID amendments (GOAL #29, #30, #31, #32) and the public lane F mirror pull requests have been recorded in `EVIDENCE-INDEX.md`; that file is the authority for their detail.
