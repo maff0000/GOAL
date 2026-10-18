@@ -87,7 +87,7 @@ BACKLOG_YAML = "backlog/backlog.yaml"
 #: Number of items the canonical backlog declares. Asserted on the success
 #: line because ``backlog OK: N items`` is the contract, not an incidental
 #: message: a command that validated nothing would still print a cheerful OK.
-CANONICAL_ITEM_COUNT = 52
+CANONICAL_ITEM_COUNT = 53
 
 #: The PID-authoring-wave answer under the ``GOAL-DCP-001`` projection, as the
 #: CLI must report it: eleven items, sorted by id, with their declared target
