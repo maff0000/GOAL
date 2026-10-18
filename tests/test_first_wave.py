@@ -151,8 +151,11 @@ def test_nothing_is_forge_dispatchable_before_or_after_the_projection(canonical)
     that reported them as ``ready`` would be handing ROGUE work FORGE cannot
     build, which is the defect this round repaired.
     """
-    assert ready_items(canonical) == ()
-    assert ready_items(canonical, frozenset({PROJECTION_ID})) == ()
+    expected = ("GOLD-AUDIT-CLOSEOUT-001",)  # DELIVERY_READY with a valid PID
+    assert tuple(i.id for i in ready_items(canonical)) == expected
+    assert tuple(
+        i.id for i in ready_items(canonical, frozenset({PROJECTION_ID}))
+    ) == expected
 
 
 def test_the_wave_is_blocked_only_by_the_projected_item(canonical):
