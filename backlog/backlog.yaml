@@ -1015,7 +1015,7 @@ items:
     target_repository: maff0000/GOAL
     priority: P0
     risk: medium
-    state: DELIVERY_READY
+    state: ROGUE_DISPATCHED
     depends_on:
       - GOAL-DCP-001
     po_gate: true

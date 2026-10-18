@@ -140,6 +140,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `operations/HELM-NEXT-ACTIONS.md`
 - `operations/RISK-REGISTER-LEGACY-EXPOSURE.md`
 - `operations/ROGUE-DISPATCH-GOAL-DCP-001.md`
+- `operations/ROGUE-DISPATCH-GOLD-AUDIT-CLOSEOUT-001.md`
 - `operations/ROGUE-READINESS.md`
 - `pids/GOAL-DCP-001.md`
 - `pids/GOLD-AUD-A.md`
