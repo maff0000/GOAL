@@ -152,6 +152,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `pids/GOLD-MVP-001.md`
 - `pids/HELIOS-STRATEGY-STANDARD-001.md`
 - `pids/HELIOS-T2-ADAPTER-PID-DRAFT.md`
+- `pids/MT5-GW-003-TYPED-GATEWAY-PROPOSAL.md`
 - `pids/PKG-AUTHORITY-DECISIONS-CONTRACT-TRIGGER.md`
 - `pids/TRON-T3A.md`
 - `templates/DECISION-BRIEF.md`
