@@ -76,8 +76,12 @@ def test_canonical_backlog_has_nothing_ready_without_a_projection():
     """
     backlog = load_backlog()
 
-    assert ready_items(backlog) == ()
-    assert readiness_payload(backlog) == {READY_KEY: []}
+    assert [i.id for i in ready_items(backlog)] == ["GOLD-AUDIT-CLOSEOUT-001"]
+    assert readiness_payload(backlog) == {
+        READY_KEY: [
+            {"id": "GOLD-AUDIT-CLOSEOUT-001", "target_repository": "maff0000/GOAL"}
+        ]
+    }
     assert backlog.by_id["GOAL-DCP-001"].state == "CLOSED"
     assert "CLOSED" in model.ACCEPTED_TERMINAL_STATES
 

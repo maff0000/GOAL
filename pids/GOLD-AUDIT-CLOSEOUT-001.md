@@ -138,3 +138,25 @@ No implementation of GOLD-MVP-001, TRON-T3A, HELIOS market-fact adapters, trigge
 ## 8. Completion authority
 
 **Central Architecture / PO approves this close-out PID's architecture, bounded scope and the seven unchanged-scope PR merges on 17 October 2026.** This does not make a not-yet-registered PID `DELIVERY_READY` or dispatch a ROGUE process automatically. Registration and dispatch follow existing GOAL governance. Within the approved scope, ROGUE should drive the work continuously through completion without repeated routine permission requests, respecting the explicit external and safety gates above.
+
+---
+
+# Structural-conformance addendum (GOAL validator headings)
+
+This addendum was appended by ROGUE after registration solely so that the headings the GOAL validator reads (`backlog/SCHEMA.md`) exist in this PID. It restates, and points to, numbered sections 1 to 8 above. Sections 1 to 8 above are normative and govern if anything in this addendum differs from them. This addendum adds no scope, no acceptance criterion, no authority and no relaxation.
+
+## Purpose
+
+The purpose is stated in section 1 above: to complete the remaining GOLD MVP six-lane audit acceptance and control-plane close-out through one governed delivery train, as a completion mandate that must not declare success while blocked work remains. Section 3 sets the finish line. Section 1 governs.
+
+## Scope
+
+The scope is stated in section 4 above (Phases 0 to 6, from registration through merging the seven approved pull requests, the Lane D policy test, criteria-by-criteria acceptance of lanes C, D, E and F, the Lane A and Lane B work, and final assurance). Section 6 states the non-goals and prohibitions and section 5 the escalation policy. Section 4 governs.
+
+## Acceptance
+
+The acceptance criteria are the checklist in section 7 above. Each item there must be met as written, and this PID may be marked CLOSED only as section 4 Phase 6 and section 7 require. Section 7 governs.
+
+## Approval
+
+Central Architecture / Product Owner approved this completion PID for governed registration and execution in the Central Architecture handoff to ROGUE dated 18 October 2026 (the PID header is dated 17 October 2026), in these words from that handoff: "Central Architecture approves the attached completion PID for governed registration and execution." This approval does not authorise production mutation, broker trading, credential modification or strategy promotion. The approval of the seven unchanged-scope pull request merges is the one recorded in section 2 above, which governs.

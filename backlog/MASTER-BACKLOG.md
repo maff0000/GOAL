@@ -64,7 +64,7 @@ region — change `backlog/backlog.yaml` and run `./tools/goal-docs --write`.
 | GOLD-AUD-F | research | CER/HSA/DARWIN/NEO | GOLD MVP audit F: strategy qualification, registration, execution and NEO review across CER, HSA, DARWIN and NEO (read-only) | maff0000/GOAL | GOAL-DCP-001 | P1 | low | PO_ACCEPTANCE | Yes | No |
 | GOLD-MVP-001 | trading | GOAL | GOLD MVP integration and acceptance: one governed XAUUSD strategy end to end on Vantage DEMO with FALCON evidence (state PAPER only after DEMO proof) | maff0000/GOAL | GOLD-AUD-A, GOLD-AUD-B, GOLD-AUD-C, GOLD-AUD-D, GOLD-AUD-E, GOLD-AUD-F, GOAL-CONTRACT-001, GOAL-TRIGGER-001, HELIOS-T3, TRON-T2, TRON-T3A, TRON-T4, FALCON-T1 | P0 | capital | BLOCKED | Yes | **Yes** |
 | HELIOS-STRATEGY-STANDARD-001 | shared | HELIOS | HELIOS Strategy Development Standard and Common Strategy Language (documentation and interoperability planning) | maff0000/HELIOS | GOAL-DCP-001, GOLD-AUD-B, GOLD-AUD-C, GOLD-AUD-F | P1 | low | BLOCKED | Yes | No |
-| GOLD-AUDIT-CLOSEOUT-001 | shared | GOAL | Governed GOLD Audit Completion Train | maff0000/GOAL | GOAL-DCP-001 | P0 | medium | PO_REVIEW | Yes | No |
+| GOLD-AUDIT-CLOSEOUT-001 | shared | GOAL | Governed GOLD Audit Completion Train | maff0000/GOAL | GOAL-DCP-001 | P0 | medium | DELIVERY_READY | Yes | No |
 
 <!-- END GENERATED: backlog-table -->
 
