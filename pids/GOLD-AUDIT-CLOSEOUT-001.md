@@ -160,3 +160,11 @@ The acceptance criteria are the checklist in section 7 above. Each item there mu
 ## Approval
 
 Central Architecture / Product Owner approved this completion PID for governed registration and execution in the Central Architecture handoff to ROGUE dated 18 October 2026 (the PID header is dated 17 October 2026), in these words from that handoff: "Central Architecture approves the attached completion PID for governed registration and execution." This approval does not authorise production mutation, broker trading, credential modification or strategy promotion. The approval of the seven unchanged-scope pull request merges is the one recorded in section 2 above, which governs.
+
+---
+
+# Governance amendment of 18 October 2026 (PROPOSED, not effective until GOAL PR #42 is accepted by the Architect and merged)
+
+Prepared for Architect review under the Central Architecture ruling of 18 October 2026. Sections 1 to 8 and the structural-conformance addendum above are unchanged. This amendment is effective only from the merge commit of GOAL PR #42.
+
+The delivery chain, invariants, Work Order regime (canonical location, executable-authority rule, twelve mandatory fields, cumulative independent audit and Architect acceptance, state-machine reading and approval provenance), stop conditions and the single canonical PROJECT DELIVERY CONTRACT preamble are recorded in `governance/DELIVERY-CHAIN-AND-WORK-ORDERS.md`, which governs and is not restated here. Architect means Central Architecture acting as Product Owner for this programme. From effectiveness, that document supersedes the following, for the execution of this PID, only to the extent of conflict: section 2 (merge approval of the seven unchanged-scope pull requests), to the extent it permits merging without an approved Git-tracked Work Order, independent audit and recorded Architect acceptance; section 5 (pre-authorisation paragraph for ROGUE and the run loop); the section 8 sentence that ROGUE should drive the work continuously; and `operations/ROGUE-DISPATCH-GOLD-AUDIT-CLOSEOUT-001.md` (the dispatch note). DARWIN #27 and any future merge fall under the new chain. Earlier merges stand as performed under the authority then in force; gaps in their records are reported separately and are not backdated.

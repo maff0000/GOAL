@@ -134,6 +134,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `decisions/ADR-DELIVERY-001-GITHUB-AND-MEMORY-FABRIC.md`
 - `decisions/ADR-MT5-001-REUSE-CONTAINER-REPLACE-BRIDGE.md`
 - `decisions/ADR-MT5-002-LEGACY-LIVE-FLAGGED-EXECUTOR.md`
+- `governance/DELIVERY-CHAIN-AND-WORK-ORDERS.md`
 - `governance/DELIVERY-STATE-MACHINE.md`
 - `operations/BACKUP-AND-RESTORE-PLAN.md`
 - `operations/HELM-BOOTSTRAP-INSTRUCTIONS.md`
@@ -158,6 +159,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `pids/TRON-T1.md`
 - `pids/TRON-T3A.md`
 - `templates/DECISION-BRIEF.md`
+- `templates/WORK-ORDER.md`
 - `tests/cp_support/__init__.py`
 - `tests/cp_support/cp1_checker_a.py`
 - `tests/cp_support/cp1_checker_b.py`
