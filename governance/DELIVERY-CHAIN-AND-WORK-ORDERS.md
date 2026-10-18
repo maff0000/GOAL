@@ -1,9 +1,11 @@
 # Delivery Chain and Work Orders
 
-**Status:** PROPOSED, NOT EFFECTIVE until Architect acceptance and merge.
-**Authority:** Central Architecture ruling of 18 October 2026 (governance reset). This document records that ruling; it introduces no new architecture. It is Architect-owned and is drafted here for Architect review only.
+**Status:** PROPOSED. It is NOT EFFECTIVE until GOAL PR #42 is accepted by the Architect and merged. It becomes EFFECTIVE only from the merge commit of that PR.
+**Effective from merge commit:** `<UNFILLED: to be completed by the Architect-authorised merge record; not yet effective>`
+**Authority:** Central Architecture ruling of 18 October 2026 (governance reset, including the ruling of that date that required changes to the first draft of this document). This document records that ruling; it introduces no other architecture. It is Architect-owned.
 **Definition:** Architect means Central Architecture acting as Product Owner for this programme. This is the one term used throughout this document.
-**Relationship to other governance:** this document complements `governance/DELIVERY-STATE-MACHINE.md` (the state vocabulary and transition rules) and `architecture/DELIVERY-CONTROL-PLANE.md`. It does not change either of them or any backlog state. How Architect acceptance and independent audit map onto existing state-machine states (PO_ACCEPTANCE, FORGE_AUDIT) is not changed by this document and is an open question for the Architect; FORGE_AUDIT performed by the implementer does not satisfy the independent-audit rule.
+**Governance bootstrap:** GOAL PR #42 is the narrowly bounded constitutive governance amendment that establishes the Work Order regime. Its drafting and review do not authorise any new engineering implementation. No retrospective Work Order is created or fabricated for it.
+**Relationship to other governance:** this document complements `governance/DELIVERY-STATE-MACHINE.md` (the state vocabulary and transition rules) and `architecture/DELIVERY-CONTROL-PLANE.md`. It does not change either of them, any state, or any backlog state. The mapping of the existing states onto this regime is in section 7.4.
 
 ## 1. The delivery chain
 
@@ -15,13 +17,13 @@ Architecture decision → PID/Amendment → Git-tracked Work Order → Delivery 
 
 - NO PID → NO WORK ORDER
 - NO WORK ORDER → NO IMPLEMENTATION
-- NO INDEPENDENT AUDIT + ARCHITECT ACCEPTANCE → NO MERGE (drafter's reading, for Architect confirmation: both an independent audit and Architect acceptance are required)
+- NO INDEPENDENT AUDIT + ARCHITECT ACCEPTANCE → NO MERGE (independent audit and Architect acceptance are cumulative, not alternatives; see section 7.3)
 - NO GIT RECORD → NOT DURABLE PROJECT AUTHORITY
 
 ## 3. Rules
 
 1. Every implementation and every correction requires an approved, Git-tracked Work Order before FORGE begins.
-2. Every Work Order identifies: the parent approved PID, the applicable amendments, the exact base SHA, the allowed paths, the scope, the exclusions, the required tests, the acceptance criteria and the independent auditor.
+2. Every Work Order carries the twelve mandatory fields listed in section 7.3.
 3. Architectural ambiguity stops the implementing lane and returns to the Architect.
 4. Passing CI is not Architect acceptance.
 5. ROGUE may prepare and coordinate pull requests but cannot merge implementation or correction pull requests before explicit Architect acceptance.
@@ -69,15 +71,46 @@ Every ROGUE and every FORGE dispatch prompt must begin with the following text, 
 
 ## 7. Work Orders
 
-The nine mandatory Work Order fields are those in rule 2 of section 3: parent approved PID, applicable amendments, exact base SHA, allowed paths, scope, exclusions, required tests, acceptance criteria, and independent auditor (named, and not the implementer of the work being audited). Rule 1 of section 3 requires the Work Order to be approved and Git-tracked.
+### 7.1 Canonical location
 
-**Proposed convention for Architect ratification (not in the Central Architecture text).** The following details are drafter proposals only:
+The canonical location of every Work Order is `maff0000/GOAL/workorders/<WO-ID>.md`, including Work Orders for component repositories. A Work Order identifies its target repository and the exact target base SHA in that repository. The blank template is `templates/WORK-ORDER.md`.
 
-- Location: a Work Order is the file `workorders/<WO-ID>.md` in the `maff0000/GOAL` repository, where `<WO-ID>` is the Work Order identifier (for example `GOAL-GOLD-AUD-D-CRIT7-TEST`). The blank template is `templates/WORK-ORDER.md`. No earlier Work Order file convention exists in this repository, so no existing file is displaced.
-- Approval is by pull request, like any other governed GOAL change.
-- Any empty field means the Work Order is not approved and cannot be dispatched.
-- The approver is the Architect.
-- Template additions beyond the nine mandatory fields: Implementer, Delivery Controller, Stop conditions, Approval record. These are proposed additions.
+### 7.2 When a Work Order is executable authority
+
+A Work Order becomes executable authority only after (a) independent review, (b) explicit Architect acceptance and (c) merge into the authoritative GOAL branch. An open pull request, a local file, a conversation approval or a candidate branch is insufficient.
+
+### 7.3 Mandatory fields, audit and acceptance
+
+Every Work Order contains all of the following fields:
+
+1. approved parent PID and applicable amendments;
+2. exact target repository and base SHA;
+3. permitted paths;
+4. scope;
+5. exclusions;
+6. required tests, including negative tests;
+7. acceptance criteria;
+8. assigned implementer;
+9. independent auditor;
+10. Delivery Controller;
+11. stop conditions;
+12. expected GitHub evidence, pull request and approval record.
+
+A field that is genuinely inapplicable is marked as such with a stated reason. An unresolved placeholder prohibits approval.
+
+Independent audit and Architect acceptance are cumulative, not alternatives. The independent auditor must not be the implementer. The final candidate head must be independently reviewed. A material modification after audit requires renewed independent assurance.
+
+### 7.4 State machine
+
+The existing state machine is unchanged; no state is added or replaced.
+
+- FORGE_AUDIT means independent audit. An audit performed by the implementer does not satisfy it.
+- PO_ACCEPTANCE means awaiting explicit Architect acceptance. It does not satisfy downstream dependencies.
+- MERGED requires an actually authorised merger and the prescribed post-merge verification.
+
+### 7.5 Approval provenance
+
+Historical actions used a shared GitHub identity, so a GitHub record alone does not prove independent Architect acceptance. An approval is recorded with its exact candidate SHA and an attributable decision source. A transcription of an approval by the Delivery Controller must be labelled as a controller transcription and must not be represented as an independently authenticated Architect action. Separate GitHub identities and branch protection are a separately governed improvement and are not made by this document.
 
 ## 8. Supersession of earlier broad language
 

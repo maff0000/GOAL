@@ -1,34 +1,37 @@
-PROPOSED TEMPLATE — not effective until Architect acceptance and merge of the governing amendment.
+PROPOSED TEMPLATE — not effective until GOAL PR #42 is accepted by the Architect and merged; effective only from that merge commit.
 
 # Work Order
 
-Location when instantiated (proposed convention for Architect ratification): `workorders/<WO-ID>.md`. Governed by `governance/DELIVERY-CHAIN-AND-WORK-ORDERS.md`. The nine mandatory fields are: parent approved PID, applicable amendments, exact base SHA, allowed paths, scope, exclusions, required tests, acceptance criteria, independent auditor. Fields marked (proposed addition) are not in the Central Architecture text. Under the proposed convention, an incomplete Work Order is not approved and cannot be dispatched.
+Canonical location when instantiated: `maff0000/GOAL/workorders/<WO-ID>.md`, including Work Orders for component repositories. Governed by `governance/DELIVERY-CHAIN-AND-WORK-ORDERS.md` (sections 7.1 to 7.5), which defines when a Work Order is executable authority and the mandatory dispatch preamble (section 6, not copied here). A field that is genuinely inapplicable is marked as such with a reason. An unresolved placeholder prohibits approval.
 
 **Work Order ID:**  
-**Parent approved PID:**  
-**Applicable amendments:**  
-**Exact base SHA:**  
-**Allowed paths:**  
-**Delivery Controller (proposed addition):** ROGUE  
-**Implementer (proposed addition):**  
-**Independent auditor (not the implementer):**  
 
-## Scope
+## 1. Approved parent PID and applicable amendments
 
-## Exclusions
+## 2. Target repository and exact base SHA
 
-## Required tests
+Target repository:  
+Exact base SHA:  
 
-## Acceptance criteria
+## 3. Permitted paths
 
-## Stop conditions (proposed addition)
+## 4. Scope
 
-Architectural ambiguity; risk-authority change; uncontrolled production access; credential exposure; incompatible contract assumption; out-of-scope implementation. On any of these, stop and return to the Architect.
+## 5. Exclusions
 
-## Approval record (proposed addition)
+## 6. Required tests (including negative tests)
 
-Approved by (Architect):  
-Date:  
-Git reference (commit/PR):  
+## 7. Acceptance criteria
 
-Dispatch prompts must begin with the PROJECT DELIVERY CONTRACT preamble (section 6 of the governance document).
+## 8. Assigned implementer
+
+## 9. Independent auditor (not the implementer)
+
+## 10. Delivery Controller
+
+## 11. Stop conditions
+
+## 12. Expected GitHub evidence, pull request and approval record
+
+Expected evidence and pull request:  
+Approval record (exact candidate SHA; attributable decision source; label any controller transcription as such):  
