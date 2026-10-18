@@ -33,12 +33,12 @@ Source: the `GOLD-AUD-D` evidence published in the GOAL lane D directory (the la
 
 | Item | Owns | Does not own | Relation to this package |
 |---|---|---|---|
-| `TRON-T1` (this package) | Execution journal port and implementations; execution identity; claim/disposition facts; reconciliation engine and integrity states; event outbox; broker-neutral adapter interface; simulated adapter with fault injection; adapter conformance suite; the single pre-submit admission sequence (the hook, not the gates' content) | Sizing, limits, the kill state record and its setter, protective-level policy | Foundation |
-| `TRON-T3A` (scope approved 17 Oct 2026) | Minimum fixed DEMO sizing; one-position and open-position limits; daily loss and trade-count guards; ONE kill state with its single setter and clearer; protected-order policy and the fail-closed protection gate | Journal, reconciliation, adapter, broker connectivity | Depends on this package; plugs its gates into the admission hook; reads counters derived from the journal |
+| `TRON-T1` (this package) | Execution journal port and implementations; execution identity; claim/disposition facts; reconciliation engine and integrity states; event outbox; broker-neutral adapter interface; simulated adapter with fault injection; adapter conformance suite; the single pre-submit admission sequence (the hook, not the gates' content) | Sizing, limits, the kill state record and its setter, derivation or validation of protective levels, protection policy, trigger intake, trigger semantics | Foundation |
+| `TRON-T3A` (scope approved 17 Oct 2026) | Minimum fixed DEMO sizing; one-position and open-position limits; daily loss and trade-count guards; ONE kill state with its single setter and clearer; protected-order policy; derivation and validation of protective levels; the fail-closed protection gate | Journal, reconciliation, adapter, broker connectivity | Depends on this package; plugs its gates into the admission hook; reads counters derived from the journal |
 | `TRON-T3` | Extension of the T3A baseline: exposure, drawdown, consecutive-loss, risk-lock automation, further promoted checks | A second kill state or second gate path | Extends T3A; must pass the same one-writer test |
 | `TRON-T5` | Sizing policy and frozen edge-profile binding | Anything on the minimum path | Later; unchanged |
 | `TRON-T2` | Vantage adapter implementing the interface, first against the gateway's fake backend, then DEMO reads | The interface itself | Consumes this package's interface and conformance suite |
-| `TRON-T4` | Inbox intake against signed fixtures, protection derivation owner for trigger-borne levels | Journal internals | Writes claims through this package's journal port; trigger contract authority stays with `GOAL-TRIGGER-001` (not restated here) |
+| `TRON-T4` | Trigger intake (inbox) against signed fixtures | Journal internals; trigger semantics (`GOAL-TRIGGER-001`); derivation or validation of protective levels (`TRON-T3A`) | Writes claims through this package's journal port; trigger semantics stay with `GOAL-TRIGGER-001` (not restated here) |
 
 ## Risk-admission architecture (the integration boundary)
 
@@ -50,7 +50,7 @@ There is one admission path for any request that would increase risk. In order, 
 4. **Journal commit.** The intent and the admission decision are durably committed. If the commit fails, no adapter call is made.
 5. **Submit.** Only then may an adapter submit be attempted. An uncertain outcome is recorded UNKNOWN, never resubmitted, and resolved by lookup of the client order id.
 
-Rules: any error, missing configuration or unknown state refuses the request (fail closed); every refusal records a reason code and a zero-submit count; every block reason maps either to the one kill state or to a gate result that is not a switch; the gateway's own refusal state and caps are a separate layer that TRON reads and never substitutes for its own kill state. This package supplies the sequence and the journal; `TRON-T3A` supplies the gates, the kill state record and the protection policy. Neither defines a numeric value.
+Rules: any error, missing configuration or unknown state refuses the request (fail closed); every refusal records a reason code and a zero-submit count; every block reason maps either to the one kill state or to a gate result that is not a switch; the gateway's own refusal state and caps are a separate layer that TRON reads and never substitutes for its own kill state. This package supplies the sequence and the journal; `TRON-T3A` supplies the gates, the kill state record, the protection policy and the derivation and validation of protective levels. Neither defines a numeric value.
 
 ## What is credential-free and what is separately authorised
 
@@ -76,7 +76,7 @@ In scope (design and credential-free engineering once approved and ready):
 
 ## Non-goals
 
-No implementation is authorised by this draft. No broker connection, credential, order or DEMO activity. No numeric limit, size or policy value. No kill-state record or setter (that is `TRON-T3A`). No Vantage adapter and no gateway work. No trigger contract text or intake semantics (owned by the trigger contract authority). No edge-profile, event-risk or sizing-policy binding. No Postgres or other store decision (owner decision of D1 ratification). No claim that a simulated rehearsal is PAPER.
+No implementation is authorised by this draft. No broker connection, credential, order or DEMO activity. No numeric limit, size or policy value. No kill-state record or setter (that is `TRON-T3A`). No Vantage adapter and no gateway work. No trigger contract text or trigger semantics (owned by `GOAL-TRIGGER-001`) and no trigger intake (owned by `TRON-T4`). No derivation or validation of protective levels (owned by `TRON-T3A`). No edge-profile, event-risk or sizing-policy binding. No Postgres or other store decision (owner decision of D1 ratification). No claim that a simulated rehearsal is PAPER.
 
 ## Dependency graph (proposed; backlog not amended)
 
@@ -109,7 +109,7 @@ No new edge is proposed by this package. Existing edges are unchanged. If the PO
 
 Owner decisions (Matt) already recorded in lane D and not decided here: ratification of the D1 baseline and its amendments; the durable store choice; whether a simulated end-to-end rehearsal may ever carry the state PAPER (default: it does not). Matt-gated and not decided here: all numeric sizing and limit values; the first DEMO order activity.
 
-PO decisions: whether the adapter interface, simulated adapter and conformance suite stay in `TRON-T1` or become a separate candidate item; whether an in-memory journal port is included in the first delivery; who owns trigger-borne protection derivation (`TRON-T4` or the trigger contract authority) — this package only requires that a request without valid protection is refused before submit. Settled by CA, not open: `GOLD-MVP-001` depends on `TRON-T3A` only (among its other direct dependencies), and `PAPER-E2E-001` retains `TRON-T3`.
+PO decisions: whether the adapter interface, simulated adapter and conformance suite stay in `TRON-T1` or become a separate candidate item; whether an in-memory journal port is included in the first delivery. Not open: derivation and validation of protective levels, including trigger-borne levels, belong to `TRON-T3A`; trigger intake to `TRON-T4`; trigger semantics to `GOAL-TRIGGER-001`. This package only provides the admission hook in which the `TRON-T3A` protection gate refuses a request without valid protection before submit. Settled by CA, not open: `GOLD-MVP-001` depends on `TRON-T3A` only (among its other direct dependencies), and `PAPER-E2E-001` retains `TRON-T3`.
 
 ## Effort and risks
 
