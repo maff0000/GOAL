@@ -1008,3 +1008,19 @@ items:
     architecture_refs:
       - architecture/DELIVERY-CONTROL-PLANE.md
       - audits/2026-10-15/gold-mvp/PORTFOLIO.md
+  - id: GOLD-AUDIT-CLOSEOUT-001
+    title: Governed GOLD Audit Completion Train
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: medium
+    state: PO_REVIEW
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: pids/GOLD-AUDIT-CLOSEOUT-001.md
+    architecture_refs:
+      - architecture/DELIVERY-CONTROL-PLANE.md
+      - audits/2026-10-15/gold-mvp/PORTFOLIO.md
