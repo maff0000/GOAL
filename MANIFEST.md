@@ -252,6 +252,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `tools/goal_dcp/readiness.py`
 - `tools/goal_dcp/validate.py`
 - `tools/secret-scan`
+- `workorders/WO-FALCON-E-EVIDENCE-001.md`
 
 <!-- END GENERATED: manifest -->
 
