@@ -1,6 +1,6 @@
 # Work Order WO-GOAL-CF-ACCEPTANCE-001
 
-**DRAFT — not approved, not dispatched; Architect acceptance and merge into GOAL main required before it is executable authority.** This file authorises no work. An open pull request, a local file, a conversation approval or a candidate branch is insufficient (governance section 7.2). Dispatch is barred until the Approval record in field 12 is complete, the "Unresolved before approval" list is empty, and this Work Order is merged into GOAL main.
+**Conditional authority.** This file is candidate text and confers no authority by itself. It becomes executable authority solely by (a) an attributable, exact-head Architect acceptance record in GOAL pull request #45 that names the candidate head commit SHA, followed by (b) merge of that exact head into GOAL main (governance sections 7.2 and 7.5). Until both have occurred nothing in this file is approved, and dispatch is barred. This file does not and cannot contain an approval of itself or its own commit SHA: the approval record is external (field 12) and the merge commit on GOAL main is the activation evidence. The amendment wording in field 4 is not operative, and may be implemented verbatim only after that acceptance and merge. The gates in "Authority gates" at the end of this file must each be actually satisfied; none is satisfied by assertion.
 
 Governing document: `maff0000/GOAL` `governance/DELIVERY-CHAIN-AND-WORK-ORDERS.md` and template `templates/WORK-ORDER.md`, at GOAL main commit `3f2f100ea27f515689d1fa05fa815956a396f730` (merge of GOAL pull request #42). The authoritative record of this Work Order is this file in `maff0000/GOAL` at `workorders/WO-GOAL-CF-ACCEPTANCE-001.md`. The mandatory dispatch preamble (governance section 6) is not copied here.
 
@@ -24,12 +24,12 @@ Authority ordering (Architect ruling of 18 October 2026): the normative GREEN-WI
 ## 2. Target repository and exact base SHA
 
 Target repository: `maff0000/GOAL`  
-Exact base SHA: `3f2f100ea27f515689d1fa05fa815956a396f730` (GOAL `main`; verified against GitHub when this version was drafted)
+Exact base SHA: `d7bffec206bf58057e4742edc1611f6ecced5d19` (GOAL `main` after the merge of pull request #43, which changed only a Work Order file and `MANIFEST.md`; the two target PID files are unchanged from `3f2f100ea27f515689d1fa05fa815956a396f730`). The base is re-verified at merge (gate G3) and at dispatch (gate P2).
 
 ## 3. Permitted paths
 
 - `pids/GOLD-AUD-C.md` and `pids/GOLD-AUD-F.md`, append-only (new dated amendment sections at the end of each file; existing text is not edited).
-- `MANIFEST.md` is not a permitted path: no new file is added, so no manifest change is expected. If a file is added after all, or `./tools/goal-docs --check` reports a manifest change, stop and return to the Architect, who adds `MANIFEST.md` to this list before approval.
+- `MANIFEST.md` is not a permitted path of the future PID amendment implementation pull request: no new file is added, so no manifest change is expected. If a file is added after all, or `./tools/goal-docs --check` reports a manifest change, stop and return to the Architect, who adds `MANIFEST.md` to this list before approval.
 
 ## 4. Scope
 
@@ -114,21 +114,28 @@ Architectural ambiguity (including any doubt about the text in field 4); change 
 ## 12. Expected GitHub evidence, pull request and approval record
 
 Expected evidence and pull request: one pull request into `maff0000/GOAL` from a branch named for this Work Order, whose diff is append-only on the two permitted paths; the PR body shows `git diff --stat`; CI results at the exact head; the independent technical audit (including the auditor check in field 6) and the independent public-safety audit, each recorded against the exact head; post-merge main CI verification after Architect-accepted merge. Lane state changes, if any, belong to separate PO acceptance pull requests.  
-External durable location of final acceptance: the exact-head Architect acceptance of this Work Order is recorded on GOAL pull request #45 (this pull request), not inside this file, so that this file need not embed its own SHA. Merge of this pull request on the accepted head is the activation evidence. The amendment wording in field 4 may be implemented verbatim only after that acceptance and merge. The fields below are intentionally left unfilled in the candidate and are not to be filled by the controller.
-Approval record (exact candidate SHA; attributable decision source; label any controller transcription as such):
+External approval record (conditional authority model). Approval of this Work Order exists only if both of the following exist, and not otherwise:
 
-- Approved by (Architect): NOT APPROVED
-- Candidate SHA: 
-- Decision source: 
-- Date: 
-- Git reference (commit/PR): 
+1. An attributable Architect acceptance record in GOAL pull request #45 (a review or comment by the Architect) that names the exact candidate head commit SHA accepted and its decision source. A controller transcription of an acceptance is not an Architect action and must be labelled as a transcription (governance section 7.5).
+2. Merge of that exact head into GOAL main. The resulting merge commit is the activation evidence.
 
-## Unresolved before approval
+This file contains no approval fields to fill, no "approved" statement and no SHA of its own commit. If no such record exists, this Work Order is not approved, whatever any other message, local file or CI result says. The pull request body points to the current candidate head and to the acceptance record once it exists. The registration pull request for this Work Order (this one) includes the generated `MANIFEST.md` line for the Work Order file; that is distinct from the future PID amendment implementation pull request, from which `MANIFEST.md` stays excluded.
 
-Each item below must be resolved before this Work Order is merged. An unresolved placeholder prohibits approval.
+## Authority gates
 
-1. Independent review of the final head by an auditor who is not the implementer or drafter, with exact-head CI and secret scan results.
-2. Re-verify the GOAL base SHA immediately before merge and dispatch; if main has moved, reconcile and re-audit any material change.
-3. Explicit Architect acceptance of the exact final head, recorded on GOAL pull request #45.
+Every gate must be actually satisfied, with the evidence named, before the step it guards. A gate that is unsatisfied, unverifiable or satisfied only by assertion blocks that step. Satisfaction is recorded in GOAL pull request #45 (merge gates) or in the dispatch pull request (dispatch gates), not in this file.
 
-Resolved by the Architect directive of 19 October 2026 (recorded on PR #45): the acceptance framework is approved, with separate express amendments for Lane C A-9 and Lane F criterion 9; amendment date 19 October 2026; the deletion test is replaced by zero deleted lines from `git diff --numstat` per PID file; disclaimer items 2 through 6 inclusive of each amendment (explicitly including item 3, No automatic application) are confirmed; no lane state change under this Work Order; Delivery Controller is ROGUE; implementer and auditor identifiers assigned as above.
+Pre-merge gates (all required before this Work Order is merged into GOAL main):
+
+- G1. Independent technical audit and independent public-safety audit of the exact final head, by auditors who are not the drafter or the implementer. A material change after audit requires renewed audit. Evidence: audit records against the exact head SHA.
+- G2. Exact-head CI success and a clean secret scan on the same head. CI success is not Architect acceptance.
+- G3. Base verified: GOAL main equals the base in field 2 at merge time. If main has moved, reconcile against the new main, independently review any material base or manifest change, and obtain fresh Architect acceptance of the new exact head.
+- G4. Explicit Architect acceptance of the exact head, recorded in GOAL pull request #45 as described in field 12, before merge. The merge is pinned to that head.
+
+Pre-dispatch gates (all required before any implementer is dispatched):
+
+- P1. This Work Order is merged into GOAL main and main CI on the merge commit is verified.
+- P2. GOAL main is re-verified at dispatch; the two target PID files are unchanged from the base used by this Work Order, or the change has been independently reviewed and accepted. On any mismatch, stop and return to the Architect.
+- P3. Actual instance and session identities of the implementer and both auditors are recorded in the dispatch pull request, and their separation is verified. The role identifiers in fields 8 and 9 are prospective assignments only.
+- P4. The mandatory dispatch preamble of governance section 6 is included in the dispatch prompt.
+- P5. Permitted paths (field 3) and exclusions (field 5) are enforced, including that the amendment text is recorded verbatim from field 4 and that no lane state changes. Any stop condition in field 11 stops work and is returned to the Architect.
