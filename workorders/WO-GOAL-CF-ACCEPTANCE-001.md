@@ -24,7 +24,7 @@ Authority ordering (Architect ruling of 18 October 2026): the normative GREEN-WI
 ## 2. Target repository and exact base SHA
 
 Target repository: `maff0000/GOAL`  
-Exact base SHA: `d7bffec206bf58057e4742edc1611f6ecced5d19` (GOAL `main` after the merge of pull request #43, which changed only a Work Order file and `MANIFEST.md`; the two target PID files are unchanged from `3f2f100ea27f515689d1fa05fa815956a396f730`). The base is re-verified at merge (gate G3) and at dispatch (gate P2).
+Exact base SHA: `4bf92ca9ef49f1e59906b31d5f0db701cc6fed24` (GOAL `main` after the merge of pull request #44; pull requests #43 and #44 each changed only a Work Order file and `MANIFEST.md`; the two target PID files are unchanged from `3f2f100ea27f515689d1fa05fa815956a396f730`). The base is re-verified at merge (gate G3) and at dispatch (gate P2).
 
 ## 3. Permitted paths
 
