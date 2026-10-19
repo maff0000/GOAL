@@ -253,6 +253,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `tools/goal_dcp/validate.py`
 - `tools/secret-scan`
 - `workorders/WO-FALCON-E-EVIDENCE-001.md`
+- `workorders/WO-GOAL-D-ORDERING-002.md`
 
 <!-- END GENERATED: manifest -->
 
