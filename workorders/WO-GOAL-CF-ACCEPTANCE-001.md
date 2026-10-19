@@ -33,15 +33,15 @@ Exact base SHA: `3f2f100ea27f515689d1fa05fa815956a396f730` (GOAL `main`; verifie
 
 ## 4. Scope
 
-Append to the two PID files the following two separate, explicit, dated amendments, recorded verbatim from the accepted Work Order. They are two independent amendments. The GREEN-WITH-NOTICE rule of Lane D criterion 12 is NOT applied to Lane C A-9 or to Lane F criterion 9 automatically, by reference or by implication; each lane receives only the express wording below, and only on the Architect's acceptance of this Work Order. Each is modelled on the structure of the Lane D criterion 12 amendment (GOAL #30 item 2, read in `pids/GOLD-AUD-D.md` on GOAL main), whose normative text is: "Fresh independent FORGE Auditor verdict recorded against the exact evidence SHA, being GREEN or an independently verified GREEN-WITH-NOTICE, provided that each notice has a named owner, the confidential evidence provenance is recorded, and PO acceptance of the verdict and its notices is recorded."
+The amendment date is 19 October 2026, the date of the Architect decision that accepts this framework (Architect directive of 19 October 2026, section 4). No earlier historical date is altered. Append to the two PID files the following two separate, explicit, dated amendments, recorded verbatim from the accepted Work Order. They are two independent amendments. The GREEN-WITH-NOTICE rule of Lane D criterion 12 is NOT applied to Lane C A-9 or to Lane F criterion 9 automatically, by reference or by implication; each lane receives only the express wording below, and only on the Architect's acceptance of this Work Order. Each is modelled on the structure of the Lane D criterion 12 amendment (GOAL #30 item 2, read in `pids/GOLD-AUD-D.md` on GOAL main), whose normative text is: "Fresh independent FORGE Auditor verdict recorded against the exact evidence SHA, being GREEN or an independently verified GREEN-WITH-NOTICE, provided that each notice has a named owner, the confidential evidence provenance is recorded, and PO acceptance of the verdict and its notices is recorded."
 
 One acceptance formulation is used in both the Lane C A-9 wording (4.1 item 1) and the Lane F criterion 9 wording (4.2 item 1). It mirrors the structure and words of D criterion 12, including "the confidential evidence provenance is recorded" and "acceptance of the verdict and its notices is recorded". Governance defines the Architect as Central Architecture acting as Product Owner, so acceptance is stated ONCE, as Architect acceptance (which is the PO acceptance of D criterion 12); the wording does not require both a separate PO acceptance and an Architect acceptance. The two wordings differ only in the place where acceptance is recorded, and that difference is not new: it is the location wording already present in each original criterion (Lane C A-9: "PO acceptance recorded per the state machine"; Lane F criterion 9: "PO acceptance recorded in GitHub"). The original criteria also require an evidence PR list with exact SHAs, which is retained. The added "confidential evidence provenance is recorded" replaces the earlier draft's mixed provenance wording, and for Lane F it carries no extra parenthetical.
 
 ### 4.1 Proposed wording for `pids/GOLD-AUD-C.md` — proposed wording — becomes operative only if the Architect accepts this Work Order
 
-> ## Amendment (18 October 2026, Central Architecture decision): acceptance A-9
+> ## Amendment (19 October 2026, Central Architecture decision): acceptance A-9
 >
-> Dated 18 October 2026. This section records a Central Architecture decision of 18 October 2026. It changes only what is stated below. No lane state changes.
+> Dated 19 October 2026. This section records a Central Architecture decision of 19 October 2026. It changes only what is stated below. No lane state changes.
 >
 > 1. **A-9 as amended.** Acceptance A-9 is amended to read: "Fresh independent FORGE Auditor verdict recorded against the exact evidence SHA, being GREEN or an independently verified GREEN-WITH-NOTICE, provided that each notice has a named owner, the confidential evidence provenance is recorded, and Architect acceptance of the verdict and its notices is recorded per the state machine; evidence PR list with exact SHAs." The independent auditor is not the implementer.
 > 2. **Supersession, A-9 only.** This amendment expressly amends and supersedes, as to A-9 only, the statement in item 3 of the amendment of 17 October 2026 (GOAL #29) that "A-9 (independent auditor and PO acceptance) is unchanged". The remainder of item 3 and of that amendment stays in force exactly as written: A-1, A-2, A-3, A-4, A-5, A-7 and A-8 apply to CP-1 only with their CP-2 parts deferred, not met; A-6 is unchanged; the `goal-validate` and `secret-scan` checks in A-8 are unchanged.
@@ -52,9 +52,9 @@ One acceptance formulation is used in both the Lane C A-9 wording (4.1 item 1) a
 
 ### 4.2 Proposed wording for `pids/GOLD-AUD-F.md` — proposed wording — becomes operative only if the Architect accepts this Work Order
 
-> ## Amendment (18 October 2026, Central Architecture decision): acceptance criterion 9
+> ## Amendment (19 October 2026, Central Architecture decision): acceptance criterion 9
 >
-> Dated 18 October 2026. This section records a Central Architecture decision of 18 October 2026. It changes only what is stated below. No lane state changes.
+> Dated 19 October 2026. This section records a Central Architecture decision of 19 October 2026. It changes only what is stated below. No lane state changes.
 >
 > 1. **Criterion 9 as amended.** Acceptance criterion 9 is amended to read: "Fresh independent FORGE Auditor verdict recorded against the exact evidence SHA, being GREEN or an independently verified GREEN-WITH-NOTICE, provided that each notice has a named owner, the confidential evidence provenance is recorded, and Architect acceptance of the verdict and its notices is recorded in GitHub; evidence PR list with exact SHAs." The independent auditor is not the implementer.
 > 2. **No other criterion changed.** Acceptance criteria 1 to 8 are unchanged. No item of the amendment of 17 October 2026 (GOAL #32) is superseded.
@@ -80,8 +80,8 @@ One acceptance formulation is used in both the Lane C A-9 wording (4.1 item 1) a
 - `./tools/goal-docs --check`.
 - `./tools/secret-scan`.
 - Control-plane CI steps, including `python3 -m pytest tests/ -q`, pass at the final head.
-- Negative checks: (a) the diff of each PID file shows additions only, with no removed or modified existing line (automated: the diff of each file against the base SHA contains no removed line other than the file header lines (lines matching `^-[^-]` or the `^---` header)); (b) AUDITOR-READ CHECK (not automated): neither PID file, after the change, contains a statement that applies the rule of the other lane or of Lane D automatically; (c) the Lane C addition expressly supersedes the A-9 statement of item 3 of GOAL #29 and no other statement of it; (d) the additions grant no MERGED state (the word MERGED may appear in the additions only in negative statements that grant nothing, such as "moves nothing to `MERGED`").
-- Byte-for-byte verification step (automated; run by the implementer, and re-run independently by the auditor, with the output recorded in the pull request and in the audit). A small script, run with `python3 -I` from a scratch directory against a checkout of the branch, extracts and diffs the two texts for each PID file. (1) Extraction of the quoted wording: read `workorders/WO-GOAL-CF-ACCEPTANCE-001.md`; for field 4.1 (resp. 4.2) collect the lines of the blockquote that follows the heading beginning `### 4.1` (resp. `### 4.2`) up to the next line beginning `#`, strip the leading `> ` from each (a bare `>` becomes an empty line), and join with `\n`. (2) Extraction of the appended text: obtain the PID file at the base SHA and at HEAD with `git show <sha>:<path>`; assert the HEAD bytes start with the base bytes (append-only); take the remainder. (3) Compare: after removing leading and trailing blank lines from both, the two strings must be identical; on any difference, print a unified diff and exit non-zero. The step fails if any byte differs, including whitespace and punctuation.
+- Negative checks: (a) the diff of each PID file shows additions only: `git diff --numstat <base-sha>..HEAD -- <pid-file>` reports ZERO deleted lines for each of `pids/GOLD-AUD-C.md` and `pids/GOLD-AUD-F.md` (automated, run per PID file; any non-zero deleted count fails). This check runs alongside, and does not replace, the byte-prefix and verbatim-text checks below; (b) AUDITOR-READ CHECK (not automated): neither PID file, after the change, contains a statement that applies the rule of the other lane or of Lane D automatically; (c) the Lane C addition expressly supersedes the A-9 statement of item 3 of GOAL #29 and no other statement of it; (d) the additions grant no MERGED state (the word MERGED may appear in the additions only in negative statements that grant nothing, such as "moves nothing to `MERGED`").
+- Byte-for-byte verification step, combining the byte-prefix (append-only) and verbatim-text checks (automated; run by the implementer, and re-run independently by the auditor, with the output recorded in the pull request and in the audit). A small script, run with `python3 -I` from a scratch directory against a checkout of the branch, extracts and diffs the two texts for each PID file. (1) Extraction of the quoted wording: read `workorders/WO-GOAL-CF-ACCEPTANCE-001.md`; for field 4.1 (resp. 4.2) collect the lines of the blockquote that follows the heading beginning `### 4.1` (resp. `### 4.2`) up to the next line beginning `#`, strip the leading `> ` from each (a bare `>` becomes an empty line), and join with `\n`. (2) Extraction of the appended text: obtain the PID file at the base SHA and at HEAD with `git show <sha>:<path>`; assert the HEAD bytes start with the base bytes (append-only); take the remainder. (3) Compare: after removing leading and trailing blank lines from both, the two strings must be identical; on any difference, print a unified diff and exit non-zero. The step fails if any byte differs, including whitespace and punctuation.
 - Auditor check (not an automated test; no automated mechanism exists to trace acceptance criteria to amendments). The independent auditor confirms by reading and records in the audit that: each amended criterion is traceable to the criterion it amends (Lane C A-9, Lane F criterion 9) and to the dated Architect decision that approves it; and the text of the Lane D criterion 12 amendment (GOAL #30 item 2) is unchanged. The byte-for-byte match is established by the script above, not by reading.
 
 ## 7. Acceptance criteria
@@ -97,15 +97,15 @@ One acceptance formulation is used in both the Lane C A-9 wording (4.1 item 1) a
 
 ## 8. Assigned implementer
 
-Not yet named. The implementer is a FORGE instance to be assigned by the Delivery Controller. A named implementer is required before approval and is listed under "Unresolved before approval". It is not a permitted placeholder at approval.
+Assigned by the Delivery Controller (controller assignment of 19 October 2026, recorded under the Architect directive of that date): implementer instance identifier `FORGE-IMPL-WO-GOAL-CF-ACCEPTANCE-001-A`, a FORGE implementer instance. It is launched only after this Work Order is merged into GOAL main, against this Work Order alone. The identifier is a role label; the launch record (session and model identity) will be added to the pull request evidence at dispatch.
 
 ## 9. Independent auditor (not the implementer)
 
-Not yet named. Required: an independent FORGE Auditor who is not the implementer, for the technical audit, and a separate independent public-safety audit. Each named identity is recorded in the Approval record before approval. Listed under "Unresolved before approval"; no name is invented in this draft.
+Assigned by the Delivery Controller (controller assignment of 19 October 2026). Independent technical auditor identifier `FORGE-AUD-TECH-WO-GOAL-CF-ACCEPTANCE-001-B`; independent public-safety auditor identifier `FORGE-AUD-SAFE-WO-GOAL-CF-ACCEPTANCE-001-C`. Both are separate instances from the implementer and from each other, and neither may be the drafter or implementer of this Work Order. Public attribution uses these stable role identifiers; the actual session identities are traceable in a restricted audit record kept by the Delivery Controller and recorded when each audit is performed.
 
 ## 10. Delivery Controller
 
-ROGUE (Proposed resolution for Architect confirmation: governance rule 8 gives ROGUE control of dispatch and delivery coordination; the Architect confirms the identity in the Approval record).
+ROGUE (confirmed by the Architect, 19 October 2026, directive section 6; governance rule 8).
 
 ## 11. Stop conditions
 
@@ -114,6 +114,7 @@ Architectural ambiguity (including any doubt about the text in field 4); change 
 ## 12. Expected GitHub evidence, pull request and approval record
 
 Expected evidence and pull request: one pull request into `maff0000/GOAL` from a branch named for this Work Order, whose diff is append-only on the two permitted paths; the PR body shows `git diff --stat`; CI results at the exact head; the independent technical audit (including the auditor check in field 6) and the independent public-safety audit, each recorded against the exact head; post-merge main CI verification after Architect-accepted merge. Lane state changes, if any, belong to separate PO acceptance pull requests.  
+External durable location of final acceptance: the exact-head Architect acceptance of this Work Order is recorded on GOAL pull request #45 (this pull request), not inside this file, so that this file need not embed its own SHA. Merge of this pull request on the accepted head is the activation evidence. The amendment wording in field 4 may be implemented verbatim only after that acceptance and merge. The fields below are intentionally left unfilled in the candidate and are not to be filled by the controller.
 Approval record (exact candidate SHA; attributable decision source; label any controller transcription as such):
 
 - Approved by (Architect): NOT APPROVED
@@ -124,13 +125,10 @@ Approval record (exact candidate SHA; attributable decision source; label any co
 
 ## Unresolved before approval
 
-Each item below must be resolved and recorded before this Work Order can be approved. An unresolved placeholder prohibits approval.
+Each item below must be resolved before this Work Order is merged. An unresolved placeholder prohibits approval.
 
-1. Implementer: not named (to be assigned by the Delivery Controller).
-2. Named independent technical auditor identity (not the implementer).
-3. Named independent public-safety auditor identity.
-4. Delivery Controller identity: confirmation of ROGUE.
-5. Architect acceptance, or amendment, of the proposed wording in fields 4.1 and 4.2, including the date the amended sections carry.
-6. Independent review of this Work Order, and explicit Architect acceptance.
-7. Re-verify the GOAL base SHA at approval.
-8. Architect confirmation that the following disclaimer items of the proposed wording are within the Architect ruling: field 4.1 items 2, 4, 5 and 6 (Lane C) and field 4.2 items 2, 4, 5 and 6 (Lane F).
+1. Independent review of the final head by an auditor who is not the implementer or drafter, with exact-head CI and secret scan results.
+2. Re-verify the GOAL base SHA immediately before merge and dispatch; if main has moved, reconcile and re-audit any material change.
+3. Explicit Architect acceptance of the exact final head, recorded on GOAL pull request #45.
+
+Resolved by the Architect directive of 19 October 2026 (recorded on PR #45): the acceptance framework is approved, with separate express amendments for Lane C A-9 and Lane F criterion 9; amendment date 19 October 2026; the deletion test is replaced by zero deleted lines from `git diff --numstat` per PID file; disclaimer items 2 through 6 inclusive of each amendment (explicitly including item 3, No automatic application) are confirmed; no lane state change under this Work Order; Delivery Controller is ROGUE; implementer and auditor identifiers assigned as above.
