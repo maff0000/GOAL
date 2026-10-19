@@ -18,7 +18,7 @@ Governing document: `maff0000/GOAL` `governance/DELIVERY-CHAIN-AND-WORK-ORDERS.m
 Target repository: `maff0000/falcon`  
 Exact base SHA: `7734856596085200967b94a79ff4faa697633878` (the merge commit of falcon pull request #21). Re-verified against GitHub when this version was drafted: it is still the head of falcon `main` and is the merge commit of that pull request.
 
-This Work Order file is recorded in `maff0000/GOAL`, whose base when this version was drafted is `d7bffec206bf58057e4742edc1611f6ecced5d19` (GOAL main after the merge of pull request #43, which itself sits on `3f2f100ea27f515689d1fa05fa815956a396f730`). Both bases were re-verified against GitHub on 19 October 2026 (falcon `main` is `7734856596085200967b94a79ff4faa697633878`; GOAL `main` is `3f2f100ea27f515689d1fa05fa815956a396f730`). The falcon base must be verified again immediately before approval and again before dispatch (Architect directive of 19 October 2026, section 3).
+This Work Order file is recorded in `maff0000/GOAL`, whose base when this version was drafted is `d7bffec206bf58057e4742edc1611f6ecced5d19` (GOAL main after the merge of pull request #43, which itself sits on `3f2f100ea27f515689d1fa05fa815956a396f730`). Both bases were re-verified against GitHub on 19 October 2026 (falcon `main` is `7734856596085200967b94a79ff4faa697633878`; GOAL `main` is `d7bffec206bf58057e4742edc1611f6ecced5d19`). The falcon base must be verified again immediately before approval and again before dispatch (Architect directive of 19 October 2026, section 3).
 
 ## 3. Permitted paths
 
