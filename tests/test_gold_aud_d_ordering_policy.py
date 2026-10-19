@@ -34,6 +34,7 @@ rewording of the obligation must update this policy test in the same governed
 change. That friction is the point.
 """
 
+import hashlib
 import re
 
 import pytest
@@ -640,3 +641,210 @@ def test_m21_item_2_marker_removed_swallows_item_2_and_fails():
     text = read_ordering().replace("\n2. Diagnostic", "\nDiagnostic", 1)
     assert text != read_ordering()
     assert_fails_closed(text)
+
+
+# ------------------------- whole-file digest guard (WO-GOAL-D-ORDERING-002)
+#
+# Interim control: the lane D ORDERING.md is pinned by the SHA-256 of its RAW
+# BYTES (no decoding, no newline, whitespace or BOM normalisation). Any edit,
+# including a CRLF conversion, fails until this constant is updated through an
+# independently reviewed Work Order. The guard is separate from, and is never
+# called by, check_tron_half or check_paper_half.
+
+ORDERING_SHA256 = "6571e2a6bf52c4c7e6a0002175578865dee02f18eed959eb138becdf3b29f93a"
+
+
+def read_ordering_bytes():
+    with open(ORDERING_PATH, "rb") as fh:
+        return fh.read()
+
+
+def check_ordering_digest(data):
+    """Whole-file integrity: SHA-256 of the raw bytes must equal the pinned value.
+
+    Takes bytes (or text, encoded as UTF-8 here) so the real-file test and the
+    mutation tests exercise the same code.
+    """
+    if isinstance(data, str):
+        data = data.encode("utf-8")
+    actual = hashlib.sha256(data).hexdigest()
+    assert actual == ORDERING_SHA256, (
+        "ORDERING.md digest mismatch: "
+        f"expected {ORDERING_SHA256}, actual {actual} ({len(data)} bytes)"
+    )
+
+
+def assert_digest_fails(data):
+    with pytest.raises(AssertionError) as exc:
+        check_ordering_digest(data)
+    msg = str(exc.value)
+    assert ORDERING_SHA256 in msg
+    assert hashlib.sha256(data if isinstance(data, bytes) else data.encode("utf-8")).hexdigest() in msg
+
+
+def mutated(old, new, count=1):
+    """In-memory bytes of the real document with `old` replaced by `new`."""
+    raw = read_ordering_bytes()
+    o, n = old.encode("utf-8"), new.encode("utf-8")
+    assert o in raw, f"mutation anchor not found in ORDERING.md: {old!r}"
+    out = raw.replace(o, n, count)
+    assert out != raw
+    return out
+
+
+def decoded(data):
+    return data.decode("utf-8")
+
+
+ITEM_2 = "Diagnostic bridge use is permitted only for isolated proof that is not TRON integration."
+GATE_A_LINE = (
+    "GATE A  typed gateway exists AND is approved (INC-10 merged and approved)"
+)
+INC_14_LINE = "  INC-14 adapter reads through the gateway  <- first accepted TRON integration"
+INC_17_LINE = "  INC-17 one order end to end (`PAPER-E2E-001`)  <- PAPER proof"
+
+
+def moved_gate_a_below(anchor_line):
+    raw = decoded(read_ordering_bytes())
+    assert raw.count(GATE_A_LINE + "\n") == 1 and raw.count(anchor_line + "\n") == 1
+    without = raw.replace(GATE_A_LINE + "\n", "", 1)
+    out = without.replace(anchor_line + "\n", anchor_line + "\n" + GATE_A_LINE + "\n", 1)
+    assert out != raw
+    return out.encode("utf-8")
+
+
+def test_digest_positive_control_real_file_passes():
+    check_ordering_digest(read_ordering_bytes())
+    # accepts text too, via UTF-8 encoding in the function
+    check_ordering_digest(decoded(read_ordering_bytes()))
+
+
+def test_digest_constant_is_sha256_of_raw_bytes():
+    raw = read_ordering_bytes()
+    assert len(raw) == 5111
+    assert hashlib.sha256(raw).hexdigest() == ORDERING_SHA256
+
+
+def test_digest_guard_is_not_called_by_half_checks():
+    import inspect
+
+    for fn in (check_tron_half, check_paper_half):
+        assert "check_ordering_digest" not in inspect.getsource(fn)
+
+
+def test_digest_message_prints_expected_and_actual():
+    with pytest.raises(AssertionError, match=r"expected [0-9a-f]{64}, actual [0-9a-f]{64}"):
+        check_ordering_digest(b"x")
+
+
+def test_digest_whole_document_single_character_outside_section_1_fails():
+    assert_digest_fails(mutated("## 5. Interaction", "## 5. interaction"))
+    assert_digest_fails(mutated("Deliverable 7.", "Deliverable 8."))
+
+
+def test_digest_ma_remove_or_paper_proof_fails_digest_and_paper_half_only():
+    data = mutated(REAL_SENTENCE, REAL_SENTENCE.replace(" or PAPER proof", "", 1))
+    assert_digest_fails(data)
+    with pytest.raises(AssertionError, match="PAPER half"):
+        check_paper_half(decoded(data))
+    check_tron_half(decoded(data))
+
+
+def test_digest_ma_remove_accepted_tron_integration_fails_digest_and_tron_half_only():
+    data = mutated(REAL_SENTENCE, REAL_SENTENCE.replace("accepted TRON integration or ", "", 1))
+    assert_digest_fails(data)
+    with pytest.raises(AssertionError, match="TRON half"):
+        check_tron_half(decoded(data))
+    check_paper_half(decoded(data))
+
+
+def test_digest_mb_cancelling_sentence_in_item_2_fails():
+    assert_digest_fails(
+        mutated(ITEM_2, ITEM_2 + " The first obligation does not apply while the diagnostic bridge is in use.")
+    )
+
+
+def test_digest_mc_new_item_3_fails():
+    assert_digest_fails(
+        mutated(ITEM_2 + "\n", ITEM_2 + "\n3. Item 1 does not apply to work that is already under way.\n")
+    )
+
+
+def test_digest_md_cancelling_statement_outside_section_1_fails():
+    anchor = "## 4. Orderings that look necessary but are not (evidence)\n"
+    assert_digest_fails(
+        mutated(anchor, anchor + "\nThe typed gateway ordering is advisory.\n")
+    )
+
+
+@pytest.mark.parametrize("anchor", [INC_14_LINE, INC_17_LINE], ids=["below-INC-14", "below-INC-17"])
+def test_digest_me_gate_a_moved_fails(anchor):
+    assert_digest_fails(moved_gate_a_below(anchor))
+
+
+def test_digest_mf_qualified_gate_table_row_fails():
+    row = "| Typed gateway exists and is approved (Gate A) |"
+    assert_digest_fails(mutated(row, "| Typed gateway exists and is approved (Gate A) (not required for PAPER) |"))
+
+
+def test_digest_mi_qualified_gateway_sentence_fails():
+    assert_digest_fails(
+        mutated(
+            REAL_SENTENCE,
+            REAL_SENTENCE[:-1] + ", except where the diagnostic bridge is in use.",
+        )
+    )
+
+
+def test_digest_paper_side_inversion_text_fails_digest():
+    data = mutated(
+        REAL_SENTENCE,
+        "The typed gateway must exist and be approved before accepted TRON integration, "
+        "and PAPER proof comes before it.",
+    )
+    assert_digest_fails(data)
+    # TRON half left intact; the PAPER half is independently reversed
+    check_tron_half(decoded(data))
+    with pytest.raises(AssertionError, match="PAPER half"):
+        check_paper_half(decoded(data))
+
+
+def test_digest_byte_variant_crlf_fails():
+    raw = read_ordering_bytes()
+    assert b"\r" not in raw
+    assert_digest_fails(raw.replace(b"\n", b"\r\n"))
+
+
+def test_digest_byte_variant_trailing_newline_added_fails():
+    assert_digest_fails(read_ordering_bytes() + b"\n")
+
+
+def test_digest_byte_variant_trailing_newline_removed_fails():
+    raw = read_ordering_bytes()
+    assert raw.endswith(b"\n")
+    assert_digest_fails(raw[:-1])
+
+
+def test_digest_byte_variant_leading_bom_fails():
+    assert_digest_fails(b"\xef\xbb\xbf" + read_ordering_bytes())
+
+
+# ------------------------------------ graph mutations M-g and M-h (PAPER side)
+
+
+def test_mg_gateway_depends_on_paper_proof_fails_inversion_check():
+    g = real_graph()
+    g[TYPED_GATEWAY] = g[TYPED_GATEWAY] + (PAPER_PROOF,)
+    with pytest.raises(AssertionError, match=f"{ACCEPTED_TRON_INTEGRATION} is an ancestor of {TYPED_GATEWAY}"):
+        check_no_inversion(g)
+
+
+def test_mh_paper_consumer_isolated_fails_inversion_check_on_paper_proof():
+    g = real_graph()
+    g[TYPED_GATEWAY] = g[TYPED_GATEWAY] + (PAPER_PROOF,)
+    cut = [(s, ACCEPTED_TRON_INTEGRATION) for s, deps in g.items() if ACCEPTED_TRON_INTEGRATION in deps]
+    assert (PAPER_PROOF, ACCEPTED_TRON_INTEGRATION) in cut
+    g = without_edges(g, *cut)
+    assert ACCEPTED_TRON_INTEGRATION not in ancestors(g, TYPED_GATEWAY)
+    with pytest.raises(AssertionError, match=f"{PAPER_PROOF} is an ancestor of {TYPED_GATEWAY}"):
+        check_no_inversion(g)
