@@ -39,15 +39,15 @@ Rules for criteria 2 and 4 (Architect ruling of 18 October 2026):
 
 Criterion 7: acceptable once the independent auditor's actual verification of it has been performed against the committed evidence, the resulting verification record is committed, and that record has been reviewed. A verdict not backed by the auditor's actual verification does not satisfy criterion 7.
 
-Where the criterion 7 verification record lives: the public-safe record of the independent auditor's actual verification (the grep outcome (pass or fail) without patterns, matches, hit paths or counts and the pass or fail per sub-check, with no private content) is committed in the same `ATTESTATION.md`, under a clearly labelled section (heading "Criterion 7 verification record"). A verdict alone, without this record, does not satisfy criterion 7.
+Where the criterion 7 verification record lives: the public-safe record of the independent auditor's actual verification (safe pass or fail outcomes only: one pass or fail per sub-check and an overall pass or fail; no search patterns, no paths, no matches, no counts and no private content) is committed in the same `ATTESTATION.md`, under a clearly labelled section (heading "Criterion 7 verification record"). A verdict alone, without this record, does not satisfy criterion 7.
 
-Public attestation. A public, sanitised attestation is recorded in `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/ATTESTATION.md`. It may contain only: a non-sensitive digest, the criteria tested, the verdict, the auditor identity, and the public-safe criterion 7 verification record described above (grep outcome (pass or fail) without patterns, matches, hit paths or counts and pass or fail per sub-check; the permitted content is widened to this extent and no further). It publishes NO counts (no inventory counts, no coverage numbers, no list lengths), no private repository identities, no paths, no addresses and no sensitive source information.
+Public attestation. A public, sanitised attestation is recorded in `audits/2026-10-15/gold-mvp/lanes/GOLD-AUD-F/ATTESTATION.md`. It may contain only: a non-sensitive digest, the criteria tested, the verdict, the auditor identity, and the public-safe criterion 7 verification record described above (safe pass or fail outcomes only, with no search patterns, paths, matches or counts; the permitted content is widened to this extent and no further). It publishes NO counts (no inventory counts, no coverage numbers, no list lengths), no private repository identities, no paths, no addresses and no sensitive source information.
 
-Digest definition (Proposed resolution for Architect confirmation; not dictated by Central Architecture): the digest is the SHA-256 of a canonical, sanitised statement of the criteria tested and the verdict, and of nothing else. The canonical statement is the exact text published in the attestation for those two items (UTF-8, LF line endings, no trailing whitespace), and the attestation states that form so a reader can recompute the digest. The digest is NOT the hash of any private file, list or register, because such a hash could confirm or leak private content. Limit of this design, stated for the Architect: the digest provides integrity of the published wording only (a reader can detect a change to the published criteria-tested and verdict text); it is not a cryptographic binding to the private evidence, so it does not by itself prove that the private checks were performed. Architect to confirm that this is adequate; the binding to the private evidence rests on the independent auditor's actual verification (criteria 2, 4 and 7) and the audit record, not on the digest.
+Digest definition (Architect decision, 19 October 2026: a public digest of the canonical public attestation wording ONLY is permitted): the digest is the SHA-256 of a canonical, sanitised statement of the criteria tested and the verdict, and of nothing else. The canonical statement is the exact text published in the attestation for those two items (UTF-8, LF line endings, no trailing whitespace), and the attestation states that form so a reader can recompute the digest. The digest is NOT the hash of any private file, list or register, because such a hash could confirm or leak private content. Limit of this design, stated for the Architect: the digest provides integrity of the published wording only (a reader can detect a change to the published criteria-tested and verdict text); it is not a cryptographic binding to the private evidence, so it does not by itself prove that the private checks were performed. The attestation must state in plain words that the digest is NOT proof of the private evidence and NOT a hash of any private material. The binding to the private evidence rests on the independent auditor's actual verification (criteria 2, 4 and 7) and the audit record, not on the digest.
 
-Auditor identity in the public attestation is role-level (for example "independent FORGE Auditor") or pseudonymous, consistent with earlier lane records, which name auditors by role. No individual name, account or address is published. This is a proposal flagged for Architect confirmation, not a ruled decision.
+Auditor identity in the public attestation uses a stable pseudonym or role identifier (Architect decision, 19 October 2026), provided the actual identity is traceable in the restricted audit record. No individual name, account or address is published.
 
-Open decision (Architect / security owner, not decided here): who grants the independent auditor access to the confidential record, and under what terms. Until that is decided and recorded, the private checks cannot be dispatched. Proposed resolution for Architect confirmation: the Architect or the security owner names the grantor and the access terms in the Approval record.
+Confidential-evidence access (Architect decision, 19 October 2026): HELM's designated security custodian is the access grantor, subject to existing authority and any required explicit owner authorisation. Access must be scoped, read-only, auditable, and limited to the independent auditor who needs it. Private evidence access is NOT granted automatically to the implementer. Until the custodian's grant, and any required owner authorisation, is recorded, the private checks cannot be dispatched. If access cannot be obtained or the private evidence cannot be reproduced, each affected criterion remains NOT MET and nothing is inferred as complete. Private criteria (2 and 4) are MET only following actual independent reproduction.
 
 ## 5. Exclusions
 
@@ -64,7 +64,7 @@ Open decision (Architect / security owner, not decided here): who grants the ind
 - Digest check: the auditor recomputes the SHA-256 of the canonical statement and it equals the published digest.
 - Coverage reconciliation for criterion 2, including the private inventory counts, performed by the auditor against retained evidence and reported only as a verdict in the public file.
 - No-change identity verification for criterion 4: before and after identities (baseline `IDENTITY-SNAPSHOTS.md` and the confidential record) compared by the auditor against the retained evidence and found equal, or recorded as not equal.
-- Criterion 7: the auditor's actual verification is committed in `ATTESTATION.md` as the labelled "Criterion 7 verification record" section (grep outcome (pass or fail) without patterns, matches, hit paths or counts and pass or fail per sub-check, no private content), in addition to the verdict, and is reviewed.
+- Criterion 7: the auditor's actual verification is committed in `ATTESTATION.md` as the labelled "Criterion 7 verification record" section (safe pass or fail outcomes only: no search patterns, paths, matches, counts or private content), in addition to the verdict, and is reviewed.
 - Negative tests: (a) an attestation that contains any count, private identity, path or address fails the redaction inspection; (b) an attestation whose digest does not match the recomputed canonical statement fails; (c) an attestation that asserts criterion 2 or 4 met without the auditor's reproduction of the retained evidence fails the audit; (d) where the auditor cannot reproduce, the attestation must record the criterion as NOT MET and the lane as remaining in `PO_ACCEPTANCE`.
 - `./tools/goal-validate`, `./tools/goal-docs --check`, `./tools/secret-scan`, and `python3 -m pytest tests/ -q` pass at the final head.
 
@@ -78,15 +78,15 @@ Open decision (Architect / security owner, not decided here): who grants the ind
 
 ## 8. Assigned implementer
 
-Not yet named. The implementer is a FORGE instance to be assigned by the Delivery Controller. A named implementer is required before approval and is listed under "Unresolved before approval". It is not a permitted placeholder at approval.
+Assigned by the Delivery Controller (controller assignment of 19 October 2026, recorded under the Architect directive of that date): implementer instance identifier `FORGE-IMPL-WO-GOAL-F-ATTESTATION-001-A`, a FORGE implementer instance. It is launched only after this Work Order is merged into GOAL main, against this Work Order alone. It receives NO access to the confidential record. The identifier is a role label; the launch record will be added to the pull request evidence at dispatch.
 
 ## 9. Independent auditor (not the implementer)
 
-Not yet named. Required: an independent FORGE Auditor who is not the implementer, for the technical audit (including the reproduction of the private checks), and a separate independent public-safety audit. Each named identity is recorded in the Approval record before approval. The auditor must be able to reproduce the private checks, which depends on the access decision in field 4. Listed under "Unresolved before approval"; no name is invented in this draft.
+Assigned by the Delivery Controller (controller assignment of 19 October 2026). Independent technical auditor identifier `FORGE-AUD-TECH-WO-GOAL-F-ATTESTATION-001-B`, who performs the private-evidence reproduction and is the only party for whom confidential access may be requested; independent public-safety auditor identifier `FORGE-AUD-SAFE-WO-GOAL-F-ATTESTATION-001-C`, who works on public material only. All are separate instances from the implementer and from each other. Public attribution uses these stable role identifiers; the actual session identities are traceable in a restricted audit record kept by the Delivery Controller. Reproduction depends on the access grant described in field 4.
 
 ## 10. Delivery Controller
 
-ROGUE (Proposed resolution for Architect confirmation: governance rule 8 gives ROGUE control of dispatch and delivery coordination; the Architect confirms the identity in the Approval record).
+ROGUE (confirmed by the Architect, 19 October 2026, directive section 6; governance rule 8).
 
 ## 11. Stop conditions
 
@@ -95,6 +95,7 @@ Architectural ambiguity; change of risk authority; uncontrolled production acces
 ## 12. Expected GitHub evidence, pull request and approval record
 
 Expected evidence and pull request: one pull request into `maff0000/GOAL` from a branch named for this Work Order, whose diff touches only the permitted paths; the PR body shows `git diff --stat`; CI results at the exact head; the independent technical audit and the independent public-safety audit, each recorded against the exact head, with no private particulars; post-merge main CI verification after Architect-accepted merge. Lane state changes belong to the separate PO acceptance pull request.  
+External durable location of final acceptance: the exact-head Architect acceptance of this Work Order is recorded on GOAL pull request #46 (this pull request), not inside this file, so that this file need not embed its own SHA. Merge of this pull request on the accepted head is the activation evidence. The fields below are intentionally left unfilled in the candidate and are not to be filled by the controller.
 Approval record (exact candidate SHA; attributable decision source; label any controller transcription as such):
 
 - Approved by (Architect): NOT APPROVED
@@ -105,13 +106,11 @@ Approval record (exact candidate SHA; attributable decision source; label any co
 
 ## Unresolved before approval
 
-Each item below must be resolved and recorded before this Work Order can be approved. An unresolved placeholder prohibits approval.
+Each item below must be resolved before this Work Order is merged or dispatched. An unresolved placeholder prohibits approval.
 
-1. Implementer: not named (to be assigned by the Delivery Controller).
-2. Named independent technical auditor identity (not the implementer), able to reproduce the private checks.
-3. Named independent public-safety auditor identity.
-4. Access grantor and access terms for the confidential record (Architect or security owner).
-5. Delivery Controller identity: confirmation of ROGUE.
-6. Architect confirmation of the digest definition (field 4), including that integrity of the published wording only (no cryptographic binding to private evidence) is adequate, and of the role-level or pseudonymous auditor identity proposal. Also for Architect confirmation: the permitted-content widening of field 4 (the criterion 7 verification record committed in `ATTESTATION.md`).
-7. Independent review of this Work Order, and explicit Architect acceptance.
-8. Re-verify the GOAL base SHA at approval.
+1. Independent review of the final head by an auditor who is not the implementer or drafter, with exact-head CI and secret scan results.
+2. Re-verify the GOAL base SHA immediately before merge and dispatch; if main has moved, reconcile and re-audit any material change.
+3. Explicit Architect acceptance of the exact final head, recorded on GOAL pull request #46.
+4. Confidential access arrangement: HELM's designated security custodian grant (scoped, read-only, auditable, limited to the independent technical auditor), and any explicit owner authorisation required by existing authority. No such grant exists or is claimed. This item may remain pending while the other Work Orders proceed; it blocks dispatch of the private checks.
+
+Resolved by the Architect directive of 19 October 2026 (recorded on PR #46): access grantor is HELM's designated security custodian; public digest of canonical public wording only, with the not-proof disclaimer; pseudonym or role-identifier attribution with traceable restricted record; criterion 7 records are safe pass or fail outcomes only; the ambiguous grep-outcome wording is replaced; Delivery Controller is ROGUE; implementer and auditor identifiers assigned as above.
