@@ -23,8 +23,7 @@ Exact base SHA: `3f2f100ea27f515689d1fa05fa815956a396f730` (GOAL `main`; verifie
 
 - `tests/test_gold_aud_d_ordering_policy.py` only.
 - `MANIFEST.md` is not a permitted path: the test file already exists and is already listed, so no manifest change is expected. If `./tools/goal-docs --check` reports that a manifest change is needed, stop and return to the Architect.
-- No separate integrity-reference file is requested: the integrity reference is a constant held inside the test file.
-- Proposed resolution for Architect confirmation: if the Architect prefers a separate reference file, its path is added to this list by the Architect before approval.
+- No separate integrity-reference file is permitted: the integrity reference is a SHA-256 constant held inside the test file (Architect decision, 19 October 2026, PR #43 directive section 2).
 
 ## 4. Scope
 
@@ -32,7 +31,7 @@ Correct the criterion 7 policy test `tests/test_gold_aud_d_ordering_policy.py` s
 
 Required behaviour: an altered `ORDERING.md` is rejected by the test until its integrity reference is updated through an independently reviewed Work Order. Any legitimate edit to `ORDERING.md` therefore requires a new Work Order, which updates the integrity reference in the same governed change.
 
-Digest guard design (retained from the earlier draft; the function and constant design below is a proposal for Architect confirmation, not a ruled design):
+Digest guard design (the in-test SHA-256 constant and byte-exact whole-document integrity are Architect decisions of 19 October 2026; function naming and message layout are left to the implementer within these rules):
 
 - The digest is the SHA-256 of the RAW BYTES of the lane D `ORDERING.md`, read with `open(path, 'rb')`. No decoding, no newline normalisation, no whitespace normalisation, no BOM handling. A CRLF variant of the document must therefore fail.
 - The expected digest is held as a hex constant in the test file. Recomputed from GOAL main `3f2f100ea27f515689d1fa05fa815956a396f730` when this version was drafted: the file is 5111 bytes and its SHA-256 is `6571e2a6bf52c4c7e6a0002175578865dee02f18eed959eb138becdf3b29f93a`. The implementer recomputes this at the base SHA and states it in the pull request; the value here is a drafting aid, not a substitute for that check.
@@ -56,7 +55,7 @@ The test file is changed; `ORDERING.md` itself is not changed. The existing exac
 
 ## 6. Required tests (including negative tests)
 
-Negative mutations, each built in memory from the bytes of the real document, passed to the guard function as arguments, and each required to FAIL the guard (with the expected and actual digests printed):
+Negative mutations, each built in memory and passed to the relevant check as an argument. Failure routing (Architect decision, 19 October 2026): M-a through M-f and the byte-level variants (item 8) must FAIL the digest guard, with the expected and actual digests printed; M-g and M-h are graph-level mutations and must FAIL the graph inversion check (`check_no_inversion`), not the digest guard. Items 1 to 8 below are digest-guard mutations built from the bytes of the real document (item 7 is the PAPER-side text inversion; the graph-level PAPER-side mutations are M-g and M-h):
 
 1. Whole-document mutation: a change to any part of the document, including a single character outside section 1.
 2. A cancelling statement added in obligation item 2.
@@ -67,7 +66,7 @@ Negative mutations, each built in memory from the bytes of the real document, pa
 7. An independent PAPER-side inversion (the PAPER half reversed while the TRON half is left intact).
 8. Byte-level variants: CRLF line endings (every `\n` replaced by `\r\n`), a trailing newline added or removed, and a leading byte-order mark.
 
-Required mutations, stated concretely (each is built in memory from the bytes of the real document; each must fail the digest guard, and where a lettered half-check or text check also applies it must still fail independently as described):
+Required mutations, stated concretely (M-a to M-f are built in memory from the bytes of the real document and must fail the digest guard, and where a lettered half-check or text check also applies it must still fail independently as described; M-g and M-h are built on the in-memory dependency graph and must fail the graph inversion check):
 
 - M-a: mutate the item 1 sentence in `## 1. The two binding obligations` (the sentence "The typed gateway must exist and be approved before accepted TRON integration or PAPER proof."), by removing " or PAPER proof" alone, and separately by removing "accepted TRON integration or " alone. The first must also fail `check_paper_half` and not `check_tron_half`; the second must also fail `check_tron_half` and not `check_paper_half`.
 - M-b: append a cancelling sentence to obligation item 2 ("Diagnostic bridge use is permitted only for isolated proof that is not TRON integration."), for example a sentence stating that the first obligation does not apply while the diagnostic bridge is in use.
@@ -84,7 +83,7 @@ Regression: the existing exact-item, half-check, Gate A, readings and graph test
 
 ## 7. Acceptance criteria
 
-1. Every negative mutation listed under field 6 fails the guard, and the failure message prints the expected and actual digest.
+1. Every digest-guard mutation (field 6 items 1 to 8 and M-a to M-f, including the byte-level variants) fails the digest guard, and its failure message prints the expected and actual digest. M-g and M-h fail the graph inversion check (`check_no_inversion`) with the messages stated in field 6; no digest output is required of them. The PAPER-isolated M-h result ("PAPER-E2E-001 is an ancestor of MT5-GW-003", with `TRON-T2` not an ancestor) is preserved.
 2. The original, unmodified `ORDERING.md` passes, and the digest is of its raw bytes as defined above.
 3. The existing exact-item, half-check and graph tests are unchanged (diff shows no removed or weakened assertion) and pass. In particular, the existing independent half-checks remain independently failing: `test_m6_text_drop_paper_proof_fails_paper_half_only` and `test_m7_text_drop_accepted_tron_integration_fails_tron_half_only` still pass unchanged, and mutations M-a (both variants) fail only the matching half-check.
 4. Only the permitted path is changed (`git diff --stat` shown in the pull request); `ORDERING.md` and `MANIFEST.md` are unchanged.
@@ -94,15 +93,15 @@ Regression: the existing exact-item, half-check, Gate A, readings and graph test
 
 ## 8. Assigned implementer
 
-Not yet named. The implementer is a FORGE instance to be assigned by the Delivery Controller. A named implementer is required before approval and is listed under "Unresolved before approval". It is not a permitted placeholder at approval.
+Assigned by the Delivery Controller (controller assignment of 19 October 2026, recorded under the Architect directive of that date): implementer instance identifier `FORGE-IMPL-WO-GOAL-D-ORDERING-002-A`, a FORGE implementer instance. It is launched only after this Work Order is merged into GOAL main, against this Work Order alone. The identifier is a role label; the launch record (session and model identity) will be added to the pull request evidence at dispatch.
 
 ## 9. Independent auditor (not the implementer)
 
-Not yet named. Required: an independent FORGE Auditor who is not the implementer, for the technical audit, and a separate independent public-safety audit. Each named identity is recorded in the Approval record before approval. Listed under "Unresolved before approval"; no name is invented in this draft.
+Assigned by the Delivery Controller (controller assignment of 19 October 2026). Independent technical auditor identifier `FORGE-AUD-TECH-WO-GOAL-D-ORDERING-002-B`; independent public-safety auditor identifier `FORGE-AUD-SAFE-WO-GOAL-D-ORDERING-002-C`. Both are separate instances from the implementer and from each other, and neither may be the drafter or implementer of this Work Order. Public attribution uses these stable role identifiers; the actual session identities are traceable in a restricted audit record kept by the Delivery Controller and recorded when each audit is performed. Audit separation from implementation is a condition of acceptance.
 
 ## 10. Delivery Controller
 
-ROGUE (Proposed resolution for Architect confirmation: governance rule 8 gives ROGUE control of dispatch and delivery coordination; the Architect confirms the identity in the Approval record).
+ROGUE (confirmed by the Architect, 19 October 2026, directive section 6; governance rule 8).
 
 ## 11. Stop conditions
 
@@ -111,6 +110,7 @@ Architectural ambiguity (including any need to change the digest definition or t
 ## 12. Expected GitHub evidence, pull request and approval record
 
 Expected evidence and pull request: one pull request into `maff0000/GOAL` from a branch named for this Work Order, whose diff touches only the permitted path; the PR body states the recomputed size and digest of `ORDERING.md` at the base SHA and shows `git diff --stat`; CI results at the exact head; the independent technical audit and the independent public-safety audit, each recorded against the exact head; post-merge main CI verification after Architect-accepted merge.  
+External durable location of final acceptance: the exact-head Architect acceptance of this Work Order is recorded on GOAL pull request #43 (this pull request), not inside this file, so that this file need not embed its own SHA. Merge of this pull request on the accepted head is the activation evidence. The fields below are intentionally left unfilled in the candidate and are not to be filled by the controller.
 Approval record (exact candidate SHA; attributable decision source; label any controller transcription as such):
 
 - Approved by (Architect): NOT APPROVED
@@ -121,12 +121,10 @@ Approval record (exact candidate SHA; attributable decision source; label any co
 
 ## Unresolved before approval
 
-Each item below must be resolved and recorded before this Work Order can be approved. An unresolved placeholder prohibits approval.
+Each item below must be resolved before this Work Order is merged. An unresolved placeholder prohibits approval.
 
-1. Implementer: not named (to be assigned by the Delivery Controller).
-2. Named independent technical auditor identity (not the implementer).
-3. Named independent public-safety auditor identity.
-4. Delivery Controller identity: confirmation of ROGUE.
-5. Architect preference on a separate integrity-reference file versus the in-test constant (field 3).
-6. Independent review of this Work Order, and explicit Architect acceptance.
-7. Re-verify the GOAL base SHA at approval.
+1. Independent review of the final head by an auditor who is not the implementer or drafter, with exact-head CI and secret scan results.
+2. Re-verify the GOAL base SHA immediately before merge and dispatch; if main has moved, reconcile and re-audit any material change.
+3. Explicit Architect acceptance of the exact final head, recorded on GOAL pull request #43.
+
+Resolved by the Architect directive of 19 October 2026 (recorded on PR #43): in-test digest constant (no separate reference file); Delivery Controller is ROGUE; failure routing of M-g and M-h to the graph inversion check; implementer and auditor identifiers assigned as above.
