@@ -16,6 +16,7 @@ region — change `backlog/backlog.yaml` and run `./tools/goal-docs --write`.
 | GOAL-DCP-002 | shared | GOAL/ROGUE | ROGUE dispatcher — deterministic consumption and multi-project dispatch control | maff0000/GOAL | GOAL-DCP-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
 | GOAL-DCP-003 | shared | ROGUE/FORGE | Automated GitHub-triggered sandboxed delivery launch | maff0000/GOAL | GOAL-DCP-002 | P0 | high | ARCHITECTURE_REQUIRED | Yes | No |
 | GOAL-DCP-004 | shared | GOAL | Automated PO/ROGUE status and stale/blocked brief | maff0000/GOAL | GOAL-DCP-002 | P1 | low | ARCHITECTURE_REQUIRED | Yes | No |
+| GOAL-DCP-005 | shared | GOAL | Delivery Identity and Independent Audit Sequencing | maff0000/GOAL | GOAL-DCP-001 | P0 | medium | ARCHITECTURE_REQUIRED | Yes | No |
 | OPS-SAFE-001 | ops | Estate | Backup/off-host/restore programme | maff0000/GOAL | GOAL-DCP-001 | P0 | high | PID_DRAFT | Yes | No |
 | OPS-SAFE-002 | ops | Estate | Network/data-store containment | maff0000/GOAL | GOAL-DCP-001 | P0 | high | PID_DRAFT | Yes | No |
 | OPS-SAFE-003 | ops | Estate | Secrets/runtime identity hygiene | maff0000/GOAL | GOAL-DCP-001 | P0 | high | PID_DRAFT | Yes | No |

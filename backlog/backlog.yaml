@@ -92,6 +92,27 @@ items:
       - architecture/DELIVERY-CONTROL-PLANE.md
       - governance/DELIVERY-STATE-MACHINE.md
 
+  # Delivery identity and independent audit sequencing: a prospective, bounded
+  # clarification of the P3 dispatch gate into P3a (before dispatch) and P3b
+  # (before each audit). Governance documents only, via a later Work Order.
+  # Distinct from GOAL-DCP-002 (the ROGUE dispatcher), which is unchanged.
+  - id: GOAL-DCP-005
+    title: "Delivery Identity and Independent Audit Sequencing"
+    lane: shared
+    component: GOAL
+    target_repository: maff0000/GOAL
+    priority: P0
+    risk: medium
+    state: ARCHITECTURE_REQUIRED
+    depends_on:
+      - GOAL-DCP-001
+    po_gate: true
+    matt_gate: false
+    pid_path: pids/GOAL-DCP-005.md
+    architecture_refs:
+      - governance/DELIVERY-CHAIN-AND-WORK-ORDERS.md
+      - governance/DELIVERY-STATE-MACHINE.md
+
   - id: OPS-SAFE-001
     title: "Backup/off-host/restore programme"
     lane: ops
