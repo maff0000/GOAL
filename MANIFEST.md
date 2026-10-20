@@ -144,6 +144,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `operations/ROGUE-DISPATCH-GOLD-AUDIT-CLOSEOUT-001.md`
 - `operations/ROGUE-READINESS.md`
 - `pids/GOAL-DCP-001.md`
+- `pids/GOAL-DCP-005.md`
 - `pids/GOLD-AUD-A.md`
 - `pids/GOLD-AUD-B.md`
 - `pids/GOLD-AUD-C.md`
