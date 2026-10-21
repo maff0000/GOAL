@@ -256,6 +256,7 @@ region — run `./tools/goal-docs --write` after committing new files.
 - `workorders/WO-FALCON-E-EVIDENCE-001.md`
 - `workorders/WO-GOAL-CF-ACCEPTANCE-001.md`
 - `workorders/WO-GOAL-D-ORDERING-002.md`
+- `workorders/WO-GOAL-DCP-P3-001.md`
 
 <!-- END GENERATED: manifest -->
 
